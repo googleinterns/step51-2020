@@ -3,26 +3,29 @@
   <head>
     <meta charset="UTF-8">
     <title>Compare</title>
-    <link rel="stylesheet" href="compare_style.css"></link>
-    <script src="compare_script.js"></script>
+    <link rel="stylesheet" href="../Resources/NavBar/navbar_style.css"></link>
+    <link rel="stylesheet" href="style-compare.css"></link>
+    <script src="../Resources/NavBar/navbar_script.js"></script>
   </head>
   <body>
-    <header>
-      <!-- Use any element to open the sidenav -->
-      <span onclick="openNav()">open</span>
-    </header>
+      <!-- NavBar -->
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <img src=""/>
-      <a href="#">About</a>
-      <a href="#">Services</a>
-      <a href="#">Clients</a>
+      <img src="../images/DSA-campaign-white.png" style="max-width: 50%; max-height: 50%; margin-left: auto; margin-right: auto; display: block;"/>
+      <a href="#">Home</a>
+      <a href="#">Create Campaign</a>
+      <a href="#">Compare Campaigns</a>
       <a href="#">Contact</a>
     </div>
+    
+    <header>
+      <!-- all the content relevant to the header is contained in this div -->
+      <div class="header">
+        <span style="font-size: 30px; cursor: pointer; float: left;" onclick="openNav()">&#9776;</span>
+        <a href="#default" class="title">Compare DSA Campaigns</a>
+      </div>
+    </header>
 
-    <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
-    <div id="main">
-    </div>
     <p>DSA Campaign Uplift Estimation</p>
     <p>This is the compare page!</p>
   </body>
