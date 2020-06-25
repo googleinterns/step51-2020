@@ -34,7 +34,7 @@ public class EmptyServlet extends HttpServlet {
         ArrayList<keywordCampaign> keywordCampaigns = new ArrayList<keywordCampaign>();
         for(Entity entity : results.asIterable()) {
             // TODO
-            // keywordCampaign keywordCampaignObject = new keywordCampaign();
+            // KeywordCampaign keywordCampaignObject = new KeywordCampaign();
             keywordCampaigns.add(keywordCampaignObject);
         }
 
