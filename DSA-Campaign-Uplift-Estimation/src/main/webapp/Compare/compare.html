@@ -5,10 +5,10 @@
     <title>Compare</title>
     <link rel="stylesheet" href="../Resources/NavBar/navbar_style.css"></link>
     <link rel="stylesheet" href="style-compare.css"></link>
+    <link rel="stylesheet" href="../Resources/dropdown.css"></link>
     <script src="../Resources/NavBar/navbar_script.js"></script>
   </head>
   <body>
-      <!-- NavBar -->
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <img src="../images/DSA-campaign-white.png" style="max-width: 50%; max-height: 50%; margin-left: auto; margin-right: auto; display: block;"/>
@@ -17,16 +17,22 @@
       <a href="#">Compare Campaigns</a>
       <a href="#">Contact</a>
     </div>
-    
+
     <header>
-      <!-- all the content relevant to the header is contained in this div -->
       <div class="header">
         <span style="font-size: 30px; cursor: pointer; float: left;" onclick="openNav()">&#9776;</span>
         <a href="#default" class="title">Compare DSA Campaigns</a>
       </div>
     </header>
 
-    <p>DSA Campaign Uplift Estimation</p>
-    <p>This is the compare page!</p>
+    <div class="dropdown">
+        <button class="dropbtn">Select a Keyword Campaign</button>
+        <div class="dropdown-content">
+        <a href="#">Campaign 1</a>
+        <a href="#">Campaign 2</a>
+        <a href="#">Campaign 3</a>
+        </div>
+    </div>
+
   </body>
 </html>
