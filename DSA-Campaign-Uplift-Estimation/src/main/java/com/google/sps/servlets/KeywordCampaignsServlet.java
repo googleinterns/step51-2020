@@ -21,14 +21,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/")
+// returns all of the keyword campaigns in datastore
+@WebServlet("/keyword-campaigns")
 public class EmptyServlet extends HttpServlet {
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    }
-
-    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("keyword-campaign").addSort("keywordCampaignId", SortDirection.DESCENDING);
+    	PreparedQuery results = datastore.prepare(query);
+
+        ArrayList<keywordCampaign> keywordCampaigns = new ArrayList<keywordCampaign>();
+        for(Entity entity : results.asIterable()) {
+            // TODO
+            // keywordCampaign keywordCampaignObject = new keywordCampaign();
+            keywordCampaigns.add(keywordCampaignObject);
+        }
+
+        Gson gson = new Gson();
+        String json = gson.toJson(keywordCampaigns);
+        response.setContentType("application/json;");
+        response.getWriter().println(json);
+    }
     }
 }
