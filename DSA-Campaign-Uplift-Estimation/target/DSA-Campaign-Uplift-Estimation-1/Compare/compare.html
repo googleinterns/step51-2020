@@ -7,8 +7,9 @@
     <link rel="stylesheet" href="style-compare.css"></link>
     <link rel="stylesheet" href="../Resources/dropdown.css"></link>
     <script src="../Resources/NavBar/navbar_script.js"></script>
+    <script src="script-compare.js"></script>
   </head>
-  <body>
+  <body onload="getKeywordCampaigns();">
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <img src="../images/DSA-campaign-white.png" style="max-width: 50%; max-height: 50%; margin-left: auto; margin-right: auto; display: block;"/>
@@ -28,10 +29,7 @@
     <div id="dropdowns" class="center">
         <div class="dropdown dropdown-padding">
             <button class="dropbtn">Select a Keyword Campaign</button>
-            <div class="dropdown-content">
-            <a href="#">Campaign 1</a>
-            <a href="#">Campaign 2</a>
-            <a href="#">Campaign 3</a>
+            <div class="dropdown-content" id="keyword-campaigns">
             </div>
         </div>
         <div class="dropdown dropdown-padding">

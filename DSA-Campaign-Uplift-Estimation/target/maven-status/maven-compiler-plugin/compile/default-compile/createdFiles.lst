@@ -1,3 +1,2 @@
-com/google/sps/servlets/TestBigQuery.class
-com/google/sps/servlets/EmptyServlet.class
-com/google/sps/servlets/TestServlet.class
+com/google/sps/servlets/KeywordCampaignsServlet.class
+com/google/sps/servlets/KeywordCampaign.class
