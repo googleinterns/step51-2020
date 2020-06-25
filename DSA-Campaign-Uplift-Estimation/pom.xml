@@ -16,6 +16,18 @@
     <failOnMissingWebXml>false</failOnMissingWebXml>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>libraries-bom</artifactId>
+        <version>7.0.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+        </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -42,6 +54,11 @@
         <groupId>com.google.appengine</groupId>
         <artifactId>appengine-api-1.0-sdk</artifactId>
         <version>1.9.59</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>google-cloud-bigquery</artifactId>
     </dependency>
   </dependencies>
 
