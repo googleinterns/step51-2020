@@ -26,3 +26,13 @@ body {
   font-size: 17px;
   margin: 0;
 }
+
+div.center {
+    text-align: center;
+    margin: auto;
+    width: 80%;
+}
+
+div.dropdown-padding {
+    padding: 50pt;
+}
