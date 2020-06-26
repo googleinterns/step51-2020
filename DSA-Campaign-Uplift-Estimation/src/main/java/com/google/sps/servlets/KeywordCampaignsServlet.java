@@ -36,7 +36,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("keywordCampaign").addSort("keywordCampaignId", SortDirection.DESCENDING);
+        Query query = new Query("keywordCampaign").addSort("keywordCampaignId", SortDirection.ASCENDING);
     	PreparedQuery results = datastore.prepare(query);
 
         ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
