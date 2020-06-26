@@ -16,6 +16,7 @@ package com.google.sps.servlets;
 
 import java.util.ArrayList;
 
+// contains all the necessary information about a keyword campaign, including id, input settings, and statistics
 public class KeywordCampaign {
 
     public int keywordCampaignId;
