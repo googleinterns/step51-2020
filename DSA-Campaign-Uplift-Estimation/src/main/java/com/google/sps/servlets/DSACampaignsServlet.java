@@ -38,7 +38,7 @@ public class DSACampaignsServlet extends HttpServlet {
         int correspondingKeywordCampaignId = Integer.parseInt(request.getParameter("keywordCampaignId"));
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("DSACampaign").setFilter(PropertyFilter.eq("keywordCampaignId", correspondingKeywordCampaignId)).addSort("DSACampaignId", SortDirection.ASCENDING);
+        Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, correspondingKeywordCampaignId)).addSort("DSACampaignId", SortDirection.ASCENDING);
     	PreparedQuery results = datastore.prepare(query);
 
         ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
