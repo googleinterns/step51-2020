@@ -17,8 +17,18 @@ function getKeywordCampaigns() {
         const keywordCampaignList = document.getElementById('keyword-campaigns');
 	
         keywordCampaigns.forEach(keywordCampaign => {
-            keywordCampaignList.innerHTML += '<a href="#">Keyword Campaign ' + keywordCampaign.keywordCampaignId + '</a>';
+            keywordCampaignList.innerHTML += '<a onclick=\"getDSACampaigns(' + keywordCampaign.keywordCampaignId + ')\">Keyword Campaign ' + keywordCampaign.keywordCampaignId + '</a>';
         });
     });
     console.log('Got keyword campaigns.');
+}
+
+function getDSACampaigns(keywordCampaignId) {
+    fetch('DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
+        const DSACampaignsList = document.getElementById('DSA-campaigns');
+
+        DSACampaigns.forEach(DSACampaign => {
+            DSACampaignsList.innerHTML += '<a href=\"#\">' + DSACampaign.name + '</a>';
+        });
+    });
 }
