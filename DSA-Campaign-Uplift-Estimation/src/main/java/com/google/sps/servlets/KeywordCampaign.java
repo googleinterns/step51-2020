@@ -25,6 +25,8 @@ public class KeywordCampaign {
     public int cost;
     public ArrayList<Integer> DSACampaignIds;
 
+    // TODO: add the keyword campaign input settings
+
     public KeywordCampaign(int keywordCampaignId, int userId, int impressions, int clicks, int cost, ArrayList<Integer> DSACampaignIds) {
         this.keywordCampaignId = keywordCampaignId;
         this.userId = userId;
