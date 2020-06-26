@@ -47,6 +47,5 @@ public class DSACampaign {
         this.target = target;
         this.impressions = impressions;
         this.clicks = clicks;
-        this.DSACampaignIds = DSACampaignIds;
     }
 }

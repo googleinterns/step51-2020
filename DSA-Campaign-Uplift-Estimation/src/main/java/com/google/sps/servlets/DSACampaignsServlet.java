@@ -29,58 +29,74 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
-// manages the keyword campaigns in datastore
-@WebServlet("/keyword-campaigns")
-public class KeywordCampaignsServlet extends HttpServlet {
+// manages the DSA campaigns in datastore
+@WebServlet("/DSA-campaigns")
+public class DSACampaignsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("keywordCampaign").addSort("keywordCampaignId", SortDirection.ASCENDING);
+        Query query = new Query("DSACampaign").addSort("DSACampaignId", SortDirection.ASCENDING);
     	PreparedQuery results = datastore.prepare(query);
 
-        ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
+        ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
         for (Entity entity : results.asIterable()) {
-            int keywordCampaignId = (int) ((long) entity.getProperty("keywordCampaignId"));
+            int DSACampaignId = (int) ((long) entity.getProperty("DSACampaignId"));
             int userId = (int) ((long) entity.getProperty("userId"));
+            int keywordCampaignId = (int) ((long) entity.getProperty("keywordCampaignId"));
+            String name = (String) entity.getProperty("name");
+            String fromDate = (String) entity.getProperty("fromDate");
+            String toDate = (String) entity.getProperty("toDate");
+            int dailyBudget = (int)  ((long) entity.getProperty("dailyBudget"));
+            String location = (String) entity.getProperty("location");
+            String domain = (String) entity.getProperty("domain");
+            String target = (String) entity.getProperty("target");
             int impressions = (int) ((long) entity.getProperty("impressions"));
             int clicks = (int) ((long) entity.getProperty("clicks"));
             int cost = (int) ((long) entity.getProperty("cost"));
-            ArrayList<Integer> DSACampaignIds = (ArrayList<Integer>) entity.getProperty("DSACampaignIds");
-            KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, impressions, clicks, cost, DSACampaignIds);
-            keywordCampaigns.add(keywordCampaignObject);
+            DSACampaign DSACampaignObject = new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, fromDate, toDate, dailyBudget, location, domain, target, impressions, clicks, cost);
+            DSACampaigns.add(DSACampaignObject);
         }
 
         Gson gson = new Gson();
-        String json = gson.toJson(keywordCampaigns);
+        String json = gson.toJson(DSACampaigns);
         response.setContentType("application/json;");
         response.getWriter().println(json);
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int keywordCampaignId = Integer.parseInt(request.getParameter("keywordCampaignId"));
+        int DSACampaignId = Integer.parseInt(request.getParameter("DSACampaignId"));
         int userId = Integer.parseInt(request.getParameter("userId"));
+        int keywordCampaignId = Integer.parseInt(request.getParameter("keywordCampaignId"));
+        String name = request.getParameter("name");
+        String fromDate = request.getParameter("fromDate");
+        String toDate = request.getParameter("toDate");
+        int dailyBudget = Integer.parseInt(request.getParameter("dailyBudget"));
+        String location = request.getParameter("location");
+        String domain = request.getParameter("domain");
+        String target = request.getParameter("target");
         int impressions = Integer.parseInt(request.getParameter("impressions"));
         int clicks = Integer.parseInt(request.getParameter("clicks"));
         int cost = Integer.parseInt(request.getParameter("cost"));
 
-        String[] DSACampaignIdsArray = request.getParameter("DSACampaignIds").split(" ");
-        ArrayList<Integer> DSACampaignIds = new ArrayList<Integer>();
-        for (String id : DSACampaignIdsArray) {
-            DSACampaignIds.add(Integer.parseInt(id));
-        }
-
-        Entity keywordCampaignEntity = new Entity("keywordCampaign");
-        keywordCampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
-        keywordCampaignEntity.setProperty("userId", userId);
-        keywordCampaignEntity.setProperty("impressions", impressions);
-        keywordCampaignEntity.setProperty("clicks", clicks);
-        keywordCampaignEntity.setProperty("cost", cost);
-        keywordCampaignEntity.setProperty("DSACampaignIds", DSACampaignIds);
+        Entity DSACampaignEntity = new Entity("DSACampaign");
+        DSACampaignEntity.setProperty("DSACampaignId", DSACampaignId);
+        DSACampaignEntity.setProperty("userId", userId);
+        DSACampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
+        DSACampaignEntity.setProperty("name", name);
+        DSACampaignEntity.setProperty("fromDate", fromDate);
+        DSACampaignEntity.setProperty("toDate", toDate);
+        DSACampaignEntity.setProperty("dailyBudget", dailyBudget);
+        DSACampaignEntity.setProperty("location", location);
+        DSACampaignEntity.setProperty("domain", domain);
+        DSACampaignEntity.setProperty("target", target);
+        DSACampaignEntity.setProperty("impressions", impressions);
+        DSACampaignEntity.setProperty("clicks", clicks);
+        DSACampaignEntity.setProperty("cost", cost);
 	
     	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(keywordCampaignEntity);
+        datastore.put(DSACampaignEntity);
 
         response.sendRedirect("/Compare/compare.html");
     }
