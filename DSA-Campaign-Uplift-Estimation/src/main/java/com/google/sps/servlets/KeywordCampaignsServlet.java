@@ -29,14 +29,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
-// returns all of the keyword campaigns in datastore
+// manages the keyword campaigns in datastore
 @WebServlet("/keyword-campaigns")
 public class KeywordCampaignsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("keyword-campaign").addSort("keywordCampaignId", SortDirection.DESCENDING);
+        Query query = new Query("keywordCampaign").addSort("keywordCampaignId", SortDirection.DESCENDING);
     	PreparedQuery results = datastore.prepare(query);
 
         ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
@@ -55,5 +55,33 @@ public class KeywordCampaignsServlet extends HttpServlet {
         String json = gson.toJson(keywordCampaigns);
         response.setContentType("application/json;");
         response.getWriter().println(json);
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int keywordCampaignId = Integer.parseInt(request.getParameter("keywordCampaignId"));
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        int impressions = Integer.parseInt(request.getParameter("impressions"));
+        int clicks = Integer.parseInt(request.getParameter("clicks"));
+        int cost = Integer.parseInt(request.getParameter("cost"));
+
+        String[] DSACampaignIdsArray = request.getParameter("DSACampaignIds").split(" ");
+        ArrayList<Integer> DSACampaignIds = new ArrayList<Integer>();
+        for (String id : DSACampaignIdsArray) {
+            DSACampaignIds.add(Integer.parseInt(id));
+        }
+
+        Entity keywordCampaignEntity = new Entity("keywordCampaign");
+        keywordCampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
+        keywordCampaignEntity.setProperty("userId", userId);
+        keywordCampaignEntity.setProperty("impressions", impressions);
+        keywordCampaignEntity.setProperty("clicks", clicks);
+        keywordCampaignEntity.setProperty("cost", cost);
+        keywordCampaignEntity.setProperty("DSACampaignIds", DSACampaignIds);
+	
+    	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(keywordCampaignEntity);
+
+        response.sendRedirect("/Compare/compare.html");
     }
 }
