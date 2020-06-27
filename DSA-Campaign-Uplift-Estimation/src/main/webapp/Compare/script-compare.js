@@ -24,11 +24,13 @@ function getKeywordCampaigns() {
 }
 
 function getDSACampaigns(keywordCampaignId) {
-    fetch('DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
-        const DSACampaignsList = document.getElementById('DSA-campaigns');
+    const DSACampaignsList = document.getElementById('DSA-campaigns');
+    DSACampaignsList.innerHTML = '';
 
+    fetch('DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
         DSACampaigns.forEach(DSACampaign => {
             DSACampaignsList.innerHTML += '<a href=\"#\">' + DSACampaign.name + '</a>';
         });
     });
+    console.log('Got DSA campaigns.');
 }
