@@ -41,11 +41,17 @@
     </div>
 	-->
 	
-	<select id="keyword-campaigns" onchange="getDSACampaigns()">
-    </select>
-
-    <select id="DSA-campaigns">
-    </select>
-
+    <div id="campaigns-container">
+        <div id="keyword-campaigns-container">
+            <h3>Select a keyword campaign</h3>
+            <select id="keyword-campaigns" onchange="getDSACampaigns()"></select>
+        </div>
+        
+        <div id="DSA-campaigns-container">
+            <h3>Select a DSA campaign</h3>
+            <select id="DSA-campaigns"></select>
+        </div>
+    </div>
+    
   </body>
 </html>
