@@ -27,7 +27,7 @@ function getDSACampaigns(keywordCampaignId) {
     const DSACampaignsList = document.getElementById('DSA-campaigns');
     DSACampaignsList.innerHTML = '';
 
-    fetch('DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
+    fetch('/DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
         DSACampaigns.forEach(DSACampaign => {
             DSACampaignsList.innerHTML += '<a href=\"#\">' + DSACampaign.name + '</a>';
         });
