@@ -18,7 +18,7 @@ function getKeywordCampaigns() {
 
     fetch('/keyword-campaigns').then(response => response.json()).then(keywordCampaigns => {
         keywordCampaigns.forEach(keywordCampaign => {
-            keywordCampaignList.innerHTML += '<option value=' + keywordCampaign.keywordCampaignId + '>Keyword Campaign ' + keywordCampaign.keywordCampaignId  + '</option>';
+            keywordCampaignList.innerHTML += '<option value=' + keywordCampaign.keywordCampaignId + '>' + keywordCampaign.name  + '</option>';
         });
     });
     console.log('Got keyword campaigns.');

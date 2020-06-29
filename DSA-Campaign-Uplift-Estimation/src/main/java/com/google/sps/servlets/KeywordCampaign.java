@@ -20,14 +20,23 @@ public class KeywordCampaign {
 
     public int keywordCampaignId;
     public int userId;
+    // the id's of all the DSA campaigns associated with this keyword campaign
+    public ArrayList<Integer> DSACampaignIds;
+
+    // settings
+    public String name;
+
+    // TODO: add the rest of the settings
+
+    // statistics
     public int impressions;
     public int clicks;
     public double cost;
-    public ArrayList<Integer> DSACampaignIds;
 
-    public KeywordCampaign(int keywordCampaignId, int userId, int impressions, int clicks, double cost, ArrayList<Integer> DSACampaignIds) {
+    public KeywordCampaign(int keywordCampaignId, int userId, String name, int impressions, int clicks, double cost, ArrayList<Integer> DSACampaignIds) {
         this.keywordCampaignId = keywordCampaignId;
         this.userId = userId;
+        this.name = name;
         this.impressions = impressions;
         this.clicks = clicks;
         this.DSACampaignIds = DSACampaignIds;
