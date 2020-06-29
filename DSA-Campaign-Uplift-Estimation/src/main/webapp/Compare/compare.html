@@ -5,7 +5,6 @@
     <title>Compare</title>
     <link rel="stylesheet" href="../Resources/NavBar/navbar_style.css"></link>
     <link rel="stylesheet" href="style-compare.css"></link>
-    <link rel="stylesheet" href="../Resources/dropdown.css"></link>
     <script src="../Resources/NavBar/navbar_script.js"></script>
     <script src="script-compare.js"></script>
   </head>
@@ -25,29 +24,14 @@
         <a href="#default" class="title">Compare DSA Campaigns</a>
       </div>
     </header>
-
-	<!--
-    <div id="dropdowns" class="center">
-        <div class="dropdown dropdown-padding">
-            <button class="dropbtn">Select a Keyword Campaign</button>
-            <div class="dropdown-content" id="keyword-campaigns">
-            </div>
-        </div>
-        <div class="dropdown dropdown-padding">
-            <button class="dropbtn">Select a DSA Campaign</button>
-            <div class="dropdown-content" id="DSA-campaigns">
-            </div>
-        </div>
-    </div>
-	-->
 	
-    <div id="campaigns-container">
-        <div id="keyword-campaigns-container">
+    <div id="campaigns-container" class="center">
+        <div id="keyword-campaigns-container" class="select">
             <h3>Select a keyword campaign</h3>
             <select id="keyword-campaigns" onchange="getDSACampaigns()"></select>
         </div>
         
-        <div id="DSA-campaigns-container">
+        <div id="DSA-campaigns-container" class="select">
             <h3>Select a DSA campaign</h3>
             <select id="DSA-campaigns"></select>
         </div>
