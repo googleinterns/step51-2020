@@ -42,6 +42,7 @@ public class DSACampaignsServlet extends HttpServlet {
     	PreparedQuery results = datastore.prepare(query);
 
         ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
+        
         for (Entity entity : results.asIterable()) {
             int DSACampaignId = (int) ((long) entity.getProperty("DSACampaignId"));
             int userId = (int) ((long) entity.getProperty("userId"));
@@ -82,7 +83,7 @@ public class DSACampaignsServlet extends HttpServlet {
         int clicks = Integer.parseInt(request.getParameter("clicks"));
         double cost = Double.parseDouble(request.getParameter("cost"));
 
-        Entity DSACampaignEntity = new Entity("DSACampaign");
+        Entity DSACampaignEntity = new Entity("DSACampaign", keywordCampaignId);
         DSACampaignEntity.setProperty("DSACampaignId", DSACampaignId);
         DSACampaignEntity.setProperty("userId", userId);
         DSACampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
