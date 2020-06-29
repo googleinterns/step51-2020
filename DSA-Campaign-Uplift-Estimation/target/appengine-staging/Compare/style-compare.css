@@ -29,10 +29,11 @@ body {
 
 div.center {
     text-align: center;
-    margin: auto;
-    width: 80%;
 }
 
-div.dropdown-padding {
-    padding: 50pt;
+div.select {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 30px;
 }

@@ -1,2 +1,4 @@
+com/google/sps/servlets/DSACampaign.class
+com/google/sps/servlets/DSACampaignsServlet.class
 com/google/sps/servlets/KeywordCampaignsServlet.class
 com/google/sps/servlets/KeywordCampaign.class
