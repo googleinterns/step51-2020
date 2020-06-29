@@ -16,6 +16,8 @@ package com.google.sps.servlets;
 
 import java.util.ArrayList;
 
+// represents the settings of a keyword campaign that can be copied to a DSA campaign
+// contains all the necessary information about a keyword campaign, including id, input settings, and statistics
 public class KeywordCampaign {
 
     public int keywordCampaignId;
@@ -26,7 +28,7 @@ public class KeywordCampaign {
     // settings
     public String name;
 
-    // TODO: add the rest of the settings
+    // TODO: add the rest of the input settings
 
     // statistics
     public int impressions;
