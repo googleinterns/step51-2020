@@ -49,13 +49,13 @@ public class DSACampaignsServlet extends HttpServlet {
             String name = (String) entity.getProperty("name");
             String fromDate = (String) entity.getProperty("fromDate");
             String toDate = (String) entity.getProperty("toDate");
-            int dailyBudget = (int)  ((long) entity.getProperty("dailyBudget"));
+            double dailyBudget = (double) entity.getProperty("dailyBudget");
             String location = (String) entity.getProperty("location");
             String domain = (String) entity.getProperty("domain");
             String target = (String) entity.getProperty("target");
             int impressions = (int) ((long) entity.getProperty("impressions"));
             int clicks = (int) ((long) entity.getProperty("clicks"));
-            int cost = (int) ((long) entity.getProperty("cost"));
+            double cost = (double) entity.getProperty("cost");
             DSACampaign DSACampaignObject = new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, fromDate, toDate, dailyBudget, location, domain, target, impressions, clicks, cost);
             DSACampaigns.add(DSACampaignObject);
         }
@@ -74,13 +74,13 @@ public class DSACampaignsServlet extends HttpServlet {
         String name = request.getParameter("name");
         String fromDate = request.getParameter("fromDate");
         String toDate = request.getParameter("toDate");
-        int dailyBudget = Integer.parseInt(request.getParameter("dailyBudget"));
+        double dailyBudget = Double.parseDouble(request.getParameter("dailyBudget"));
         String location = request.getParameter("location");
         String domain = request.getParameter("domain");
         String target = request.getParameter("target");
         int impressions = Integer.parseInt(request.getParameter("impressions"));
         int clicks = Integer.parseInt(request.getParameter("clicks"));
-        int cost = Integer.parseInt(request.getParameter("cost"));
+        double cost = Double.parseDouble(request.getParameter("cost"));
 
         Entity DSACampaignEntity = new Entity("DSACampaign");
         DSACampaignEntity.setProperty("DSACampaignId", DSACampaignId);

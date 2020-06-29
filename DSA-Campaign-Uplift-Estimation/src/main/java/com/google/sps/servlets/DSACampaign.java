@@ -24,7 +24,7 @@ public class DSACampaign {
 	public String name;
     public String fromDate;
     public String toDate;
-    public int dailyBudget;
+    public double dailyBudget;
     public String location;
     public String domain;
     public String target;
@@ -32,9 +32,9 @@ public class DSACampaign {
     // estimation results
     public int impressions;
     public int clicks;
-    public int cost;
+    public double cost;
 
-    public DSACampaign(int DSACampaignId, int userId, int keywordCampaignId, String name, String fromDate, String toDate, int dailyBudget, String location, String domain, String target, int impressions, int clicks, int cost) {
+    public DSACampaign(int DSACampaignId, int userId, int keywordCampaignId, String name, String fromDate, String toDate, double dailyBudget, String location, String domain, String target, int impressions, int clicks, double cost) {
         this.DSACampaignId = DSACampaignId;
         this.userId = userId;
         this.keywordCampaignId = keywordCampaignId;

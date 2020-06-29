@@ -14,7 +14,7 @@
 
 function getKeywordCampaigns() {
 	const keywordCampaignList = document.getElementById('keyword-campaigns');
-    keywordCampaignList.innerHTML = '';
+    keywordCampaignList.innerHTML = '<option value=0>Select a keyword campaign</option>';
 
     fetch('/keyword-campaigns').then(response => response.json()).then(keywordCampaigns => {
         keywordCampaigns.forEach(keywordCampaign => {
@@ -26,8 +26,7 @@ function getKeywordCampaigns() {
 
 function getDSACampaigns() {
     const DSACampaignsList = document.getElementById('DSA-campaigns');
-    DSACampaignsList.innerHTML = '';
-	
+    DSACampaignsList.innerHTML = '<option value=0>Select a DSA campaign</option>';
     var keywordCampaignId = document.getElementById("keyword-campaigns").value;
 
     fetch('/DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {

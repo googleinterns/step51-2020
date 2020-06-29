@@ -22,10 +22,10 @@ public class KeywordCampaign {
     public int userId;
     public int impressions;
     public int clicks;
-    public int cost;
+    public double cost;
     public ArrayList<Integer> DSACampaignIds;
 
-    public KeywordCampaign(int keywordCampaignId, int userId, int impressions, int clicks, int cost, ArrayList<Integer> DSACampaignIds) {
+    public KeywordCampaign(int keywordCampaignId, int userId, int impressions, int clicks, double cost, ArrayList<Integer> DSACampaignIds) {
         this.keywordCampaignId = keywordCampaignId;
         this.userId = userId;
         this.impressions = impressions;

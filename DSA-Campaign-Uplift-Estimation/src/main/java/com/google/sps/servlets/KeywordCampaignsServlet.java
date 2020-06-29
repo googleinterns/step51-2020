@@ -45,7 +45,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
             int userId = (int) ((long) entity.getProperty("userId"));
             int impressions = (int) ((long) entity.getProperty("impressions"));
             int clicks = (int) ((long) entity.getProperty("clicks"));
-            int cost = (int) ((long) entity.getProperty("cost"));
+            double cost = (double) entity.getProperty("cost");
             ArrayList<Integer> DSACampaignIds = (ArrayList<Integer>) entity.getProperty("DSACampaignIds");
             KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, impressions, clicks, cost, DSACampaignIds);
             keywordCampaigns.add(keywordCampaignObject);
@@ -63,7 +63,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
         int userId = Integer.parseInt(request.getParameter("userId"));
         int impressions = Integer.parseInt(request.getParameter("impressions"));
         int clicks = Integer.parseInt(request.getParameter("clicks"));
-        int cost = Integer.parseInt(request.getParameter("cost"));
+        double cost = Double.parseDouble(request.getParameter("cost"));
 
         String[] DSACampaignIdsArray = request.getParameter("DSACampaignIds").split(" ");
         ArrayList<Integer> DSACampaignIds = new ArrayList<Integer>();
