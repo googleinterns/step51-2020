@@ -11,3 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+function getKeywordCampaigns() {
+	fetch('/keyword-campaigns').then(response => response.json()).then(keywordCampaigns => {
+        const keywordCampaignList = document.getElementById('keyword-campaigns');
+	
+        keywordCampaigns.forEach(keywordCampaign => {
+            keywordCampaignList.innerHTML += '<a href="#">Keyword Campaign ' + keywordCampaign.keywordCampaignId + '</a>';
+        });
+    });
+    console.log('Got keyword campaigns.');
+}
