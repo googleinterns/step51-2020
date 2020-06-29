@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ public class UserApiServlet extends HttpServlet {
 
         // Store whether user is logged in.
         Boolean isLoggedIn = userService.isUserLoggedIn();
-        String url,
-            email;
+        String url;
+        String email;
 
         // If user is logged in send logout is index.html, else home.html is login
         if(isLoggedIn) {
@@ -45,7 +45,7 @@ public class UserApiServlet extends HttpServlet {
             email = userService.getCurrentUser().getEmail();
         }
         else {
-            url =userService.createLoginURL("../Home/home.html");
+            url = userService.createLoginURL("../Home/home.html");
             email = "";
         }
         
