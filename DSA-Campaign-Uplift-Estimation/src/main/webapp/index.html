@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css"></link>
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="getLogsStatus()">
 
     <div class="topnav">
         <a href="#home">DSA Campaign Uplift Estimation</a>
@@ -14,13 +14,13 @@
 
     <div style="padding-left:16px">
         <div class="display-middle" style="white-space:nowrap;">
-            <div class = "headline-ctas">
-                <div class="headline-cta-section">
-                    <img class="hero-icon" src="/images/plane_attempt.png">
+            <div class = "headline-animate-opacity"  >
+                <div class="headline-section">
+                    <img class="plane-icon" src="/images/plane_attempt.png">
                     <p>
                         See the uplift DSA can bring<br> to your campaigns.
                     </p>
-                    <a  href="/Home/home.html">Login</a>
+                    <a  id="login-link" href="#">Login</a>
                 </div>
             </div>
         </div>
