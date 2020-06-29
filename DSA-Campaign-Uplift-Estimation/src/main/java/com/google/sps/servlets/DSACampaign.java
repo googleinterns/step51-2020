@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+// contains all the necessary information about a DSA campaign, including id's, input settings, and statistics
 public class DSACampaign {
 
 	public int DSACampaignId;
