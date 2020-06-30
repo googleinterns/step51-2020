@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 // gets the DSA campaign from datastore corresponding to a specific DSA id
 @WebServlet("/DSA-campaign-id")
-public class DSACampaignsServlet extends HttpServlet {
+public class DSACampaignIdServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
