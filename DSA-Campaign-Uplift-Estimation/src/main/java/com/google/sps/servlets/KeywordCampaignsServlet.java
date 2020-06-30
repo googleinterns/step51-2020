@@ -43,11 +43,12 @@ public class KeywordCampaignsServlet extends HttpServlet {
         for (Entity entity : results.asIterable()) {
             int keywordCampaignId = (int) ((long) entity.getProperty("keywordCampaignId"));
             int userId = (int) ((long) entity.getProperty("userId"));
+            String name = (String) entity.getProperty("name");
             int impressions = (int) ((long) entity.getProperty("impressions"));
             int clicks = (int) ((long) entity.getProperty("clicks"));
-            int cost = (int) ((long) entity.getProperty("cost"));
+            double cost = (double) entity.getProperty("cost");
             ArrayList<Integer> DSACampaignIds = (ArrayList<Integer>) entity.getProperty("DSACampaignIds");
-            KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, impressions, clicks, cost, DSACampaignIds);
+            KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, name, impressions, clicks, cost, DSACampaignIds);
             keywordCampaigns.add(keywordCampaignObject);
         }
 
@@ -61,9 +62,10 @@ public class KeywordCampaignsServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int keywordCampaignId = Integer.parseInt(request.getParameter("keywordCampaignId"));
         int userId = Integer.parseInt(request.getParameter("userId"));
+        String name = request.getParameter("name");
         int impressions = Integer.parseInt(request.getParameter("impressions"));
         int clicks = Integer.parseInt(request.getParameter("clicks"));
-        int cost = Integer.parseInt(request.getParameter("cost"));
+        double cost = Double.parseDouble(request.getParameter("cost"));
 
         String[] DSACampaignIdsArray = request.getParameter("DSACampaignIds").split(" ");
         ArrayList<Integer> DSACampaignIds = new ArrayList<Integer>();
@@ -74,6 +76,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
         Entity keywordCampaignEntity = new Entity("keywordCampaign");
         keywordCampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
         keywordCampaignEntity.setProperty("userId", userId);
+        keywordCampaignEntity.setProperty("name", name);
         keywordCampaignEntity.setProperty("impressions", impressions);
         keywordCampaignEntity.setProperty("clicks", clicks);
         keywordCampaignEntity.setProperty("cost", cost);

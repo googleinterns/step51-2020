@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Create Data</title>
+  </head>
+  <body>
+    <form method="POST" action="/keyword-campaigns">
+        <p>Keyword Campaign Id:</p>
+        <input type="number" name="keywordCampaignId" value=0>
+        <p>User Id</p>
+        <input type="number" name="userId" value=0> 
+        <p>Name</p> 
+        <input type="text" name="name" value="">         
+        <p>Impressions</p>
+        <input type="number" name="impressions" value=0>
+        <p>Clicks</p>
+        <input type="number" name="clicks" value=0>
+        <p>Cost</p>
+        <input type="number" step="0.01" name="cost" value=0>   
+        <p>DSA Campaign ID's (space separated list)</p> 
+        <input type="text" name="DSACampaignIds" value="1 4 7">    
+        <br>
+        <button>Submit</button>
+    </form>
+  </body>
+</html>
