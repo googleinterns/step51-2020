@@ -40,6 +40,8 @@ function getDSACampaigns() {
 }
 
 function drawBarGraph(DSACampaignId) {
+    var DSACampaignId = document.getElementById("DSA-campaigns").value;
+
     fetch('/DSA-campaign-id?DSACampaignId=' + DSACampaignId).then(response => response.json()).then(DSACampaign => {
         fetch('/keyword-campaign-id?keywordCampaignId=' + DSACampaign.keywordCampaignId).then(response => response.json()).then(keywordCampaign => {
             var data = google.visualization.arrayToDataTable([
