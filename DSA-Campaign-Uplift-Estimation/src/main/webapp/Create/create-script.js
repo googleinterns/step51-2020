@@ -41,13 +41,20 @@ function submitPresetData() {
     }
   }
 
+  var presetName = prompt("What would you like to call the preset?", "Preset Name");
+  if (presetName == null || presetName == "") {
+    return;
+  }
+
   // dynamically build a URI string with form elements
   var keyval_pairs = [];
 
   // TODO: Add email id and preset id
-  keyval_pairs.push(encodeURIComponent("userEmail") + "=" + encodeURIComponent());
+  keyval_pairs.push(encodeURIComponent("userEmail") + "=" + encodeURIComponent("testEmail"));
   
-  var form = document.getElementById('campaign-form'); // get the form somehow
+  keyval_pairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));
+  
+  var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
     var curr_element = form.elements[i];
     keyval_pairs.push(encodeURIComponent(curr_element.name) + "=" + encodeURIComponent(curr_element.value));
@@ -70,5 +77,5 @@ function submitPresetData() {
  * @param userId   id identifying the user requesting the data.
  */
 function updatePresetData(presetId, userId) {
-
+  
 }

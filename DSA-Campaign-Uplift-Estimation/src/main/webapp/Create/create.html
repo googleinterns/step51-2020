@@ -49,7 +49,9 @@
             <div class="dropdown">
               <button class="dropbtn">Select a keyword Campaign</button>
               <div class="dropdown-content" id="keyword-campaign">
-                
+                <select id="keyword-campaigns" onchange="getDSACampaigns()">
+                  <option value=0>Standard DSA Campaign</option>
+                </select>
               </div>
             </div>
           </div>          
@@ -96,9 +98,10 @@
 
               <!-- Preset Data -->
               <div class="col-50">
-                <h3>Presets</h3>
+                <h3>Available Presets</h3>
                 <p><a href="#">Google Recommended Settings</a></p>
-                <ol>
+                <hr class="header_tag">
+                <ol id="preset-container">
                   <li><a href="#">Preset 1</a></li>
                   <li><a href="#">Preset 2</a></li>
                   <li><a href="#">Preset 3</a></li>
@@ -107,9 +110,10 @@
               </div>
             </div>   
           </form>
-          <div class="col-50">
-            <button class="btn" onclick="">Estimate your Campaign</button>
-            <button class="btn" onclick="submitPresetData()">Save as Preset</button> 
+          <div class="col-50" style="display: inline-;">
+            <button class="btn submit-btn" style="float: left;" onclick="">Estimate your Campaign</button>
+            <button class="btn settings-btn" style="float: center;">Show Advanced Settings</button> 
+            <button class="btn preset-btn" onclick="submitPresetData()" style="float: right;">Save Configuration as Preset</button> 
           </div>
         </div>
       </div>

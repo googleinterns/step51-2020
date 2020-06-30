@@ -118,28 +118,47 @@ label {
 }
 
 .btn {
-  background-color: #4CAF50;
   color: white;
   padding: 15px;
   margin: 10px 0;
   border: none;
-  width: 50%;
+  width: fit-content;
   border-radius: 3px;
   cursor: pointer;
-  font-size: 17px;
-  float: left;
+  font-size: 13px;
 }
 
-.btn:hover {
+.submit-btn {
+  background-color: #4CAF50;
+}
+
+.settings-btn {
+  background-color: rgb(230, 125, 40);
+}
+
+.preset-btn {
+  background-color: rgb(172, 171, 171);
+}
+
+.submit-btn:hover {
   background-color: #45a049;
+}
+
+.settings-btn:hover {
+  background-color: rgb(185, 105, 39);
+}
+
+.preset-btn:hover {
+  background-color: rgb(136, 135, 135);
 }
 
 a {
   color: #2196F3;
 }
 
-hr {
-  border: 1px solid white;
+hr.header_tag {
+  border: 1.5px solid grey;
+  border-radius: 13px;
 }
 
 
