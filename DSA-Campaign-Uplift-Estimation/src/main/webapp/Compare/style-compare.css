@@ -37,3 +37,9 @@ div.select {
     margin-right: auto;
     padding: 30px;
 }
+
+div.bar-chart {
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
+}
