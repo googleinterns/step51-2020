@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/preset")
 public class PresetServlet extends HttpServlet {
+
+    //TODO: write preset data GET and POST request handlers
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
