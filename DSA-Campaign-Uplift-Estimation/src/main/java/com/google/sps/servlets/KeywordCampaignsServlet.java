@@ -29,7 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
-// manages the keyword campaigns in datastore
+// gets all the keyword campaigns from datastore
+// posts new keyword campaigns to datastore
 @WebServlet("/keyword-campaigns")
 public class KeywordCampaignsServlet extends HttpServlet {
 
