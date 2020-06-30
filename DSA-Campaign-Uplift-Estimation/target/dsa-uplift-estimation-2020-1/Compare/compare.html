@@ -36,15 +36,14 @@
         
         <div id="DSA-campaigns-container" class="select">
             <h3>Select a DSA campaign</h3>
-            <select id="DSA-campaigns" onchange="drawBarGraph()">
-                <option value=0>Select a DSA campaign</option>
-            </select>
+            <form id="DSA-campaigns" action="drawBarGraph()">
+                <p>First select a keyword campaign.</p>
+            </form>
         </div>
     </div>
     
     <div id="bar-chart" class="bar-chart"></div>
 
     <div id="table" class="table"></div>
-
   </body>
 </html>

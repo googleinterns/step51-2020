@@ -28,15 +28,20 @@ function getKeywordCampaigns() {
 
 function getDSACampaigns() {
     const DSACampaignsList = document.getElementById('DSA-campaigns');
-    DSACampaignsList.innerHTML = '<option value=0>Select a DSA campaign</option>';
+    DSACampaignsList.innerHTML = '<p>First select a keyword campaign.</p>';
     var keywordCampaignId = document.getElementById("keyword-campaigns").value;
 
     if (keywordCampaignId != 0) {
+        DSACampaignsList.innerHTML = '';
+
         fetch('/DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
             DSACampaigns.forEach(DSACampaign => {
-                DSACampaignsList.innerHTML += '<option value=' + DSACampaign.DSACampaignId + '>' + DSACampaign.name + '</option>';
+                DSACampaignsList.innerHTML += '<input type=\"checkbox\" name=' + DSACampaign.DSACampaignId + ' value=' + DSACampaign.DSACampaignId + '>';
+                DSACampaignsList.innerHTML += '<label for=' + DSACampaign.DSACampaignId + '>' + DSACampaign.name + '</label>';
             });
         });
+        DSACampaignsList.innerHTML += '<input type="submit" value="Submit">';
+
         console.log('Got DSA campaigns.');
     }
 }

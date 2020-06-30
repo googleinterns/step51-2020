@@ -84,7 +84,7 @@ public class DSACampaignsServlet extends HttpServlet {
         int clicks = Integer.parseInt(request.getParameter("clicks"));
         double cost = Double.parseDouble(request.getParameter("cost"));
 
-        Entity DSACampaignEntity = new Entity("DSACampaign", keywordCampaignId);
+        Entity DSACampaignEntity = new Entity("DSACampaign");
         DSACampaignEntity.setProperty("DSACampaignId", DSACampaignId);
         DSACampaignEntity.setProperty("userId", userId);
         DSACampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
