@@ -41,7 +41,6 @@ public class DSACampaignIdServlet extends HttpServlet {
         Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, DSACampaignId));
     	Entity entity = datastore.prepare(query).asSingleEntity();
 
-        int DSACampaignId = (int) ((long) entity.getProperty("DSACampaignId"));
         int userId = (int) ((long) entity.getProperty("userId"));
         int keywordCampaignId = (int) ((long) entity.getProperty("keywordCampaignId"));
         String name = (String) entity.getProperty("name");

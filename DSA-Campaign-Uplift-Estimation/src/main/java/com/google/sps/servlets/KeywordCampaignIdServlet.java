@@ -41,7 +41,6 @@ public class KeywordCampaignIdServlet extends HttpServlet {
         Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, keywordCampaignId));
     	Entity entity = datastore.prepare(query).asSingleEntity();
 
-        int keywordCampaignId = (int) ((long) entity.getProperty("keywordCampaignId"));
         int userId = (int) ((long) entity.getProperty("userId"));
         String name = (String) entity.getProperty("name");
         int impressions = (int) ((long) entity.getProperty("impressions"));
