@@ -1,8 +1,8 @@
-<!-- Indices written at Mon, 29 Jun 2020 17:50:09 UTC -->
+<!-- Indices written at Mon, 29 Jun 2020 19:58:21 UTC -->
 
 <datastore-indexes autoGenerate="true">
 
-    <!-- Used 3 times in query history -->
+    <!-- Used 2 times in query history -->
     <datastore-index kind="DSACampaign" ancestor="false" source="auto">
         <property name="keywordCampaignId" direction="asc"/>
         <property name="DSACampaignId" direction="asc"/>

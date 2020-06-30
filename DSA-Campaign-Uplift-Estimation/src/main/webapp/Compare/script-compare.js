@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+google.charts.load('current', {'packages':['bar']});
+
 function getKeywordCampaigns() {
 	const keywordCampaignList = document.getElementById('keyword-campaigns');
     keywordCampaignList.innerHTML = '<option value=0>Select a keyword campaign</option>';
@@ -35,4 +37,30 @@ function getDSACampaigns() {
         });
     });
     console.log('Got DSA campaigns.');
+}
+
+function drawBarGraph(DSACampaignId) {
+    fetch('/DSA-campaign-id?DSACampaignId=' + DSACampaignId).then(response => response.json()).then(DSACampaign => {
+        fetch('/keyword-campaign-id?keywordCampaignId=' + DSACampaign.keywordCampaignId).then(response => response.json()).then(keywordCampaign => {
+            var data = google.visualization.arrayToDataTable([
+            ['Statistic', keywordCampaign.name, DSACampaign.name],
+            ['Impressions', keywordCampaign.impressions, DSACampaign.impressions],
+            ['Clicks', keywordCampaign.clicks, DSACampaign.clicks],
+            ['Cost (USD)', keywordCampaign.cost, DSACampaign.cost]]);
+
+            var options = {
+                chart: {
+                    title: 'Statistics',
+                    subtitle: 'Impressions, Clicks, and Cost (USD)',
+                },
+                bars: 'horizontal' // Required for Material Bar Charts.
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('bar-chart'));
+
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+        });
+    });
+
+    console.log("Drew next project graph.");
 }
