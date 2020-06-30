@@ -13,12 +13,26 @@
 // limitations under the License.
 
 function getKeywordCampaigns() {
-	fetch('/keyword-campaigns').then(response => response.json()).then(keywordCampaigns => {
-        const keywordCampaignList = document.getElementById('keyword-campaigns');
-	
+	const keywordCampaignList = document.getElementById('keyword-campaigns');
+    keywordCampaignList.innerHTML = '<option value=0>Select a keyword campaign</option>';
+
+    fetch('/keyword-campaigns').then(response => response.json()).then(keywordCampaigns => {
         keywordCampaigns.forEach(keywordCampaign => {
-            keywordCampaignList.innerHTML += '<a href="#">Keyword Campaign ' + keywordCampaign.keywordCampaignId + '</a>';
+            keywordCampaignList.innerHTML += '<option value=' + keywordCampaign.keywordCampaignId + '>' + keywordCampaign.name  + '</option>';
         });
     });
     console.log('Got keyword campaigns.');
+}
+
+function getDSACampaigns() {
+    const DSACampaignsList = document.getElementById('DSA-campaigns');
+    DSACampaignsList.innerHTML = '<option value=0>Select a DSA campaign</option>';
+    var keywordCampaignId = document.getElementById("keyword-campaigns").value;
+
+    fetch('/DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
+        DSACampaigns.forEach(DSACampaign => {
+            DSACampaignsList.innerHTML += '<option value=' + DSACampaign.DSACampaignId + '>' + DSACampaign.name + '</option>';
+        });
+    });
+    console.log('Got DSA campaigns.');
 }
