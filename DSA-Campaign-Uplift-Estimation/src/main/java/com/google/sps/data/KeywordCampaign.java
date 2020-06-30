@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.servlets;
+package com.google.sps.data;
 
 import java.util.ArrayList;
 
 // represents the settings of a keyword campaign that can be copied to a DSA campaign
 // contains all the necessary information about a keyword campaign, including id, input settings, and statistics
 public class KeywordCampaign {
-
     public int keywordCampaignId;
     public int userId;
     // the id's of all the DSA campaigns associated with this keyword campaign
@@ -36,11 +35,11 @@ public class KeywordCampaign {
     public double cost;
 
     public KeywordCampaign(int keywordCampaignId, int userId, String name, int impressions, int clicks, double cost, ArrayList<Integer> DSACampaignIds) {
-        this.keywordCampaignId = keywordCampaignId;
-        this.userId = userId;
-        this.name = name;
-        this.impressions = impressions;
-        this.clicks = clicks;
-        this.DSACampaignIds = DSACampaignIds;
+      this.keywordCampaignId = keywordCampaignId;
+      this.userId = userId;
+      this.name = name;
+      this.impressions = impressions;
+      this.clicks = clicks;
+      this.DSACampaignIds = DSACampaignIds;
     }
 }

@@ -19,7 +19,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   </head>
-  <body onload="verifyLoginStatus()">
+  <body onload="verifyLoginStatus(); updatePresetData();" required>
     <!-- NavBar  - to add to page, copy mySidenav div and paste into body, and navbar_script.js and navbar_style.css to page-->
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -27,7 +27,6 @@
       <a href="/Home/home.html">Home</a>
       <a href="/Create/create.html">Create Campaign</a>
       <a href="/Compare/compare.html">Compare Campaigns</a>
-      <a href="#">Contact</a>
     </div>
     <header>
       <!-- all the content relevant to the header is contained in this div -->
@@ -41,7 +40,7 @@
         <div class="container">
           <div id="dropdowns" class="center">
             <div class="dropdown">
-              <button class="dropbtn">Compare DSA Campaign</button>
+              <button class="dropbtn">Select DSA Campaign Type</button>
               <div class="dropdown-content" id="compare-campaign">
                 
               </div>
@@ -106,7 +105,6 @@
                   <li><a href="#">Preset 2</a></li>
                   <li><a href="#">Preset 3</a></li>
                 </ol>
-                
               </div>
             </div>   
           </form>

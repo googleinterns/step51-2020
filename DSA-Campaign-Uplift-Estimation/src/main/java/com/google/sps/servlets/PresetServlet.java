@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.data.*;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// This servlet is responsible for handling campaign preset data for each user.
 @WebServlet("/preset")
 public class PresetServlet extends HttpServlet {
 
@@ -39,6 +41,24 @@ public class PresetServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      System.out.println("Got a post request");
+      Entity presetEntity = new Entity("PresetData");
+      String userEmail = request.getParameter("userEmail");
+      double userId = Double.parseDouble(request.getParameter("userId"));
+      String presetId = request.getParameter("presetId");
+      String simName = request.getParameter("sim_name");
+      String fromDate = request.getParameter("start_date");
+      String toDate = request.getParameter("end_date");
+      double dailyBudget = Double.parseDouble(request.getParameter("daily_budget"));
+      String location = request.getParameter("location");
+      String domain = request.getParameter("domain");
+      String target = request.getParameter("target_page");
+      String adText = request.getParameter("ad_text");
+      double cpc = Double.parseDouble(request.getParameter("cpc"));
+
+      DSACampaign dsaCampaign = new DSACampaign(0, userId, 0, simName, fromDate, toDate, dailyBudget, location, domain, target);
+      CampaignPreset campaignPreset = new CampaignPreset(userEmail, presetId, dsaCampaign);
+
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      datastore.put(campaignPreset);
     }
 }
