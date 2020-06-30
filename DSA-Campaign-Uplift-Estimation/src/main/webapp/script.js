@@ -17,7 +17,7 @@ function getLogsStatus() {
     fetch('/userapi').then(response => response.json()).then(logStatus => {
         const link = document.getElementById("login-link");
 
-        if(logStatus.Bool) {
+        if(logStatus.isLoggedIn) {
 
             console.log('User is Logged In');
             link.href = '../Home/home.html';

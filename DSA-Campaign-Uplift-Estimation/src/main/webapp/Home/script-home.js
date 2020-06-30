@@ -11,20 +11,3 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-
-function getLogsStatus() {
-
-    fetch('/userapi').then(response => response.json()).then(logStatus => {
-        const link = document.getElementById("logout-link");
-
-        if(logStatus.Bool) {
-
-            console.log('User is Logged In');
-            link.href = logStatus.Url;
-        }
-        else {
-            console.log('User is not Logged In');
-            link.href = '../index.html';
-        }
-    });
-}

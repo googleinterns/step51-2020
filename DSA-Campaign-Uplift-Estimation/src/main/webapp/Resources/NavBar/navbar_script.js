@@ -11,3 +11,21 @@ function closeNav() {
   document.getElementById("main").style.marginLeft = "0";
   document.body.style.backgroundColor = "white";
 }
+
+/* Checks user's login status and sets logout link accordingly */
+function getLogsStatus() {
+
+    fetch('/userapi').then(response => response.json()).then(logStatus => {
+        const link = document.getElementById("logout-link");
+
+        if(logStatus.isLoggedIn) {
+
+            console.log('User is Logged In');
+            link.href = logStatus.Url;
+        }
+        else {
+            console.log('User is not Logged In');
+            link.href = '../index.html';
+        }
+    });
+}
