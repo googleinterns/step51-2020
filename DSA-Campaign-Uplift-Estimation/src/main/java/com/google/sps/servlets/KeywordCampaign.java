@@ -41,6 +41,7 @@ public class KeywordCampaign {
         this.name = name;
         this.impressions = impressions;
         this.clicks = clicks;
+        this.cost = cost;
         this.DSACampaignIds = DSACampaignIds;
     }
 }
