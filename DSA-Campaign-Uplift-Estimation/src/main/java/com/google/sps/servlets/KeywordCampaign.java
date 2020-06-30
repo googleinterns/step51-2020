@@ -27,18 +27,28 @@ public class KeywordCampaign {
 
     // settings
     public String name;
-
-    // TODO: add the rest of the input settings
+    public String fromDate;
+    public String toDate;
+    public double dailyBudget;
+    public String location;
+    public String domain;
+    public String target;
 
     // statistics
     public int impressions;
     public int clicks;
     public double cost;
 
-    public KeywordCampaign(int keywordCampaignId, int userId, String name, int impressions, int clicks, double cost, ArrayList<Integer> DSACampaignIds) {
+    public KeywordCampaign(int keywordCampaignId, int userId, String name, String fromDate, String toDate, double dailyBudget, String location, String domain, String target, int impressions, int clicks, double cost, ArrayList<Integer> DSACampaignIds) {
         this.keywordCampaignId = keywordCampaignId;
         this.userId = userId;
         this.name = name;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+        this.dailyBudget = dailyBudget;
+        this.location = location;
+        this.domain = domain;
+        this.target = target;
         this.impressions = impressions;
         this.clicks = clicks;
         this.cost = cost;

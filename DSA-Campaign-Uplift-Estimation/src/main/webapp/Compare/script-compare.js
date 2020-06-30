@@ -73,7 +73,7 @@ function drawBarGraph() {
 function drawTable(DSACampaign, keywordCampaign) {
     var data = google.visualization.arrayToDataTable([
         ['', 'name', 'start date', 'end date', 'daily budget', 'location', 'domain', 'target', 'impressions', 'clicks', 'cost (USD)'],
-        ['Keyword Campaign', keywordCampaign.name, '', '', '', '', '', '', keywordCampaign.impressions, keywordCampaign.clicks, keywordCampaign.cost],
+        ['Keyword Campaign', keywordCampaign.name, keywordCampaign.fromDate, keywordCampaign.toDate, keywordCampaign.dailyBudget, keywordCampaign.location, keywordCampaign.domain, keywordCampaign.target, keywordCampaign.impressions, keywordCampaign.clicks, keywordCampaign.cost],
         ['DSA Campaign', DSACampaign.name, DSACampaign.fromDate, DSACampaign.toDate, DSACampaign.dailyBudget, DSACampaign.location, DSACampaign.domain, DSACampaign.target, DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost],
     ]);
 

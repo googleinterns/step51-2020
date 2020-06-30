@@ -45,11 +45,17 @@ public class KeywordCampaignsServlet extends HttpServlet {
             int keywordCampaignId = (int) ((long) entity.getProperty("keywordCampaignId"));
             int userId = (int) ((long) entity.getProperty("userId"));
             String name = (String) entity.getProperty("name");
+            String fromDate = (String) entity.getProperty("fromDate");
+            String toDate = (String) entity.getProperty("toDate");
+            double dailyBudget = (double) entity.getProperty("dailyBudget");
+            String location = (String) entity.getProperty("location");
+            String domain = (String) entity.getProperty("domain");
+            String target = (String) entity.getProperty("target");
             int impressions = (int) ((long) entity.getProperty("impressions"));
             int clicks = (int) ((long) entity.getProperty("clicks"));
             double cost = (double) entity.getProperty("cost");
             ArrayList<Integer> DSACampaignIds = (ArrayList<Integer>) entity.getProperty("DSACampaignIds");
-            KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, name, impressions, clicks, cost, DSACampaignIds);
+            KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, name, fromDate, toDate, dailyBudget, location, domain, target, impressions, clicks, cost, DSACampaignIds);
             keywordCampaigns.add(keywordCampaignObject);
         }
 
@@ -64,6 +70,12 @@ public class KeywordCampaignsServlet extends HttpServlet {
         int keywordCampaignId = Integer.parseInt(request.getParameter("keywordCampaignId"));
         int userId = Integer.parseInt(request.getParameter("userId"));
         String name = request.getParameter("name");
+        String fromDate = request.getParameter("fromDate");
+        String toDate = request.getParameter("toDate");
+        double dailyBudget = Double.parseDouble(request.getParameter("dailyBudget"));
+        String location = request.getParameter("location");
+        String domain = request.getParameter("domain"); 
+        String target = request.getParameter("target");
         int impressions = Integer.parseInt(request.getParameter("impressions"));
         int clicks = Integer.parseInt(request.getParameter("clicks"));
         double cost = Double.parseDouble(request.getParameter("cost"));
@@ -78,6 +90,12 @@ public class KeywordCampaignsServlet extends HttpServlet {
         keywordCampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
         keywordCampaignEntity.setProperty("userId", userId);
         keywordCampaignEntity.setProperty("name", name);
+        keywordCampaignEntity.setProperty("fromDate", fromDate);
+        keywordCampaignEntity.setProperty("toDate", toDate);
+        keywordCampaignEntity.setProperty("dailyBudget", dailyBudget);
+        keywordCampaignEntity.setProperty("location", location);
+        keywordCampaignEntity.setProperty("domain", domain);
+        keywordCampaignEntity.setProperty("target", target);
         keywordCampaignEntity.setProperty("impressions", impressions);
         keywordCampaignEntity.setProperty("clicks", clicks);
         keywordCampaignEntity.setProperty("cost", cost);

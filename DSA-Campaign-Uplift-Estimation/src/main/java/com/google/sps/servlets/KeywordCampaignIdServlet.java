@@ -43,11 +43,17 @@ public class KeywordCampaignIdServlet extends HttpServlet {
 
         int userId = (int) ((long) entity.getProperty("userId"));
         String name = (String) entity.getProperty("name");
+        String fromDate = (String) entity.getProperty("fromDate");
+        String toDate = (String) entity.getProperty("toDate");
+        double dailyBudget = (double) entity.getProperty("dailyBudget");
+        String location = (String) entity.getProperty("location");
+        String domain = (String) entity.getProperty("domain");
+        String target = (String) entity.getProperty("target");
         int impressions = (int) ((long) entity.getProperty("impressions"));
         int clicks = (int) ((long) entity.getProperty("clicks"));
         double cost = (double) entity.getProperty("cost");
         ArrayList<Integer> DSACampaignIds = (ArrayList<Integer>) entity.getProperty("DSACampaignIds");
-        KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, name, impressions, clicks, cost, DSACampaignIds);
+        KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, name, fromDate, toDate, dailyBudget, location, domain, target, impressions, clicks, cost, DSACampaignIds);
 
         Gson gson = new Gson();
         String json = gson.toJson(keywordCampaignObject);
