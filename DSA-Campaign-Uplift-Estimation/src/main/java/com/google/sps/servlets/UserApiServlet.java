@@ -25,6 +25,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// Logs in and logs out the user while also accessing userdata
+// retrieved from having logged in. The data is stored in a 
+// Json and then sent back as a response.
 @WebServlet("/userapi")
 public class UserApiServlet extends HttpServlet {
 
@@ -35,7 +38,7 @@ public class UserApiServlet extends HttpServlet {
         UserService userService = UserServiceFactory.getUserService();
 
         // Store whether user is logged in.
-        Boolean isLoggedIn = userService.isUserLoggedIn();
+        boolean isLoggedIn = userService.isUserLoggedIn();
         String url;
         String email;
 
@@ -51,7 +54,7 @@ public class UserApiServlet extends HttpServlet {
         
         // Store info in Json object.
         loginInfo.addProperty("Url", url);
-        loginInfo.addProperty("Bool", isLoggedIn);
+        loginInfo.addProperty("isLoggedIn", isLoggedIn);
         loginInfo.addProperty("Email", email);
 
         // Send info back as response.
