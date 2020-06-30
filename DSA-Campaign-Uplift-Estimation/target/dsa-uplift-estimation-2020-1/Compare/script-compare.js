@@ -64,5 +64,5 @@ function drawBarGraph(DSACampaignId) {
         });
     });
 
-    console.log("Drew next project graph.");
+    console.log("Drew bar graph.");
 }

@@ -39,7 +39,7 @@ function getDSACampaigns() {
     console.log('Got DSA campaigns.');
 }
 
-function drawBarGraph(DSACampaignId) {
+function drawBarGraph() {
     var DSACampaignId = document.getElementById("DSA-campaigns").value;
 
     fetch('/DSA-campaign-id?DSACampaignId=' + DSACampaignId).then(response => response.json()).then(DSACampaign => {
