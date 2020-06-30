@@ -12,19 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* Submission form only requires 2 decimals, this function enforces that rule */
-function setTwoNumberDecimal(event) {
+/* 
+ * Submission form only requires 2 decimals, this function enforces that rule 
+ */
+function setTwoNumberDecimal() {
   this.value = parseFloat(this.value).toFixed(2);
 }
 
+// TODO: Verify user login status
+function verifyLoginStatus() {
 
+}
+
+/* 
+ * This function allows preset data to be saved while the form is being
+ * filled out. Alerts the user of the status of their saved preset. 
+ */
 function submitPresetData() {
   let xmlhttp= window.XMLHttpRequest ?
     new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.status === 0) {
-      console.log(xmlhttp.status);
       alert("Preset saved!");
     }
     else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
@@ -32,18 +41,34 @@ function submitPresetData() {
     }
   }
 
-  // dynamically build a URL string with form elements
-  var keyvalpairs = [];
+  // dynamically build a URI string with form elements
+  var keyval_pairs = [];
+
+  // TODO: Add email id and preset id
+  keyval_pairs.push(encodeURIComponent("userEmail") + "=" + encodeURIComponent());
+  
   var form = document.getElementById('campaign-form'); // get the form somehow
   for (var i = 0; i < form.elements.length; i++) {
     var curr_element = form.elements[i];
-    keyvalpairs.push(encodeURIComponent(curr_element.name) + "=" + encodeURIComponent(curr_element.value));
+    keyval_pairs.push(encodeURIComponent(curr_element.name) + "=" + encodeURIComponent(curr_element.value));
   }
 
   // divide each parameter with '&'
-  var queryString = keyvalpairs.join("&");
+  var queryString = keyval_pairs.join("&");
   
   xmlhttp.open("POST", '/preset', true);
   xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
   xmlhttp.send(queryString);
+}
+
+/*
+ * updatePresetData takes in a presetId and userId and sends a GET request
+ * to '/preset'. Once received, the preset data in the comment form is updated
+ * with all updated links.
+ *
+ * @param presetId id identifying the preset.
+ * @param userId   id identifying the user requesting the data.
+ */
+function updatePresetData(presetId, userId) {
+
 }
