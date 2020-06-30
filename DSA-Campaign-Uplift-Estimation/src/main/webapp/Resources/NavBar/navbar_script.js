@@ -29,17 +29,36 @@ function closeNav() {
 /* Checks user's login status and sets logout link accordingly */
 function getLogsStatus() {
 
+    // Fetches json from userapi servlet and uses to set the login
+    // and logout links for the front end.
     fetch('/userapi').then(response => response.json()).then(logStatus => {
-        const link = document.getElementById("logout-link");
+        const link = document.getElementById("loginout-link");
 
+        // If the user is logged in and is at the login screen then the
+        // login link should skip login and head into home. If the user is
+        // not on the login screen then the url will be to sign out.
         if(logStatus.isLoggedIn) {
+            if(window.location.pathname === "/index.html"){
+                console.log('User is Logged In');
+                link.href = '../Home/home.html';
+            }
+            else{
+                link.href = logStatus.Url;
+            }
 
-            console.log('User is Logged In');
-            link.href = logStatus.Url;
         }
+        // If the user is not logged in and is at the login screen then the
+        // login link should require them to login before heading into home.
+        // If the user is somehow not on the login screen and isn't logged in
+        // then the url will point to the login sceen.
         else {
-            console.log('User is not Logged In');
-            link.href = '../index.html';
+            if(window.location.pathname === "/index.html"){
+                console.log('User is not Logged In');
+                link.href = logStatus.Url;
+            }
+            else{
+                link.href = '../index.html';
+            }
         }
     });
 }

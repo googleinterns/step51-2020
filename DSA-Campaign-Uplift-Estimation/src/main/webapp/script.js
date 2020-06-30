@@ -12,20 +12,3 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Checks user's login status and sets login link accordingly.
-function getLogsStatus() {
-
-    fetch('/userapi').then(response => response.json()).then(logStatus => {
-        const link = document.getElementById("login-link");
-
-        if(logStatus.isLoggedIn) {
-
-            console.log('User is Logged In');
-            link.href = '../Home/home.html';
-        }
-        else {
-            console.log('User is not Logged In');
-            link.href = logStatus.Url;
-        }
-    });
-}
