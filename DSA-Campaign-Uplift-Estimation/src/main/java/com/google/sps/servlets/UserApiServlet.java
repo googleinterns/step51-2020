@@ -41,21 +41,26 @@ public class UserApiServlet extends HttpServlet {
         boolean isLoggedIn = userService.isUserLoggedIn();
         String url;
         String email;
+        String id;
 
         // If user is logged in send logout is index.html, else home.html is login
         if(isLoggedIn) {
             url = userService.createLogoutURL("../index.html");
             email = userService.getCurrentUser().getEmail();
+            id = userService.getCurrentUser().getUserId();
         }
         else {
             url = userService.createLoginURL("../Home/home.html");
             email = "";
+            id = "";
         }
         
         // Store info in Json object.
         loginInfo.addProperty("Url", url);
         loginInfo.addProperty("isLoggedIn", isLoggedIn);
         loginInfo.addProperty("Email", email);
+        loginInfo.addProperty("id", id);
+
 
         // Send info back as response.
         response.setContentType("application/json;");
