@@ -19,15 +19,16 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   </head>
-  <body onload="verifyLoginStatus()">
+  <body onload="verifyLoginStatus(); getLogsStatus();">
     <!-- NavBar  - to add to page, copy mySidenav div and paste into body, and navbar_script.js and navbar_style.css to page-->
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <img src="../Resources/images/DSA-campaign-white.png" class="navbar-image"/>
       <a href="/Home/home.html">Home</a>
-      <a href="/Create/create.html">Create Campaign</a>
-      <a href="/Compare/compare.html">Compare Campaigns</a>
+      <a href="/Create/create.html">Create</a>
+      <a href="/Compare/compare.html">Compare</a>
       <a href="#">Contact</a>
+      <a id="loginout-link" href="#">Logout</a>
     </div>
     <header>
       <!-- all the content relevant to the header is contained in this div -->

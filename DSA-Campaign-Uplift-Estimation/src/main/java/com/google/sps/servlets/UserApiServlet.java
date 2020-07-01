@@ -44,7 +44,7 @@ public class UserApiServlet extends HttpServlet {
         String id;
 
         // If user is logged in send logout is index.html, else home.html is login
-        if(isLoggedIn) {
+        if (isLoggedIn) {
             url = userService.createLogoutURL("../index.html");
             email = userService.getCurrentUser().getEmail();
             id = userService.getCurrentUser().getUserId();

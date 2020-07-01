@@ -9,14 +9,15 @@
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="script-compare.js"></script>
   </head>
-  <body onload="getKeywordCampaigns();">
+  <body onload="getKeywordCampaigns(); getLogsStatus();">
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <img src="../Resources/images/DSA-campaign-white.png" style="max-width: 50%; max-height: 50%; margin-left: auto; margin-right: auto; display: block;"/>
       <a href="/Home/home.html">Home</a>
-      <a href="/Create/create.html">Create Campaign</a>
-      <a href="/Compare/compare.html">Compare Campaigns</a>
+      <a href="/Create/create.html">Create</a>
+      <a href="/Compare/compare.html">Compare</a>
       <a href="#">Contact</a>
+      <a id="loginout-link" href="#">Logout</a>
     </div>
 
     <header>

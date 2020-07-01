@@ -2,32 +2,30 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Compare</title>
+    <title>Home</title>
     <link rel="stylesheet" href="style-home.css"></link>
-    <script src="script.js"></script>
-
-    <!-- nav bar source files -->
     <link rel="stylesheet" href="../Resources/NavBar/navbar_style.css"></link>
     <script src="../Resources/NavBar/navbar_script.js"></script>
+    <script src="script-home.js"></script>
   </head>
-  <body>
-    <!-- NavBar  - to add to page, copy mySidenav div and paste into body, and navbar_script.js and navbar_style.css to page-->
+  <body onload="getLogsStatus()">
+    <!-- Navbar -->
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <img src="../Resources/images/DSA-campaign-white.png" class="navbar-image"/>
+      <img src="../Resources/images/DSA-campaign-white.png" style="max-width: 50%; max-height: 50%; margin-left: auto; margin-right: auto; display: block;"/>
       <a href="/Home/home.html">Home</a>
-      <a href="/Create/create.html">Create Campaign</a>
-      <a href="/Compare/compare.html">Compare Campaigns</a>
+      <a href="/Create/create.html">Create</a>
+      <a href="/Compare/compare.html">Compare</a>
       <a href="#">Contact</a>
+      <a id="loginout-link" href="#">Logout</a>
     </div>
     <header>
       <!-- all the content relevant to the header is contained in this div -->
       <div class="header">
-        <span style="font-size: 30px; cursor: pointer; float: left; color: #f2f2f2;" onclick="openNav()">&#9776;</span>
-        <a class="title">Create a DSA Estimate</a>
+        <span style="font-size: 30px; cursor: pointer; float: left;" onclick="openNav()">&#9776;</span>
+        <a href="#default" class="title">Estimate Overview</a>
       </div>
     </header>
-    <p>DSA Campaign Uplift Estimation</p>
-    <p>This is the home page.</p>
+    
   </body>
 </html>

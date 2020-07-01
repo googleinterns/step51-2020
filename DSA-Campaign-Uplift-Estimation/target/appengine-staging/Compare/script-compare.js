@@ -28,62 +28,97 @@ function getKeywordCampaigns() {
 
 function getDSACampaigns() {
     const DSACampaignsList = document.getElementById('DSA-campaigns');
-    DSACampaignsList.innerHTML = '<option value=0>Select a DSA campaign</option>';
+    DSACampaignsList.innerHTML = '<p>First select a keyword campaign.</p>';
     var keywordCampaignId = document.getElementById("keyword-campaigns").value;
 
     if (keywordCampaignId != 0) {
+        DSACampaignsList.innerHTML = '';
+
         fetch('/DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
             DSACampaigns.forEach(DSACampaign => {
-                DSACampaignsList.innerHTML += '<option value=' + DSACampaign.DSACampaignId + '>' + DSACampaign.name + '</option>';
+                DSACampaignsList.innerHTML += '<input class=\"checkbox\" type=\"checkbox\" value=' + DSACampaign.DSACampaignId + '>';
+                DSACampaignsList.innerHTML += '<label>' + DSACampaign.name + '</label>';
             });
         });
+        DSACampaignsList.innerHTML += '<input id="keyword-campaign-id-form" type=\"hidden\" name=\"keywordCampaignId\" value=' + keywordCampaignId + '>';
+        DSACampaignsList.innerHTML += '<input type=\"submit\" value=\"Submit\">';
+
         console.log('Got DSA campaigns.');
     }
 }
 
 function drawBarGraph() {
-    var DSACampaignId = document.getElementById("DSA-campaigns").value;
+    var keywordCampaignId = document.getElementById("keyword-campaign-id-form").value;
 
-    if (DSACampaignId != 0) {
-        fetch('/DSA-campaign-id?DSACampaignId=' + DSACampaignId).then(response => response.json()).then(DSACampaign => {
-            fetch('/keyword-campaign-id?keywordCampaignId=' + DSACampaign.keywordCampaignId).then(response => response.json()).then(keywordCampaign => {
-                var data = google.visualization.arrayToDataTable([
-                    ['Statistic', keywordCampaign.name, DSACampaign.name],
-                    ['Impressions', keywordCampaign.impressions, DSACampaign.impressions],
-                    ['Clicks', keywordCampaign.clicks, DSACampaign.clicks],
-                    ['Cost (USD)', keywordCampaign.cost, DSACampaign.cost]
-                ]);
-
-                var options = {
-                    chart: {
-                        title: 'Statistics',
-                        subtitle: 'Impressions, Clicks, and Cost (USD)',
-                    },
-                    bars: 'horizontal' // Required for Material Bar Charts.
-                };
-
-                var chart = new google.charts.Bar(document.getElementById('bar-chart'));
-
-                chart.draw(data, google.charts.Bar.convertOptions(options));
-
-                drawTable(DSACampaign, keywordCampaign);
-            });
-        });
-
-        console.log("Drew bar graph.");
+    // add to DSACampaignIds the id's of all the DSA campaigns whose check boxes were checked
+    var DSACampaignIds = "";
+    var inputElements = document.getElementsByClassName('checkbox');
+    for (var i=0; inputElements[i]; i++) {
+        if (inputElements[i].checked) {
+            DSACampaignIds += inputElements[i].value + " ";
+        }
     }
+
+    fetch('/keyword-campaign-id?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(keywordCampaign => {
+        fetch('/DSA-campaign-id?DSACampaignIds=' + DSACampaignIds).then(response => response.json()).then(DSACampaignList => {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'DSA Campaign');
+            data.addColumn('number', 'Impressions Uplift');
+            data.addColumn('number', 'Clicks Uplift');
+            data.addColumn('number', 'Cost Uplift (USD)');
+
+            DSACampaignList.forEach(DSACampaign => {
+                data.addRow([DSACampaign.name, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), calculateUplift(DSACampaign.clicks, keywordCampaign.clicks), 
+                            calculateUplift(DSACampaign.cost, keywordCampaign.cost)]);
+            });
+
+            var options = {
+                chart: {
+                    title: 'Statistics',
+                    subtitle: 'Impressions, Clicks, and Cost Uplift',
+                },
+                bars: 'horizontal' // Required for Material Bar Charts.
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('bar-chart'));
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+            console.log("Drew bar graph.");
+
+            drawTable(DSACampaignList, keywordCampaign);
+        });
+    });
 }
 
-function drawTable(DSACampaign, keywordCampaign) {
-    var data = google.visualization.arrayToDataTable([
-        ['', 'name', 'start date', 'end date', 'daily budget', 'location', 'domain', 'target', 'impressions', 'clicks', 'cost (USD)'],
-        ['Keyword Campaign', keywordCampaign.name, keywordCampaign.fromDate, keywordCampaign.toDate, keywordCampaign.dailyBudget, keywordCampaign.location, keywordCampaign.domain, keywordCampaign.target, keywordCampaign.impressions, keywordCampaign.clicks, keywordCampaign.cost],
-        ['DSA Campaign', DSACampaign.name, DSACampaign.fromDate, DSACampaign.toDate, DSACampaign.dailyBudget, DSACampaign.location, DSACampaign.domain, DSACampaign.target, DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost],
-    ]);
+function drawTable(DSACampaignList, keywordCampaign) {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'DSA Campaign');
+    data.addColumn('string', 'Start Date');
+    data.addColumn('string', 'End Date');
+    data.addColumn('number', 'Daily Budget');
+    data.addColumn('string', 'Location');
+    data.addColumn('string', 'Domain');
+    data.addColumn('string', 'Target');
+    data.addColumn('number', 'Impressions Uplift');
+    data.addColumn('number', 'Clicks Uplift');
+    data.addColumn('number', 'Cost Uplift (USD)');
+
+    DSACampaignList.forEach(DSACampaign => {
+        data.addRow([DSACampaign.name, DSACampaign.fromDate, DSACampaign.toDate, DSACampaign.dailyBudget, DSACampaign.location,
+            DSACampaign.domain, DSACampaign.target, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), 
+            calculateUplift(DSACampaign.clicks, keywordCampaign.clicks), calculateUplift(DSACampaign.cost, keywordCampaign.cost)]);
+    });
 
     var table = new google.visualization.Table(document.getElementById('table'));
-
     table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
 
     console.log("Drew table.");
+}
+
+function calculateUplift(DSAStatistic, keywordCampaignStatistic) {
+    var uplift = DSAStatistic - keywordCampaignStatistic;
+    // uplift must be non-negative
+    if (uplift < 0) {
+        return 0;
+    }
+    return uplift;
 }

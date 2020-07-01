@@ -19,15 +19,16 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   </head>
-  <body>
+  <body onload="verifyLoginStatus(); getLogsStatus();">
     <!-- NavBar  - to add to page, copy mySidenav div and paste into body, and navbar_script.js and navbar_style.css to page-->
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <img src="../Resources/images/DSA-campaign-white.png" class="navbar-image"/>
       <a href="/Home/home.html">Home</a>
-      <a href="/Create/create.html">Create Campaign</a>
-      <a href="/Compare/compare.html">Compare Campaigns</a>
+      <a href="/Create/create.html">Create</a>
+      <a href="/Compare/compare.html">Compare</a>
       <a href="#">Contact</a>
+      <a id="loginout-link" href="#">Logout</a>
     </div>
     <header>
       <!-- all the content relevant to the header is contained in this div -->
@@ -49,20 +50,22 @@
             <div class="dropdown">
               <button class="dropbtn">Select a keyword Campaign</button>
               <div class="dropdown-content" id="keyword-campaign">
-                
+                <select id="keyword-campaigns" onchange="getDSACampaigns()">
+                  <option value=0>Standard DSA Campaign</option>
+                </select>
               </div>
             </div>
           </div>          
           <!-- settings form -->
-          <form action="/DSA-campaigns" style="background-color: white;">
+          <form action="/keyword-campaigns" id="campaign-form" style="background-color: white;">
             <div class="row">
               
               <!-- Main form(s) -->
               <div class="col-50">
                 <h2>DSA Campaign Configuration</h2>
                 <p>Please input the settings you would like and submit.</p>
-                <label for="fname">Campaign Name:</label>
-                <input type="text" id="fname" name="sim_name" placeholder="DSA Campaign Name" required>
+                <label for="sim_name">Campaign Name:</label>
+                <input type="text" id="sim_name" name="sim_name" placeholder="DSA Campaign Name" required>
                 <div class="row">
                   <div class="col-50">
                     <label for="from">From:</label>
@@ -92,22 +95,27 @@
                 <input type="text" id="adtext" name="ad_text" placeholder="Some ad text." required>
                 <label for="cpc">Max CPC: $</label>
                 <input type="number" onchange="setTwoNumberDecimal()" id="cpc" name="cpc" step=".01" placeholder="0.00" required>
-                
               </div>
 
               <!-- Preset Data -->
               <div class="col-50">
-                <h3>Presets</h3>
+                <h3>Available Presets</h3>
                 <p><a href="#">Google Recommended Settings</a></p>
-                <ol>
+                <hr class="header_tag">
+                <ol id="preset-container">
                   <li><a href="#">Preset 1</a></li>
                   <li><a href="#">Preset 2</a></li>
                   <li><a href="#">Preset 3</a></li>
                 </ol>
+                
               </div>
-            </div>     
-            <input type="submit" value="Estimate your Campaign" class="btn">
+            </div>   
           </form>
+          <div class="col-50" style="display: inline-;">
+            <button class="btn submit-btn" style="float: left;" onclick="">Estimate your Campaign</button>
+            <button class="btn settings-btn" style="float: center;">Show Advanced Settings</button> 
+            <button class="btn preset-btn" onclick="submitPresetData()" style="float: right;">Save Configuration as Preset</button> 
+          </div>
         </div>
       </div>
     </div>
