@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Create Estimates</title>
+    <!-- nav bar source files -->
+    <link rel="stylesheet" href="../Resources/NavBar/navbar_style.css"></link>
+    <script src="../Resources/NavBar/navbar_script.js"></script>
+    
+    <!-- drop down box styling -->
+    <link rel="stylesheet" href="../Resources/dropdown.css"></link>
+
+    <!-- create page source files -->
+    <link rel="stylesheet" href="create-style.css"></link>
+    <script src="create-script.js"></script>
+
+    <!-- Bootstrap integration -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
+  <body onload="verifyLoginStatus(); updatePresetData();" required>
+    <!-- NavBar  - to add to page, copy mySidenav div and paste into body, and navbar_script.js and navbar_style.css to page-->
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <img src="../Resources/images/DSA-campaign-white.png" class="navbar-image"/>
+      <a href="/Home/home.html">Home</a>
+      <a href="/Create/create.html">Create Campaign</a>
+      <a href="/Compare/compare.html">Compare Campaigns</a>
+    </div>
+    <header>
+      <!-- all the content relevant to the header is contained in this div -->
+      <div class="header">
+        <span style="font-size: 30px; cursor: pointer; float: left; color: #f2f2f2;" onclick="openNav()">&#9776;</span>
+        <a class="title">Create a DSA Estimate</a>
+      </div>
+    </header>
+    <div class="row">
+      <div class="col-75">
+        <div class="container">
+          <div id="dropdowns" class="center">
+            <div class="dropdown">
+              <button class="dropbtn">Select DSA Campaign Type</button>
+              <div class="dropdown-content" id="compare-campaign">
+                
+              </div>
+            </div>
+            <div class="dropdown">
+              <button class="dropbtn">Select a keyword Campaign</button>
+              <div class="dropdown-content" id="keyword-campaign">
+                <select id="keyword-campaigns" onchange="getDSACampaigns()">
+                  <option value=0>Standard DSA Campaign</option>
+                </select>
+              </div>
+            </div>
+          </div>          
+          <!-- settings form -->
+          <form action="/keyword-campaigns" id="campaign-form" style="background-color: white;">
+            <div class="row">
+              
+              <!-- Main form(s) -->
+              <div class="col-50">
+                <h2>DSA Campaign Configuration</h2>
+                <p>Please input the settings you would like and submit.</p>
+                <label for="sim_name">Campaign Name:</label>
+                <input type="text" id="sim_name" name="sim_name" placeholder="DSA Campaign Name" required>
+                <div class="row">
+                  <div class="col-50">
+                    <label for="from">From:</label>
+                    <input type="date" id="from" name="start_date" placeholder="01/01/2000" required>
+                  </div>
+                  <div class="col-50">
+                    <label for="to">To:</label>
+                    <input type="date" id="to" name="end_date" placeholder="01/01/2001" required>
+                  </div>
+                </div>
+                <br>
+                <label for="budget">Daily Budget: $</label>
+                <input type="number" onchange="setTwoNumberDecimal()" id="budget" name="daily_budget" step=".01" placeholder="0.00" required>
+                <br>
+                <br>
+                <label for="cpc">Max CPC: $</label>
+                <input type="number" onchange="setTwoNumberDecimal()" id="cpc" name="cpc" step=".01" placeholder="0.00" required>
+                <br>
+                <br>
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" placeholder="California" required>
+                <label for="language">Language:</label>
+                <input type="text" id="language" name="language" placeholder="English" required>
+                <label for="domain">Domain:</label>
+                <input type="url" id="domain" name="domain" placeholder="http://google.com" required>
+                <br>
+                <br>
+                <label for="adtext">Ad Text:</label>
+                <input type="text" id="adtext" name="ad_text" placeholder="Some ad text." required>
+              </div>
+
+              <!-- Preset Data -->
+              <div class="col-50">
+                <h3>Available Presets</h3>
+                <p><a href="#">Google Recommended Settings</a></p>
+                <hr class="header_tag">
+                <ol id="preset-container">
+                  <li><a href="#">Preset 1</a></li>
+                  <li><a href="#">Preset 2</a></li>
+                  <li><a href="#">Preset 3</a></li>
+                </ol>
+              </div>
+            </div>   
+          </form>
+          <div class="col-50" style="display: inline-;">
+            <button class="btn submit-btn" style="float: left;" onclick="">Estimate your Campaign</button>
+            <button class="btn settings-btn" style="float: center;">Show Advanced Settings</button> 
+            <button class="btn preset-btn" onclick="submitPresetData()" style="float: right;">Save Configuration as Preset</button> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

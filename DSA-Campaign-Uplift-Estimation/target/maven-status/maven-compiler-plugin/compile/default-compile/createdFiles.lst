@@ -1,4 +1,7 @@
-com/google/sps/servlets/DSACampaign.class
+com/google/sps/data/KeywordCampaign.class
+com/google/sps/servlets/UserApiServlet.class
 com/google/sps/servlets/DSACampaignsServlet.class
+com/google/sps/data/CampaignPreset.class
 com/google/sps/servlets/KeywordCampaignsServlet.class
-com/google/sps/servlets/KeywordCampaign.class
+com/google/sps/data/DSACampaign.class
+com/google/sps/servlets/PresetServlet.class

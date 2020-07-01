@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Compare</title>
+    <link rel="stylesheet" href="../Resources/NavBar/navbar_style.css"></link>
+    <link rel="stylesheet" href="style-compare.css"></link>
+    <script src="../Resources/NavBar/navbar_script.js"></script>
+    <script src="script-compare.js"></script>
+  </head>
+  <body onload="getKeywordCampaigns();">
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <img src="../Resources/images/DSA-campaign-white.png" style="max-width: 50%; max-height: 50%; margin-left: auto; margin-right: auto; display: block;"/>
+      <a href="/Home/home.html">Home</a>
+      <a href="/Create/create.html">Create Campaign</a>
+      <a href="/Compare/compare.html">Compare Campaigns</a>
+      <a href="#">Contact</a>
+    </div>
+
+    <header>
+      <div class="header">
+        <span style="font-size: 30px; cursor: pointer; float: left;" onclick="openNav()">&#9776;</span>
+        <a href="#default" class="title">Compare DSA Campaigns</a>
+      </div>
+    </header>
+	
+    <div id="campaigns-container" class="center">
+        <div id="keyword-campaigns-container" class="select">
+            <h3>Select a keyword campaign</h3>
+            <select id="keyword-campaigns" onchange="getDSACampaigns()">
+                <option value=0>Select a keyword campaign</option>
+            </select>
+        </div>
+        
+        <div id="DSA-campaigns-container" class="select">
+            <h3>Select a DSA campaign</h3>
+            <select id="DSA-campaigns">
+                <option value=0>Select a DSA campaign</option>
+            </select>
+        </div>
+    </div>
+    
+  </body>
+</html>
