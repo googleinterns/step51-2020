@@ -11,6 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// global variables used for managing local preset stats
 let userEmail = "example@google.com";
 let userId = 0;
 
@@ -38,17 +40,18 @@ function verifyLoginStatus() {
 
 /* 
  * This function allows preset data to be saved while the form is being
- * filled out. Alerts the user of the status of their saved preset. 
+ * filled out. Alerts the user if form is incomplete and of the status of 
+ * their saved preset. 
  */
 function submitPresetData() {
-  let xmlhttp= window.XMLHttpRequest ?
-    new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+  let xmlhttp = window.XMLHttpRequest ? 
+      new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.status === 0) {
       alert("Preset saved!");
     }
-    else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
+    else if ((xmlhttp.status < 200) || (xmlhttp.status >= 400)) {
       alert("Error: Preset cannot be saved. Please try again later.");
     }
   }
@@ -69,6 +72,10 @@ function submitPresetData() {
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
     var curr_element = form.elements[i];
+    if (curr_element.value == null || curr_element.value == "") {
+      alert("One or more fields is not filled out. Please double check your settings.");
+      return;
+    }
     keyval_pairs.push(encodeURIComponent(curr_element.name) + "=" + encodeURIComponent(curr_element.value));
   }
 
@@ -77,7 +84,6 @@ function submitPresetData() {
   
   xmlhttp.open("POST", '/preset', true);
   xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-  alert(queryString);
   xmlhttp.send(queryString);
 }
 
@@ -90,5 +96,5 @@ function submitPresetData() {
  * @param userId   id identifying the user requesting the data.
  */
 function updatePresetData(presetId, userId) {
-  
+  // TODO;
 }

@@ -43,7 +43,7 @@ public class PresetServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       String userEmail = request.getParameter("userEmail");
-      String userId = request.getParameter("userId");
+      int userId = Integer.parseInt(request.getParameter("userId"));
       String presetId = request.getParameter("presetId");
       String simName = request.getParameter("sim_name");
       String fromDate = request.getParameter("start_date");
