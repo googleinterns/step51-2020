@@ -49,9 +49,9 @@ public class DSACampaign {
     this.clicks = clicks;
   }
 
-  public DSACampaign(int DSACampaignId, int userId, int keywordCampaignId, String name, String fromDate, String toDate, double dailyBudget, String location, String domain, String target) {
+  public DSACampaign(int DSACampaignId, String userId, int keywordCampaignId, String name, String fromDate, String toDate, double dailyBudget, String location, String domain, String target) {
     this.DSACampaignId = DSACampaignId;
-    this.userId = userId;
+    this.tempUserId = userId;
     this.keywordCampaignId = keywordCampaignId;
     this.name = name;
     this.fromDate = fromDate;
