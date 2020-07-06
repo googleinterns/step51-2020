@@ -51,7 +51,6 @@ public final class CampaignServletTest {
     @Mock
     HttpServletResponse response;
     
-    // Maximum eventual consistency.
     private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
     @Before
@@ -65,38 +64,38 @@ public final class CampaignServletTest {
         helper.tearDown();
     }
 
-    /*
     @Test
     public void keywordCampaignsServletDoGet() throws IOException, ServletException {
-        when(request.getParameter("keywordCampaignId")).thenReturn("1");
-        when(request.getParameter("userId")).thenReturn("2");
-        when(request.getParameter("name")).thenReturn("Test Keyword Campaign");
-        when(request.getParameter("fromDate")).thenReturn("1/1/1");
-        when(request.getParameter("toDate")).thenReturn("2/2/2");
-        when(request.getParameter("dailyBudget")).thenReturn("20.12");
-        when(request.getParameter("location")).thenReturn("CA");
-        when(request.getParameter("domain")).thenReturn("google.com");
-        when(request.getParameter("target")).thenReturn("google.com");
-        when(request.getParameter("impressions")).thenReturn("12412");
-        when(request.getParameter("clicks")).thenReturn("535");
-        when(request.getParameter("cost")).thenReturn("2145.50");
-        when(request.getParameter("DSACampaignIds")).thenReturn("2 5 3 7");
- 
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-         
         when(response.getWriter()).thenReturn(pw);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        assertEquals(0, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
+        Entity keywordCampaignEntity = new Entity("keywordCampaign");
+        keywordCampaignEntity.setProperty("keywordCampaignId", 1);
+        keywordCampaignEntity.setProperty("userId", 2);
+        keywordCampaignEntity.setProperty("name", "entity 1");
+        keywordCampaignEntity.setProperty("fromDate", "1/1/1");
+        keywordCampaignEntity.setProperty("toDate", "2/2/2");
+        keywordCampaignEntity.setProperty("dailyBudget", 123.2);
+        keywordCampaignEntity.setProperty("location", "CA");
+        keywordCampaignEntity.setProperty("domain", "google.com");
+        keywordCampaignEntity.setProperty("target", "google.com");
+        keywordCampaignEntity.setProperty("impressions", 432);
+        keywordCampaignEntity.setProperty("clicks", 123);
+        keywordCampaignEntity.setProperty("cost", 42.51);
+        ArrayList<Integer> DSACampaignIds = new ArrayList<Integer>();
+        DSACampaignIds.add(4);
+        DSACampaignIds.add(2);
+        DSACampaignIds.add(5);
+        keywordCampaignEntity.setProperty("DSACampaignIds", DSACampaignIds);
+        ds.put(keywordCampaignEntity);
 
         KeywordCampaignsServlet servlet = new KeywordCampaignsServlet();
-        servlet.doPost(request, response);
+        servlet.doGet(request, response);
         String result = sw.getBuffer().toString().trim();
-        assertEquals(new String("The following keyword campaign object was put in datastore: 1 2 Test Keyword Campaign 1/1/1 2/2/2 20.12 CA google.com google.com 12412 535 2145.5 2 5 3 7"), result);
-        assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
+        assertEquals(new String("[{\"keywordCampaignId\":1,\"userId\":2,\"DSACampaignIds\":[4,2,5],\"name\":\"entity 1\",\"fromDate\":\"1/1/1\",\"toDate\":\"2/2/2\",\"dailyBudget\":123.2,\"location\":\"CA\",\"domain\":\"google.com\",\"target\":\"google.com\",\"impressions\":432,\"clicks\":123,\"cost\":42.51}]"), result);
     }
-    */
  
     @Test
     public void keywordCampaignsServletDoPost() throws IOException, ServletException {

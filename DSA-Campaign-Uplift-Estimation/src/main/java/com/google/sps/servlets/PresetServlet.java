@@ -14,7 +14,7 @@
 
 package com.google.sps.servlets;
 
-import com.google.sps.data.*;
+import com.google.sps.classes.*;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -42,6 +42,7 @@ public class PresetServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        /*
       // parse each parameter from the save preset form.
       String userEmail = request.getParameter("userEmail");
       String userId = request.getParameter("userId");
@@ -66,5 +67,6 @@ public class PresetServlet extends HttpServlet {
       presetEntity.setProperty("presetData", dsaCampaignData);
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(presetEntity);
+      */
     }
 }

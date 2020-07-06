@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.data;
+package com.google.sps.classes;
 
 // contains all the necessary information about a DSA campaign preset to be used on create.html
 // This class is used to parse preset POST requests and to send preset data upon server request.
