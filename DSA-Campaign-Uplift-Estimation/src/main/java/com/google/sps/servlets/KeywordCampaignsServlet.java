@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.KeywordCampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -80,7 +81,8 @@ public class KeywordCampaignsServlet extends HttpServlet {
         int clicks = Integer.parseInt(request.getParameter("clicks"));
         double cost = Double.parseDouble(request.getParameter("cost"));
 
-        String[] DSACampaignIdsArray = request.getParameter("DSACampaignIds").split(" ");
+        String DSACampaignIdsStr = request.getParameter("DSACampaignIds");
+        String[] DSACampaignIdsArray = DSACampaignIdsStr.split(" ");
         ArrayList<Integer> DSACampaignIds = new ArrayList<Integer>();
         for (String id : DSACampaignIdsArray) {
             DSACampaignIds.add(Integer.parseInt(id));
@@ -104,6 +106,10 @@ public class KeywordCampaignsServlet extends HttpServlet {
     	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(keywordCampaignEntity);
 
+        // used for testing purposes
+        response.getWriter().append("The following keyword campaign object was put in datastore: " + keywordCampaignId + " " + userId + " " + name + " " + fromDate
+            + " " + toDate + " " + dailyBudget + " " + location + " " + domain + " " + target + " " + impressions + " " + clicks + " " + cost + " " + DSACampaignIdsStr);
+            
         response.sendRedirect("/Compare/compare.html");
     }
 }
