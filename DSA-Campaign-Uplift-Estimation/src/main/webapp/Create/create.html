@@ -19,7 +19,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   </head>
-  <body onload="verifyLoginStatus(); getLogsStatus();">
+  <!-- on page load, login status is verified and preset data is fetched. -->
+  <body onload="getLogsStatus(); verifyLoginStatus(); updatePresetData()">
     <!-- NavBar  - to add to page, copy mySidenav div and paste into body, and navbar_script.js and navbar_style.css to page-->
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -31,7 +32,7 @@
       <a id="loginout-link" href="#">Logout</a>
     </div>
     <header>
-      <!-- all the content relevant to the header is contained in this div -->
+      <!-- page header content -->
       <div class="header">
         <span style="font-size: 30px; cursor: pointer; float: left; color: #f2f2f2;" onclick="openNav()">&#9776;</span>
         <a class="title">Create a DSA Estimate</a>
@@ -39,6 +40,7 @@
     </header>
     <div class="row">
       <div class="col-75">
+        <!-- drop down menus -->
         <div class="container">
           <div id="dropdowns" class="center">
             <div class="dropdown">
@@ -110,6 +112,7 @@
               </div>
             </div>   
           </form>
+          <!-- form buttons -->
           <div class="col-50" style="display: inline-;">
             <button class="btn submit-btn" style="float: left;" onclick="">Estimate your Campaign</button>
             <button class="btn settings-btn" style="float: center;">Show Advanced Settings</button> 

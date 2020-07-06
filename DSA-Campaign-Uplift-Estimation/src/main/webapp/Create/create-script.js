@@ -53,9 +53,14 @@ function submitPresetData() {
     }
   }
 
-  var presetName = prompt("What would you like to call the preset?", "Preset Name");
-  if (presetName == null || presetName == "") {
-    return;
+  var presetName;
+  while (true) {
+    presetName = prompt("What would you like to call the preset?", "Preset Name");
+    if ((presetName != null) && (presetName != "")) {
+      break;
+    }
+    alert("Preset name is not valid or already exists! Please pick another name.");
+    //TODO verify that the preset nickname does not already exist.
   }
 
   // dynamically build a URI string with form elements
@@ -85,10 +90,7 @@ function submitPresetData() {
  * updatePresetData takes in a presetId and userId and sends a GET request
  * to '/preset'. Once received, the preset data in the comment form is updated
  * with all updated links.
- *
- * @param presetId id identifying the preset.
- * @param userId   id identifying the user requesting the data.
  */
-function updatePresetData(presetId, userId) {
+function updatePresetData() {
   
 }
