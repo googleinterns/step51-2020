@@ -11,6 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+let userEmail = "example@google.com";
+let userId = 0;
 
 /* 
  * Submission form only requires 2 decimals, this function enforces that rule 
@@ -19,9 +21,19 @@ function setTwoNumberDecimal() {
   this.value = parseFloat(this.value).toFixed(2);
 }
 
-// TODO: Verify user login status
+/*
+ * verifyLoginStatus() is ran on page load
+ * and obtains the user email associated with the user.
+ */
 function verifyLoginStatus() {
+  fetch('/userapi').then(response => response.json()).then(loginStatus => {
+    userEmail = loginStatus.Email;
+    userId = loginStatus.id;
+    console.log(loginStatus);
+    return loginStatus.isLoggedIn;
+  });
 
+  return false;
 }
 
 /* 
@@ -50,8 +62,8 @@ function submitPresetData() {
   var keyval_pairs = [];
 
   // TODO: Add email id and preset id
-  keyval_pairs.push(encodeURIComponent("userEmail") + "=" + encodeURIComponent("testEmail"));
-  
+  keyval_pairs.push(encodeURIComponent("userEmail") + "=" + encodeURIComponent(userEmail));
+  keyval_pairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
   keyval_pairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));
   
   var form = document.getElementById('campaign-form'); // get the comment form
@@ -65,6 +77,7 @@ function submitPresetData() {
   
   xmlhttp.open("POST", '/preset', true);
   xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  alert(queryString);
   xmlhttp.send(queryString);
 }
 
