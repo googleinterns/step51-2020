@@ -5,3 +5,9 @@ indexes:
     direction: asc
   - name: "DSACampaignId"
     direction: asc
+- kind: "DSACampaign"
+  properties:
+  - name: "keywordCampaignId"
+    direction: asc
+  - name: "DSACampaignId"
+    direction: asc
