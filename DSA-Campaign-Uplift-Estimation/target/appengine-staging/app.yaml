@@ -39,7 +39,23 @@ handlers:
   script: unused
   login: optional
   secure: optional
+- url: /DSA-campaign-id
+  script: unused
+  login: optional
+  secure: optional
+- url: /userapi
+  script: unused
+  login: optional
+  secure: optional
+- url: /preset
+  script: unused
+  login: optional
+  secure: optional
 - url: /keyword-campaigns
+  script: unused
+  login: optional
+  secure: optional
+- url: /keyword-campaign-id
   script: unused
   login: optional
   secure: optional

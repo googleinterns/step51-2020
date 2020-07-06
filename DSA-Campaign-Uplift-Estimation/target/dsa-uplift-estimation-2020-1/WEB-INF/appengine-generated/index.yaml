@@ -1,0 +1,9 @@
+indexes:
+
+- kind: DSACampaign
+  ancestor: no
+  properties:
+  - name: keywordCampaignId
+    direction: asc
+  - name: DSACampaignId
+    direction: asc
