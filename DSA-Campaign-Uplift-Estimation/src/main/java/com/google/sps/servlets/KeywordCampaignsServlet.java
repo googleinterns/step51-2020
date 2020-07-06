@@ -105,10 +105,6 @@ public class KeywordCampaignsServlet extends HttpServlet {
 	
     	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(keywordCampaignEntity);
-
-        // used for testing purposes
-        response.getWriter().append("The following keyword campaign object was put in datastore: " + keywordCampaignId + " " + userId + " " + name + " " + fromDate
-            + " " + toDate + " " + dailyBudget + " " + location + " " + domain + " " + target + " " + impressions + " " + clicks + " " + cost + " " + DSACampaignIdsStr);
             
         response.sendRedirect("/Compare/compare.html");
     }
