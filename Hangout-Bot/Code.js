@@ -1,3 +1,12 @@
+//boolean indicating if the creation phase has started.
+let creating = false;
+
+// variable to keep track of DSA creation phase.
+var phase_num = 0;
+
+//POST query string to be built by bot.
+let query_string = '';
+
 /**
  * Responds to a MESSAGE event in Hangouts Chat.
  *
@@ -5,14 +14,15 @@
  */
 function onMessage(event) {
   var name = "";
-
+  
   if (event.space.type == "DM") {
-    name = "You";
+    name = "You" + phase_num;
   } else {
     name = event.user.displayName;
   }
-  var message = name + " said \"" + event.message.text + "\"";
-
+  var message = name + " said \"" + event.message.text + phase_num + "\"";
+  phase_num++;
+  
   return { "text": message };
 }
 
@@ -30,15 +40,6 @@ let phase_map = new Map([
     [8, 'ad_text'],
     [9, 'cpc']
 ]);
-
-//boolean indicating if the creation phase has started.
-let creating = false;
-
-// variable to keep track of DSA creation phase.
-let phase_num = 0;
-
-//POST query string to be built by bot.
-let query_string = '';
 
 /**
  * Starts the configuration process for the DSA Campaign.
