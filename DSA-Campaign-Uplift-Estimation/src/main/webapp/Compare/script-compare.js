@@ -92,19 +92,30 @@ function drawBarGraph() {
 function drawTable(DSACampaignList, keywordCampaign) {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'DSA Campaign');
+    data.addColumn('string', 'Campaign Status');
     data.addColumn('string', 'Start Date');
     data.addColumn('string', 'End Date');
+    data.addColumn('number', 'Manual CPC');
     data.addColumn('number', 'Daily Budget');
-    data.addColumn('string', 'Location');
+    data.addColumn('string', 'Locations');
     data.addColumn('string', 'Domain');
-    data.addColumn('string', 'Target');
+    data.addColumn('string', 'Targets');
+    data.addColumn('string', 'Ad Text');
     data.addColumn('number', 'Impressions Uplift');
     data.addColumn('number', 'Clicks Uplift');
     data.addColumn('number', 'Cost Uplift (USD)');
 
     DSACampaignList.forEach(DSACampaign => {
-        data.addRow([DSACampaign.name, DSACampaign.fromDate, DSACampaign.toDate, DSACampaign.dailyBudget, DSACampaign.location,
-            DSACampaign.domain, DSACampaign.target, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), 
+        var locations = "";
+        for (var i=0; i<DSACampaign.locations.length; i++) {
+            locations += DSACampaign.locations[i] + " ";
+        }
+        var targets = " ";
+        for (var i=0; i<DSACampaign.targets.length; i++) {
+            targets += DSACampaign.targets[i] + " ";
+        }
+        data.addRow([DSACampaign.name, DSACampaign.campaignStatus, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget, 
+            locations, DSACampaign.domain, targets, DSACampaign.adText, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), 
             calculateUplift(DSACampaign.clicks, keywordCampaign.clicks), calculateUplift(DSACampaign.cost, keywordCampaign.cost)]);
     });
 
