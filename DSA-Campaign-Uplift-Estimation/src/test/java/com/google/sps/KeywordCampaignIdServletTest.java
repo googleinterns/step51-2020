@@ -72,31 +72,13 @@ public final class KeywordCampaignIdServletTest {
         when(response.getWriter()).thenReturn(pw);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        Entity keywordCampaignEntity = new Entity("keywordCampaign");
-        keywordCampaignEntity.setProperty("keywordCampaignId", 1);
-        keywordCampaignEntity.setProperty("userId", 2);
-        keywordCampaignEntity.setProperty("name", "entity 1");
-        keywordCampaignEntity.setProperty("fromDate", "1/1/1");
-        keywordCampaignEntity.setProperty("toDate", "2/2/2");
-        keywordCampaignEntity.setProperty("dailyBudget", 123.2);
-        keywordCampaignEntity.setProperty("location", "CA");
-        keywordCampaignEntity.setProperty("domain", "google.com");
-        keywordCampaignEntity.setProperty("target", "google.com");
-        keywordCampaignEntity.setProperty("impressions", 432);
-        keywordCampaignEntity.setProperty("clicks", 123);
-        keywordCampaignEntity.setProperty("cost", 42.51);
-        ArrayList<Integer> DSACampaignIds = new ArrayList<Integer>();
-        DSACampaignIds.add(4);
-        DSACampaignIds.add(2);
-        DSACampaignIds.add(5);
-        keywordCampaignEntity.setProperty("DSACampaignIds", DSACampaignIds);
-        ds.put(keywordCampaignEntity);
+        ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign("1", "2", "4 2 5".split(" "), "entity 1", 432, 123, 42.51));
 
         KeywordCampaignIdServlet servlet = new KeywordCampaignIdServlet();
         servlet.doGet(request, response);
         String result = sw.getBuffer().toString().trim();
-        String expectedStr = "{\"keywordCampaignId\":1,\"userId\":2,\"DSACampaignIds\":[4,2,5],\"name\":\"entity 1\",\"fromDate\":\"1/1/1\",\"toDate\":\"2/2/2\",";
-        expectedStr += "\"dailyBudget\":123.2,\"location\":\"CA\",\"domain\":\"google.com\",\"target\":\"google.com\",\"impressions\":432,\"clicks\":123,\"cost\":42.51}";
+        String expectedStr = "{\"keywordCampaignId\":\"1\",\"userId\":\"2\",\"DSACampaignIds\":[\"4\",\"2\",\"5\"],\"name\":\"entity 1\",";
+        expectedStr += "\"impressions\":432,\"clicks\":123,\"cost\":42.51}";
         assertEquals(new String(expectedStr), result);
     }
 }
