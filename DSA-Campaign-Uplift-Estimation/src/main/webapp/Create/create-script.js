@@ -53,14 +53,24 @@ function submitPresetData() {
     }
   }
 
+  // error handling for the preset nickname prompt. JS prompt that sticks until valid name is inputted.
   var presetName;
   while (true) {
-    presetName = prompt("What would you like to call the preset?", "Preset Name");
-    if ((presetName != null) && (presetName != "")) {
+    presetName = prompt("What would you like to call the preset?", "");
+    
+    // user clicked cancel
+    if (presetName == null) {
+      return;
+    }
+
+    // start error handling.
+    if (presetName != "") {
+      //TODO verify that the preset nickname does not already exist.
       break;
     }
-    alert("Preset name is not valid or already exists! Please pick another name.");
-    //TODO verify that the preset nickname does not already exist.
+    else {
+      alert("Preset name is not valid or already exists! Please pick another name.");
+    }
   }
 
   // dynamically build a URI string with form elements
@@ -73,6 +83,11 @@ function submitPresetData() {
   
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
+    // stop preset process if parameter is empty.
+    if ((form.elements[i].value === null) || (form.elements[i].value === "")) {
+      alert("Not all the settings are filled out!");
+      return;
+    }
     var curr_element = form.elements[i];
     keyval_pairs.push(encodeURIComponent(curr_element.name) + "=" + encodeURIComponent(curr_element.value));
   }
