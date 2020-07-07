@@ -37,7 +37,7 @@ public class DSACampaignsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int correspondingKeywordCampaignId = Integer.parseInt(request.getParameter("keywordCampaignId"));
+        String correspondingKeywordCampaignId = request.getParameter("keywordCampaignId");
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, correspondingKeywordCampaignId)).addSort("DSACampaignId", SortDirection.ASCENDING);

@@ -35,7 +35,7 @@ public class KeywordCampaignIdServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int keywordCampaignId = Integer.parseInt(request.getParameter("keywordCampaignId"));
+        String keywordCampaignId = request.getParameter("keywordCampaignId");
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, keywordCampaignId));

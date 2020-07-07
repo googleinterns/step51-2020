@@ -75,6 +75,7 @@ public final class KeywordCampaignIdServletTest {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "4 2 5", "entity 1", 432, 123, 42.51);
         ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
+        assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
 
         KeywordCampaignIdServlet servlet = new KeywordCampaignIdServlet();
         servlet.doGet(request, response);

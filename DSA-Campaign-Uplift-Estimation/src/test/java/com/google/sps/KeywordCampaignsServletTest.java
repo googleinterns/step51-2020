@@ -101,6 +101,7 @@ public final class KeywordCampaignsServletTest {
 
         KeywordCampaignsServlet servlet = new KeywordCampaignsServlet();
         servlet.doPost(request, response);
+        assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
 
         Query query = new Query("keywordCampaign");
     	Entity entity = ds.prepare(query).asSingleEntity();
