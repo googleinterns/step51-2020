@@ -43,7 +43,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
 
         ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
         for (Entity entity : results.asIterable()) {
-            keywordCampaigns.add(createKeywordCampaignObjectFromEntity(entity));
+            keywordCampaigns.add(createKeywordCampaignFromEntity(entity));
         }
 
         Gson gson = new Gson();
@@ -85,7 +85,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
         response.sendRedirect("/Compare/compare.html");
     }
 
-    public static KeywordCampaign createKeywordCampaignObjectFromEntity(Entity entity) {
+    public static KeywordCampaign createKeywordCampaignFromEntity(Entity entity) {
         String keywordCampaignId = (String) entity.getProperty("keywordCampaignId");
         String userId = (String) entity.getProperty("userId");
         ArrayList<String> DSACampaignIds = (ArrayList<String>) entity.getProperty("DSACampaignIds");

@@ -43,7 +43,7 @@ public class KeywordCampaignIdServlet extends HttpServlet {
     	Entity entity = datastore.prepare(query).asSingleEntity();
 
         Gson gson = new Gson();
-        String json = gson.toJson(KeywordCampaignsServlet.createKeywordCampaignObjectFromEntity(entity));
+        String json = gson.toJson(KeywordCampaignsServlet.createKeywordCampaignFromEntity(entity));
         response.setContentType("application/json;");
         response.getWriter().println(json);
     }
