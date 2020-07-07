@@ -54,30 +54,15 @@ public class KeywordCampaignsServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String keywordCampaignId = request.getParameter("keywordCampaignId");
-        String userId = request.getParameter("userId");
-
-        String[] DSACampaignIdsArray = request.getParameter("DSACampaignIds").split(" ");
-        ArrayList<String> DSACampaignIds = new ArrayList<String>();
-        for (String id : DSACampaignIdsArray) {
-            DSACampaignIds.add(id);
-        }
-
-        String name = request.getParameter("name");
-
-        int impressions = Integer.parseInt(request.getParameter("impressions"));
-        int clicks = Integer.parseInt(request.getParameter("clicks"));
-        double cost = Double.parseDouble(request.getParameter("cost"));
-
         Entity keywordCampaignEntity = new Entity("keywordCampaign");
-        keywordCampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
-        keywordCampaignEntity.setProperty("userId", userId);
-        keywordCampaignEntity.setProperty("DSACampaignIds", DSACampaignIds);
-        keywordCampaignEntity.setProperty("name", name);
+        keywordCampaignEntity.setProperty("keywordCampaignId", request.getParameter("keywordCampaignId"));
+        keywordCampaignEntity.setProperty("userId", request.getParameter("userId"));
+        keywordCampaignEntity.setProperty("DSACampaignIds", request.getParameter("DSACampaignIds").split(" "));
+        keywordCampaignEntity.setProperty("name", request.getParameter("name"));
        
-        keywordCampaignEntity.setProperty("impressions", impressions);
-        keywordCampaignEntity.setProperty("clicks", clicks);
-        keywordCampaignEntity.setProperty("cost", cost);
+        keywordCampaignEntity.setProperty("impressions", Integer.parseInt(request.getParameter("impressions")));
+        keywordCampaignEntity.setProperty("clicks", Integer.parseInt(request.getParameter("clicks")));
+        keywordCampaignEntity.setProperty("cost", Double.parseDouble(request.getParameter("cost")));
 	
     	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(keywordCampaignEntity);
