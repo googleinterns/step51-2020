@@ -43,17 +43,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
 
         ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
         for (Entity entity : results.asIterable()) {
-            String keywordCampaignId = (String) entity.getProperty("keywordCampaignId");
-            String userId = (String) entity.getProperty("userId");
-            ArrayList<String> DSACampaignIds = (ArrayList<String>) entity.getProperty("DSACampaignIds");
-            String name = (String) entity.getProperty("name");
-
-            int impressions = (int) ((long) entity.getProperty("impressions"));
-            int clicks = (int) ((long) entity.getProperty("clicks"));
-            double cost = (double) entity.getProperty("cost");
-
-            KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, DSACampaignIds, name, impressions, clicks, cost);
-            keywordCampaigns.add(keywordCampaignObject);
+            keywordCampaigns.add(createKeywordCampaignObjectFromEntity(entity));
         }
 
         Gson gson = new Gson();
@@ -93,5 +83,18 @@ public class KeywordCampaignsServlet extends HttpServlet {
         datastore.put(keywordCampaignEntity);
             
         response.sendRedirect("/Compare/compare.html");
+    }
+
+    public static KeywordCampaign createKeywordCampaignObjectFromEntity(Entity entity) {
+        String keywordCampaignId = (String) entity.getProperty("keywordCampaignId");
+        String userId = (String) entity.getProperty("userId");
+        ArrayList<String> DSACampaignIds = (ArrayList<String>) entity.getProperty("DSACampaignIds");
+        String name = (String) entity.getProperty("name");
+
+        int impressions = (int) ((long) entity.getProperty("impressions"));
+        int clicks = (int) ((long) entity.getProperty("clicks"));
+        double cost = (double) entity.getProperty("cost");
+
+        return new KeywordCampaign(keywordCampaignId, userId, DSACampaignIds, name, impressions, clicks, cost);
     }
 }
