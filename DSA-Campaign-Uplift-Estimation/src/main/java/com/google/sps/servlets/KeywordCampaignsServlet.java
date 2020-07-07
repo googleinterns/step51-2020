@@ -52,19 +52,10 @@ public class KeywordCampaignsServlet extends HttpServlet {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Entity keywordCampaignEntity = new Entity("keywordCampaign");
-        keywordCampaignEntity.setProperty("keywordCampaignId", request.getParameter("keywordCampaignId"));
-        keywordCampaignEntity.setProperty("userId", request.getParameter("userId"));
-        keywordCampaignEntity.setProperty("DSACampaignIds", request.getParameter("DSACampaignIds").split(" "));
-        keywordCampaignEntity.setProperty("name", request.getParameter("name"));
-       
-        keywordCampaignEntity.setProperty("impressions", Integer.parseInt(request.getParameter("impressions")));
-        keywordCampaignEntity.setProperty("clicks", Integer.parseInt(request.getParameter("clicks")));
-        keywordCampaignEntity.setProperty("cost", Double.parseDouble(request.getParameter("cost")));
-	
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
     	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(keywordCampaignEntity);
+        datastore.put(createEntityFromKeywordCampaign(request.getParameter("keywordCampaignId"), request.getParameter("userId"), request.getParameter("DSACampaignIds").split(" "), request.getParameter("name"),
+            Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost"))));
             
         response.sendRedirect("/Compare/compare.html");
     }
@@ -80,5 +71,20 @@ public class KeywordCampaignsServlet extends HttpServlet {
         double cost = (double) entity.getProperty("cost");
 
         return new KeywordCampaign(keywordCampaignId, userId, DSACampaignIds, name, impressions, clicks, cost);
+    }
+
+    public static Entity createEntityFromKeywordCampaign(String keywordCampaignId, String userId, String[] DSACampaignIds, String name, int impressions, int clicks, double cost) {
+        Entity keywordCampaignEntity = new Entity("keywordCampaign");
+
+        keywordCampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
+        keywordCampaignEntity.setProperty("userId", userId);
+        keywordCampaignEntity.setProperty("DSACampaignIds", DSACampaignIds);
+        keywordCampaignEntity.setProperty("name", name);
+       
+        keywordCampaignEntity.setProperty("impressions", impressions);
+        keywordCampaignEntity.setProperty("clicks", clicks);
+        keywordCampaignEntity.setProperty("cost", cost);
+
+        return keywordCampaignEntity;
     }
 }
