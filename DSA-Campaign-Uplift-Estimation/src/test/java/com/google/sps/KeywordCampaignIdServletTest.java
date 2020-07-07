@@ -37,7 +37,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import java.util.ArrayList;
 
 /*
  * Tests the doGet() function in KeywordCampaignIdServlet.java.

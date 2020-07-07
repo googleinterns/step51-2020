@@ -14,8 +14,6 @@
 
 package com.google.sps.classes;
 
-import java.util.ArrayList;
-
 // contains all the necessary information about a keyword campaign
 public class KeywordCampaign {
 

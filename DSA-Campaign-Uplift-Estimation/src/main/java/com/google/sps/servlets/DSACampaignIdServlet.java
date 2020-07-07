@@ -28,7 +28,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 
 // gets the DSA campaigns from datastore corresponding to the DSA campaign id's in the array from the request
 @WebServlet("/DSA-campaign-id")

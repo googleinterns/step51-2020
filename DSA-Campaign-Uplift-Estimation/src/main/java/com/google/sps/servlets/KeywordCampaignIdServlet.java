@@ -28,7 +28,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 
 // gets the keyword campaign from datastore corresponding to a specific keyword campaign id
 @WebServlet("/keyword-campaign-id")

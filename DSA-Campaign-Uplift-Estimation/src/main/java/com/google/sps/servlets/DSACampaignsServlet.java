@@ -28,7 +28,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 
 // gets all the DSA campaigns from datastore that correspond to a specified keyword campaign
 // posts new DSA campaigns to datastore
