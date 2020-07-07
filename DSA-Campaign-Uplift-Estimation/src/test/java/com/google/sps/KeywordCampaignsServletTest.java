@@ -71,13 +71,13 @@ public final class KeywordCampaignsServletTest {
         when(response.getWriter()).thenReturn(pw);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "4 2 5".split(" "), "entity 1", 432, 123, 42.51);
+        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "4 2 5", "entity 1", 432, 123, 42.51);
         ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
 
         KeywordCampaignsServlet servlet = new KeywordCampaignsServlet();
         servlet.doGet(request, response);
         String result = sw.getBuffer().toString().trim();
-        String expectedStr = "[{\"keywordCampaignId\":\"1\",\"userId\":\"2\",\"DSACampaignIds\":[\"4\",\"2\",\"5\"],\"name\":\"entity 1\",";
+        String expectedStr = "[{\"keywordCampaignId\":\"1\",\"userId\":\"2\",\"DSACampaignIds\":\"4 2 5\",\"name\":\"entity 1\",";
         expectedStr += "\"impressions\":432,\"clicks\":123,\"cost\":42.51}]";
         assertEquals(new String(expectedStr), result);
     }
@@ -106,7 +106,7 @@ public final class KeywordCampaignsServletTest {
     	Entity entity = ds.prepare(query).asSingleEntity();
         assertEquals("1", (String) entity.getProperty("keywordCampaignId"));
         assertEquals("2", (String) entity.getProperty("userId"));
-        assertEquals("2 5 3 7".split(" "), (String[]) entity.getProperty("DSACampaignIds"));
+        assertEquals("2 5 3 7", (String) entity.getProperty("DSACampaignIds"));
         assertEquals("Test Keyword Campaign", (String) entity.getProperty("name"));
         assertEquals(12412, (int) ((long) entity.getProperty("impressions")));
         assertEquals(535, (int) ((long) entity.getProperty("clicks")));
