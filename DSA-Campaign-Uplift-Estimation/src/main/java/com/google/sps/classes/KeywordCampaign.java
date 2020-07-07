@@ -16,42 +16,35 @@ package com.google.sps.classes;
 
 import java.util.ArrayList;
 
-// represents the settings of a keyword campaign that can be copied to a DSA campaign
-// contains all the necessary information about a keyword campaign, including id, input settings, and statistics
+// contains all the necessary information about a keyword campaign
 public class KeywordCampaign {
 
-    public int keywordCampaignId;
-    public int userId;
+    // unique identifier for the keyword campaign
+    public String keywordCampaignId;
+    // id of the user who created the keyword campaign
+    public String userId;
     // the id's of all the DSA campaigns associated with this keyword campaign
-    public ArrayList<Integer> DSACampaignIds;
-
-    // settings
+    public ArrayList<String> DSACampaignIds;
+    // name of the keyword campaign (used for display purposes)
     public String name;
-    public String fromDate;
-    public String toDate;
-    public double dailyBudget;
-    public String location;
-    public String domain;
-    public String target;
 
-    // statistics
+    // statistics used to calculate the uplift of a DSA campaign (e.g. impressions uplift = DSA campaign impressions - keyword campaign impressions)
+
+    //  how many times an ad appears on a search result page
     public int impressions;
+    // how many times a user clicks on an ad link
     public int clicks;
+    // total money spent on the ad campaign
     public double cost;
 
-    public KeywordCampaign(int keywordCampaignId, int userId, String name, String fromDate, String toDate, double dailyBudget, String location, String domain, String target, int impressions, int clicks, double cost, ArrayList<Integer> DSACampaignIds) {
+    public KeywordCampaign(String keywordCampaignId, String userId, ArrayList<String> DSACampaignIds, String name, int impressions, int clicks, double cost) {
         this.keywordCampaignId = keywordCampaignId;
         this.userId = userId;
+        this.DSACampaignIds = DSACampaignIds;
         this.name = name;
-        this.fromDate = fromDate;
-        this.toDate = toDate;
-        this.dailyBudget = dailyBudget;
-        this.location = location;
-        this.domain = domain;
-        this.target = target;
+
         this.impressions = impressions;
         this.clicks = clicks;
         this.cost = cost;
-        this.DSACampaignIds = DSACampaignIds;
     }
 }
