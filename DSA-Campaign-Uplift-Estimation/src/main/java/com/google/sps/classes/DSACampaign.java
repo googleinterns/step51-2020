@@ -39,16 +39,16 @@ public class DSACampaign {
     // amount an advertiser is willing to spend each day
     public double dailyBudget;
     /*
-     * contains the different locations the advertiser wants to target
+     * space-separated string containing the different locations the advertiser wants to target
      * ads will only be targeted towards users living in the specified locations
      * locations must be cities or states in the US, or the US itself
      * locations cannot be abbreviations (e.g. correct - California, United States of America; incorrect - CA, USA)
      */
-    public String[] locations;
+    public String locations;
     // url of the main web page to be advertised
     public String domain;
-    // url's of additional sub pages to be advertised
-    public String[] targets;
+    // space-separated string of url's of additional sub pages to be advertised
+    public String targets;
     // custom description to display along with the ad
     public String adText;
 
@@ -61,7 +61,7 @@ public class DSACampaign {
     // total money spent on the ad campaign
     public double cost;
 
-    public DSACampaign(String DSACampaignId, String userId, String keywordCampaignId, String name, String campaignStatus, String startDate, String endDate, double manualCPC, double dailyBudget, String[] locations, String domain, String[] targets, String adText, int impressions, int clicks, double cost) {
+    public DSACampaign(String DSACampaignId, String userId, String keywordCampaignId, String name, String campaignStatus, String startDate, String endDate, double manualCPC, double dailyBudget, String locations, String domain, String targets, String adText, int impressions, int clicks, double cost) {
         this.DSACampaignId = DSACampaignId;
         this.userId = userId;
         this.keywordCampaignId = keywordCampaignId;

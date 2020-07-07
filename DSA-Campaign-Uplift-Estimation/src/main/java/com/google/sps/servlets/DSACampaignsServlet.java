@@ -28,6 +28,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 
 // gets all the DSA campaigns from datastore that correspond to a specified keyword campaign
 // posts new DSA campaigns to datastore
@@ -57,8 +58,8 @@ public class DSACampaignsServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         DSACampaign DSACampaignObject = new DSACampaign(request.getParameter("DSACampaignId"), request.getParameter("userId"), request.getParameter("keywordCampaignId"),
             request.getParameter("name"), request.getParameter("campaignStatus"), request.getParameter("startDate"), request.getParameter("endDate"), 
-            Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations").split(" "),
-            request.getParameter("domain"), request.getParameter("targets").split(" "), Integer.parseInt(request.getParameter("impressions")),
+            Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
+            request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), Integer.parseInt(request.getParameter("impressions")),
             Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
 
     	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -78,9 +79,9 @@ public class DSACampaignsServlet extends HttpServlet {
         String endDate = (String) entity.getProperty("endDate");
         double manualCPC = (double) entity.getProperty("manualCPC");
         double dailyBudget = (double) entity.getProperty("dailyBudget");
-        String[] locations = (String[]) entity.getProperty("locations");
+        String locations = (String) entity.getProperty("locations");
         String domain = (String) entity.getProperty("domain");
-        String[] targets = (String[]) entity.getProperty("targets");
+        String targets = (String) entity.getProperty("targets");
         String adText = (String) entity.getProperty("adText");
 
         int impressions = (int) ((long) entity.getProperty("impressions"));

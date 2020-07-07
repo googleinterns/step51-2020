@@ -28,6 +28,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 
 // gets all the keyword campaigns from datastore
 // posts new keyword campaigns to datastore
@@ -54,7 +55,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
     	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        KeywordCampaign keywordCampaignObject = new KeywordCampaign(request.getParameter("keywordCampaignId"), request.getParameter("userId"), request.getParameter("DSACampaignIds").split(" "), 
+        KeywordCampaign keywordCampaignObject = new KeywordCampaign(request.getParameter("keywordCampaignId"), request.getParameter("userId"), request.getParameter("DSACampaignIds"), 
             request.getParameter("name"),Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
         datastore.put(createEntityFromKeywordCampaign(keywordCampaignObject));
             
@@ -64,7 +65,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
     public static KeywordCampaign createKeywordCampaignFromEntity(Entity entity) {
         String keywordCampaignId = (String) entity.getProperty("keywordCampaignId");
         String userId = (String) entity.getProperty("userId");
-        String[] DSACampaignIds = (String[]) entity.getProperty("DSACampaignIds");
+        String DSACampaignIds = (String) entity.getProperty("DSACampaignIds");
         String name = (String) entity.getProperty("name");
 
         int impressions = (int) ((long) entity.getProperty("impressions"));

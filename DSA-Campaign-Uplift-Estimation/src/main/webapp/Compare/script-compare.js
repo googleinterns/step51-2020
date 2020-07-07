@@ -106,16 +106,8 @@ function drawTable(DSACampaignList, keywordCampaign) {
     data.addColumn('number', 'Cost Uplift (USD)');
 
     DSACampaignList.forEach(DSACampaign => {
-        var locations = "";
-        for (var i=0; i<DSACampaign.locations.length; i++) {
-            locations += DSACampaign.locations[i] + " ";
-        }
-        var targets = " ";
-        for (var i=0; i<DSACampaign.targets.length; i++) {
-            targets += DSACampaign.targets[i] + " ";
-        }
         data.addRow([DSACampaign.name, DSACampaign.campaignStatus, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget, 
-            locations, DSACampaign.domain, targets, DSACampaign.adText, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), 
+            DSACampaign.locations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), 
             calculateUplift(DSACampaign.clicks, keywordCampaign.clicks), calculateUplift(DSACampaign.cost, keywordCampaign.cost)]);
     });
 

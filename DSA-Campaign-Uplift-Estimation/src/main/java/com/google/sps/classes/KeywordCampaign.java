@@ -21,8 +21,8 @@ public class KeywordCampaign {
     public String keywordCampaignId;
     // id of the user who created the keyword campaign
     public String userId;
-    // the id's of all the DSA campaigns associated with this keyword campaign
-    public String[] DSACampaignIds;
+    // space-separated string of the id's of all the DSA campaigns associated with this keyword campaign
+    public String DSACampaignIds;
     // name of the keyword campaign (used for display purposes)
     public String name;
 
@@ -35,7 +35,7 @@ public class KeywordCampaign {
     // total money spent on the ad campaign
     public double cost;
 
-    public KeywordCampaign(String keywordCampaignId, String userId, String[] DSACampaignIds, String name, int impressions, int clicks, double cost) {
+    public KeywordCampaign(String keywordCampaignId, String userId, String DSACampaignIds, String name, int impressions, int clicks, double cost) {
         this.keywordCampaignId = keywordCampaignId;
         this.userId = userId;
         this.DSACampaignIds = DSACampaignIds;
