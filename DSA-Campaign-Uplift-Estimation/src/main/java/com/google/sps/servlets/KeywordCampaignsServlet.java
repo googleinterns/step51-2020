@@ -73,7 +73,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
     public static KeywordCampaign createKeywordCampaignFromEntity(Entity entity) {
         String keywordCampaignId = (String) entity.getProperty("keywordCampaignId");
         String userId = (String) entity.getProperty("userId");
-        ArrayList<String> DSACampaignIds = (ArrayList<String>) entity.getProperty("DSACampaignIds");
+        String[] DSACampaignIds = (String[]) entity.getProperty("DSACampaignIds");
         String name = (String) entity.getProperty("name");
 
         int impressions = (int) ((long) entity.getProperty("impressions"));
