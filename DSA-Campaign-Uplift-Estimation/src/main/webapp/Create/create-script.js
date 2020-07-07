@@ -66,7 +66,7 @@ function submitPresetData() {
   // dynamically build a URI string with form elements
   var keyval_pairs = [];
 
-  // TODO: Add email id and preset id
+  // Encode email, user ID, and preset ID into POST URI string.
   keyval_pairs.push(encodeURIComponent("userEmail") + "=" + encodeURIComponent(userEmail));
   keyval_pairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
   keyval_pairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));

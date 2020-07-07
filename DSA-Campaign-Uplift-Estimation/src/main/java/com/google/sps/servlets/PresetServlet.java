@@ -34,39 +34,39 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/preset")
 public class PresetServlet extends HttpServlet {
 
-    //TODO: write preset data GET and POST request handlers
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  //TODO: write preset data GET and POST request handlers
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    }
+  }
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        /*
-      // parse each parameter from the save preset form.
-      String userEmail = request.getParameter("userEmail");
-      String userId = request.getParameter("userId");
-      String presetId = request.getParameter("presetId");
-      String simName = request.getParameter("sim_name");
-      String fromDate = request.getParameter("start_date");
-      String toDate = request.getParameter("end_date");
-      double dailyBudget = Double.parseDouble(request.getParameter("daily_budget"));
-      String location = request.getParameter("location");
-      String language = request.getParameter("language");
-      String domain = request.getParameter("domain");
-      String target = request.getParameter("target_page");
-      String adText = request.getParameter("ad_text");
-      double cpc = Double.parseDouble(request.getParameter("cpc"));
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    /*
+    // parse each parameter from the save preset form.
+    String userEmail = request.getParameter("userEmail");
+    String userId = request.getParameter("userId");
+    String presetId = request.getParameter("presetId");
+    String simName = request.getParameter("sim_name");
+    String fromDate = request.getParameter("start_date");
+    String toDate = request.getParameter("end_date");
+    double dailyBudget = Double.parseDouble(request.getParameter("daily_budget"));
+    String location = request.getParameter("location");
+    String language = request.getParameter("language");
+    String domain = request.getParameter("domain");
+    String target = request.getParameter("target_page");
+    String adText = request.getParameter("ad_text");
+    double cpc = Double.parseDouble(request.getParameter("cpc"));
 
-      Entity presetEntity = new Entity("PresetData");      
-      presetEntity.setProperty("userEmail", userEmail);
-      presetEntity.setProperty("presetId", presetId);
-      DSACampaign dsaCampaign = new DSACampaign(0, userId, 0, simName, fromDate, toDate, dailyBudget, location, domain, target);
-      Gson gson = new Gson();
-      String dsaCampaignData = gson.toJson(dsaCampaign);
-      presetEntity.setProperty("presetData", dsaCampaignData);
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(presetEntity);
-      */
-    }
+    Entity presetEntity = new Entity("PresetData");      
+    presetEntity.setProperty("userEmail", userEmail);
+    presetEntity.setProperty("presetId", presetId);
+    DSACampaign dsaCampaign = new DSACampaign(0, userId, 0, simName, fromDate, toDate, dailyBudget, location, domain, target);
+    Gson gson = new Gson();
+    String dsaCampaignData = gson.toJson(dsaCampaign);
+    presetEntity.setProperty("presetData", dsaCampaignData);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(presetEntity);
+    */
+  }
 }

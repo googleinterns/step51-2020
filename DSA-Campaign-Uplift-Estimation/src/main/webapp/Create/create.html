@@ -14,9 +14,18 @@
     <link rel="stylesheet" href="create-style.css"></link>
     <script src="create-script.js"></script>
 
+    <!-- location drop down styling -->
+    <link rel="gettext" type="application/x-po" href="../Resources/LocationDropdown/languages/en/LC_MESSAGES/en.po" />
+    <script type="text/javascript" src="../Resources/LocationDropdown/assets/js/Gettext.js"></script>
+    <script src="../Resources/LocationDropdown/assets/js/geodatasource-cr.min.js"></script>
+    
     <!-- Bootstrap integration -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   </head>
   <!-- on page load, login status is verified and preset data is fetched. -->
@@ -46,7 +55,7 @@
             <div class="dropdown">
               <button class="dropbtn">Select DSA Campaign Type</button>
               <div class="dropdown-content" id="compare-campaign">
-                
+            
               </div>
             </div>
             <div class="dropdown">
@@ -83,8 +92,15 @@
                 <input type="number" onchange="setTwoNumberDecimal()" id="budget" name="daily_budget" step=".01" placeholder="0.00" required>
                 <br>
                 <br>
-                <label for="location">Location:</label>
-                <input type="text" id="location" name="location" placeholder="California" required>
+                <div class="form-group">
+                  <label class="control-label">Country</label>
+                  <select class="form-control gds-cr" country-data-region-id="gds-cr-1" data-language="en" name="country"></select>
+                </div>
+                <div class="form-group">
+                  <label for="gds-cr-1" class="control-label">Region</label>
+                  <select class="form-control" id="gds-cr-1" name="region"></select>
+                </div>
+                <br>
                 <label for="domain">Domain:</label>
                 <input type="url" id="domain" name="domain" placeholder="http://google.com" required>
                 <br>
