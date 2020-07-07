@@ -55,25 +55,14 @@ public class DSACampaignsServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Entity DSACampaignEntity = new Entity("DSACampaign");
-        DSACampaignEntity.setProperty("DSACampaignId", request.getParameter("DSACampaignId"));
-        DSACampaignEntity.setProperty("userId", request.getParameter("userId"));
-        DSACampaignEntity.setProperty("keywordCampaignId", request.getParameter("keywordCampaignId"));
+        DSACampaign DSACampaignObject = new DSACampaign(request.getParameter("DSACampaignId"), request.getParameter("userId"), request.getParameter("keywordCampaignId"),
+            request.getParameter("name"), request.getParameter("campaignStatus"), request.getParameter("startDate"), request.getParameter("endDate"), 
+            Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations").split(" "),
+            request.getParameter("domain"), request.getParameter("targets").split(" "), Integer.parseInt(request.getParameter("impressions")),
+            Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
 
-        DSACampaignEntity.setProperty("name", request.getParameter("name"));
-        DSACampaignEntity.setProperty("campaignStatus", request.getParameter("campaignStatus"));
-        DSACampaignEntity.setProperty("startDate", request.getParameter("startDate"));
-        DSACampaignEntity.setProperty("endDate", request.getParameter("endDate"));
-        DSACampaignEntity.setProperty("dailyBudget", Double.parseDouble(request.getParameter("dailyBudget")));
-        DSACampaignEntity.setProperty("locations", request.getParameter("locations").split(" "));
-        DSACampaignEntity.setProperty("domain", request.getParameter("domain"));
-        DSACampaignEntity.setProperty("targets", request.getParameter("targets").split(" "));
-        DSACampaignEntity.setProperty("impressions", Integer.parseInt(request.getParameter("impressions")));
-        DSACampaignEntity.setProperty("clicks", Integer.parseInt(request.getParameter("clicks")));
-        DSACampaignEntity.setProperty("cost", Double.parseDouble(request.getParameter("cost")));
-	
     	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(DSACampaignEntity);
+        datastore.put(createEntityFromDSACampaign(DSACampaignObject));
 
         response.sendRedirect("/Compare/compare.html");
     }
@@ -98,6 +87,31 @@ public class DSACampaignsServlet extends HttpServlet {
         int clicks = (int) ((long) entity.getProperty("clicks"));
         double cost = (double) entity.getProperty("cost");
 
-        return new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, campaignStatus, startDate, endDate, dailyBudget, manualCPC, locations, domain, targets, adText, impressions, clicks, cost);
+        return new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, campaignStatus, startDate, endDate, manualCPC, dailyBudget, locations, domain, targets, adText, impressions, clicks, cost);
+    }
+
+    public static Entity createEntityFromDSACampaign(DSACampaign DSACampaignObject) {
+        Entity DSACampaignEntity = new Entity("DSACampaign");
+
+        DSACampaignEntity.setProperty("DSACampaignId", DSACampaignObject.DSACampaignId);
+        DSACampaignEntity.setProperty("userId", DSACampaignObject.userId);
+        DSACampaignEntity.setProperty("keywordCampaignId", DSACampaignObject.keywordCampaignId);
+
+        DSACampaignEntity.setProperty("name", DSACampaignObject.name);
+        DSACampaignEntity.setProperty("campaignStatus", DSACampaignObject.campaignStatus);
+        DSACampaignEntity.setProperty("startDate", DSACampaignObject.startDate);
+        DSACampaignEntity.setProperty("endDate", DSACampaignObject.endDate);
+        DSACampaignEntity.setProperty("manualCPC", DSACampaignObject.manualCPC);
+        DSACampaignEntity.setProperty("dailyBudget", DSACampaignObject.dailyBudget);
+        DSACampaignEntity.setProperty("locations", DSACampaignObject.locations);
+        DSACampaignEntity.setProperty("domain", DSACampaignObject.domain);
+        DSACampaignEntity.setProperty("targets", DSACampaignObject.targets);
+        DSACampaignEntity.setProperty("adText", DSACampaignObject.adText);
+       
+        DSACampaignEntity.setProperty("impressions", DSACampaignObject.impressions);
+        DSACampaignEntity.setProperty("clicks", DSACampaignObject.clicks);
+        DSACampaignEntity.setProperty("cost", DSACampaignObject.cost);
+
+        return DSACampaignEntity;
     }
 }

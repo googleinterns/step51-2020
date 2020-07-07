@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.DSACampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -72,45 +73,23 @@ public final class DSACampaignIdServletTest {
         when(response.getWriter()).thenReturn(pw);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        Entity DSACampaignEntity1 = new Entity("DSACampaign");
-        DSACampaignEntity1.setProperty("DSACampaignId", 1);
-        DSACampaignEntity1.setProperty("userId", 2);
-        DSACampaignEntity1.setProperty("keywordCampaignId", 1);
-        DSACampaignEntity1.setProperty("name", "entity 1");
-        DSACampaignEntity1.setProperty("fromDate", "1/1/1");
-        DSACampaignEntity1.setProperty("toDate", "2/2/2");
-        DSACampaignEntity1.setProperty("dailyBudget", 123.2);
-        DSACampaignEntity1.setProperty("location", "CA");
-        DSACampaignEntity1.setProperty("domain", "google.com");
-        DSACampaignEntity1.setProperty("target", "google.com");
-        DSACampaignEntity1.setProperty("impressions", 432);
-        DSACampaignEntity1.setProperty("clicks", 123);
-        DSACampaignEntity1.setProperty("cost", 42.51);
-        ds.put(DSACampaignEntity1);
+        DSACampaign DSACampaignObject1 = new DSACampaign("1", "2", "1", "entity 1", "complete", "1/1/1", "2/2/2", 12.1, 123.2, "California Texas".split(" "),
+            "google.com", "url1.com url2.com".split(" "), "sample ad text 1", 432, 123, 42.51);
+        ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject1));
 
-        Entity DSACampaignEntity2 = new Entity("DSACampaign");
-        DSACampaignEntity2.setProperty("DSACampaignId", 2);
-        DSACampaignEntity2.setProperty("userId", 2);
-        DSACampaignEntity2.setProperty("keywordCampaignId", 1);
-        DSACampaignEntity2.setProperty("name", "entity 2");
-        DSACampaignEntity2.setProperty("fromDate", "1/1/1");
-        DSACampaignEntity2.setProperty("toDate", "2/2/2");
-        DSACampaignEntity2.setProperty("dailyBudget", 123.2);
-        DSACampaignEntity2.setProperty("location", "CA");
-        DSACampaignEntity2.setProperty("domain", "google.com");
-        DSACampaignEntity2.setProperty("target", "google.com");
-        DSACampaignEntity2.setProperty("impressions", 432);
-        DSACampaignEntity2.setProperty("clicks", 123);
-        DSACampaignEntity2.setProperty("cost", 42.51);
-        ds.put(DSACampaignEntity2);
+        DSACampaign DSACampaignObject2 = new DSACampaign("2", "2", "1", "entity 2", "pending", "1/1/1", "2/2/2", 12.1, 123.2, "California Texas".split(" "),
+            "google.com", "url1.com url2.com".split(" "), "sample ad text 2", 432, 123, 42.51);
+        ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject2));
 
         DSACampaignIdServlet servlet = new DSACampaignIdServlet();
         servlet.doGet(request, response);
         String result = sw.getBuffer().toString().trim();
-        String expectedStr = "[{\"DSACampaignId\":1,\"userId\":2,\"keywordCampaignId\":1,\"name\":\"entity 1\",\"fromDate\":\"1/1/1\",\"toDate\":\"2/2/2\",";
-        expectedStr += "\"dailyBudget\":123.2,\"location\":\"CA\",\"domain\":\"google.com\",\"target\":\"google.com\",\"impressions\":432,\"clicks\":123,\"cost\":42.51},";
-        expectedStr += "{\"DSACampaignId\":2,\"userId\":2,\"keywordCampaignId\":1,\"name\":\"entity 2\",\"fromDate\":\"1/1/1\",\"toDate\":\"2/2/2\",";
-        expectedStr += "\"dailyBudget\":123.2,\"location\":\"CA\",\"domain\":\"google.com\",\"target\":\"google.com\",\"impressions\":432,\"clicks\":123,\"cost\":42.51}]";
+        String expectedStr = "[{\"DSACampaignId\":1,\"userId\":2,\"keywordCampaignId\":1,\"name\":\"entity 1\",\"campaignStatus\":\"complete\",\"startDate\":\"1/1/1\",\"endDate\":\"2/2/2\",";
+        expectedStr += "\"manualCPC\":12.1,\"dailyBudget\":123.2,\"locations\":[\"California\",\"Texas\"],\"domain\":\"google.com\",\"targets\":[\"url1.com\", \"url2.com\"],\"adText\":\"sample ad text 1\",";
+        expectedStr += "\"impressions\":432,\"clicks\":123,\"cost\":42.51},";
+        expectedStr += "{\"DSACampaignId\":2,\"userId\":2,\"keywordCampaignId\":1,\"name\":\"entity 2\",\"campaignStatus\":\"pending\",\"startDate\":\"1/1/1\",\"endDate\":\"2/2/2\",";
+        expectedStr += "\"manualCPC\":12.1,\"dailyBudget\":123.2,\"locations\":[\"California\",\"Texas\"],\"domain\":\"google.com\",\"targets\":[\"url1.com\", \"url2.com\"],\"adText\":\"sample ad text 2\",";
+        expectedStr += "\"impressions\":432,\"clicks\":123,\"cost\":42.51},";
         assertEquals(new String(expectedStr), result);
     }
 }

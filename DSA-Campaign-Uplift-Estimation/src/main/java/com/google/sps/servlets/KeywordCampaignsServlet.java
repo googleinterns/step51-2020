@@ -54,8 +54,9 @@ public class KeywordCampaignsServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
     	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(createEntityFromKeywordCampaign(request.getParameter("keywordCampaignId"), request.getParameter("userId"), request.getParameter("DSACampaignIds").split(" "), request.getParameter("name"),
-            Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost"))));
+        KeywordCampaign keywordCampaignObject = new KeywordCampaign(request.getParameter("keywordCampaignId"), request.getParameter("userId"), request.getParameter("DSACampaignIds").split(" "), 
+            request.getParameter("name"),Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
+        datastore.put(createEntityFromKeywordCampaign(keywordCampaignObject));
             
         response.sendRedirect("/Compare/compare.html");
     }
@@ -73,17 +74,17 @@ public class KeywordCampaignsServlet extends HttpServlet {
         return new KeywordCampaign(keywordCampaignId, userId, DSACampaignIds, name, impressions, clicks, cost);
     }
 
-    public static Entity createEntityFromKeywordCampaign(String keywordCampaignId, String userId, String[] DSACampaignIds, String name, int impressions, int clicks, double cost) {
+    public static Entity createEntityFromKeywordCampaign(KeywordCampaign KeywordCampaign) {
         Entity keywordCampaignEntity = new Entity("keywordCampaign");
 
-        keywordCampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
-        keywordCampaignEntity.setProperty("userId", userId);
-        keywordCampaignEntity.setProperty("DSACampaignIds", DSACampaignIds);
-        keywordCampaignEntity.setProperty("name", name);
+        keywordCampaignEntity.setProperty("keywordCampaignId", KeywordCampaign.keywordCampaignId);
+        keywordCampaignEntity.setProperty("userId", KeywordCampaign.userId);
+        keywordCampaignEntity.setProperty("DSACampaignIds", KeywordCampaign.DSACampaignIds);
+        keywordCampaignEntity.setProperty("name", KeywordCampaign.name);
        
-        keywordCampaignEntity.setProperty("impressions", impressions);
-        keywordCampaignEntity.setProperty("clicks", clicks);
-        keywordCampaignEntity.setProperty("cost", cost);
+        keywordCampaignEntity.setProperty("impressions", KeywordCampaign.impressions);
+        keywordCampaignEntity.setProperty("clicks", KeywordCampaign.clicks);
+        keywordCampaignEntity.setProperty("cost", KeywordCampaign.cost);
 
         return keywordCampaignEntity;
     }

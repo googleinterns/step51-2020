@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.KeywordCampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -70,7 +71,8 @@ public final class KeywordCampaignsServletTest {
         when(response.getWriter()).thenReturn(pw);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign("1", "2", "4 2 5".split(" "), "entity 1", 432, 123, 42.51));
+        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "4 2 5".split(" "), "entity 1", 432, 123, 42.51);
+        ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
 
         KeywordCampaignsServlet servlet = new KeywordCampaignsServlet();
         servlet.doGet(request, response);

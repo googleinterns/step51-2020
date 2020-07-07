@@ -61,7 +61,7 @@ public class DSACampaign {
     // total money spent on the ad campaign
     public double cost;
 
-    public DSACampaign(int DSACampaignId, int userId, int keywordCampaignId, String name, String campaignStatus, String startDate, String endDate, double manualCPC, double dailyBudget, String[] locations, String domain, String[] targets, String adText, int impressions, int clicks, double cost) {
+    public DSACampaign(String DSACampaignId, String userId, String keywordCampaignId, String name, String campaignStatus, String startDate, String endDate, double manualCPC, double dailyBudget, String[] locations, String domain, String[] targets, String adText, int impressions, int clicks, double cost) {
         this.DSACampaignId = DSACampaignId;
         this.userId = userId;
         this.keywordCampaignId = keywordCampaignId;
