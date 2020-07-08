@@ -21,7 +21,8 @@ public class KeywordCampaign {
     public String keywordCampaignId;
     // id of the user who created the keyword campaign
     public String userId;
-    // space-separated string of the id's of all the DSA campaigns associated with this keyword campaign
+    // comma-separated string of the id's of all the DSA campaigns associated with this keyword campaign
+    // Ex: "2, 4, 7"
     public String DSACampaignIds;
     // name of the keyword campaign (used for display purposes)
     public String name;
