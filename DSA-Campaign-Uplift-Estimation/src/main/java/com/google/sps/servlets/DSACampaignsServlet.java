@@ -14,6 +14,8 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.classes.DSACampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -56,16 +58,24 @@ public class DSACampaignsServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        DSACampaign DSACampaignObject = new DSACampaign(request.getParameter("DSACampaignId"), request.getParameter("userId"), request.getParameter("keywordCampaignId"),
-            request.getParameter("name"), request.getParameter("campaignStatus"), request.getParameter("startDate"), request.getParameter("endDate"), 
-            Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
-            request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), Integer.parseInt(request.getParameter("impressions")),
-            Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
+        UserService userService = UserServiceFactory.getUserService();
 
-    	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(createEntityFromDSACampaign(DSACampaignObject));
+        if (userService.isUserLoggedIn()) {
+            String userId = userService.getCurrentUser().getUserId();
 
-        response.sendRedirect("/Compare/compare.html");
+            DSACampaign DSACampaignObject = new DSACampaign(request.getParameter("DSACampaignId"), userId, request.getParameter("keywordCampaignId"),
+                request.getParameter("name"), request.getParameter("campaignStatus"), request.getParameter("startDate"), request.getParameter("endDate"), 
+                Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
+                request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), Integer.parseInt(request.getParameter("impressions")),
+                Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
+
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            datastore.put(createEntityFromDSACampaign(DSACampaignObject));
+
+            response.sendRedirect("/Compare/compare.html");
+        } else {
+            response.sendRedirect("/index.html");
+        }
     }
 
     public static DSACampaign createDSACampaignFromEntity(Entity entity) {
