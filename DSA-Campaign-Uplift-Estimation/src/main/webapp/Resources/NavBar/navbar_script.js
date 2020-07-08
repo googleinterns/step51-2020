@@ -50,7 +50,7 @@ function getLogsStatus() {
         // If the user is somehow not on the login screen and isn't logged in
         // then the url will point to the login sceen.
         else {
-            if(window.location.pathname === "/index.html"){
+            if(window.location.pathname === "/index.html" || window.location.pathname === "/"){
                 console.log('User is not Logged In');
                 link.href = logStatus.Url;
             }
