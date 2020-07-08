@@ -28,7 +28,7 @@ public class DSACampaign {
 
     // name of the DSA campaign (used for display purposes)
 	public String name;
-    // status of the blackbox data retrieval: pending (stats still pending) or complete (stats retrieved)
+    // status of the blackbox data retrieval: "pending" (stats still pending) or "complete" (stats retrieved)
     public String campaignStatus;
     // start date of the DSA campaign: MM/DD/YYYY
     public String startDate;
@@ -39,15 +39,19 @@ public class DSACampaign {
     // amount an advertiser is willing to spend each day
     public double dailyBudget;
     /*
-     * space-separated string containing the different locations the advertiser wants to target
+     * comma-separated string containing the different locations the advertiser wants to target
      * ads will only be targeted towards users living in the specified locations
      * locations must be cities or states in the US, or the US itself
-     * locations cannot be abbreviations (e.g. correct - California, United States of America; incorrect - CA, USA)
+     * locations cannot be abbreviations
+     * Ex: correct - "California, Houston, United States of America"; incorrect - "CA, Houston, USA")
      */
     public String locations;
     // url of the main web page to be advertised
     public String domain;
-    // space-separated string of url's of additional sub pages to be advertised
+    /*
+     * comma-separated string of url's of additional sub pages to be advertised
+     * Ex: "url1.com, url2.com"
+     */
     public String targets;
     // custom description to display along with the ad
     public String adText;
