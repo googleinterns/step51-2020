@@ -92,3 +92,5 @@ function submitPresetData() {
 function updatePresetData(presetId, userId) {
   
 }
+
+// TODO: validate DSA campaign inputs (e.g. campaign status must be "pending" or "complete")
