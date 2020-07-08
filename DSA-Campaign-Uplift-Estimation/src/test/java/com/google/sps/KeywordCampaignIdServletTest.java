@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.classes.KeywordCampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -37,7 +38,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import java.util.ArrayList;
 
 /*
  * Tests the doGet() function in KeywordCampaignIdServlet.java.
@@ -73,31 +73,15 @@ public final class KeywordCampaignIdServletTest {
         when(response.getWriter()).thenReturn(pw);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        Entity keywordCampaignEntity = new Entity("keywordCampaign");
-        keywordCampaignEntity.setProperty("keywordCampaignId", 1);
-        keywordCampaignEntity.setProperty("userId", 2);
-        keywordCampaignEntity.setProperty("name", "entity 1");
-        keywordCampaignEntity.setProperty("fromDate", "1/1/1");
-        keywordCampaignEntity.setProperty("toDate", "2/2/2");
-        keywordCampaignEntity.setProperty("dailyBudget", 123.2);
-        keywordCampaignEntity.setProperty("location", "CA");
-        keywordCampaignEntity.setProperty("domain", "google.com");
-        keywordCampaignEntity.setProperty("target", "google.com");
-        keywordCampaignEntity.setProperty("impressions", 432);
-        keywordCampaignEntity.setProperty("clicks", 123);
-        keywordCampaignEntity.setProperty("cost", 42.51);
-        ArrayList<Integer> DSACampaignIds = new ArrayList<Integer>();
-        DSACampaignIds.add(4);
-        DSACampaignIds.add(2);
-        DSACampaignIds.add(5);
-        keywordCampaignEntity.setProperty("DSACampaignIds", DSACampaignIds);
-        ds.put(keywordCampaignEntity);
+        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "4 2 5", "entity 1", 432, 123, 42.51);
+        ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
+        assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
 
         KeywordCampaignIdServlet servlet = new KeywordCampaignIdServlet();
         servlet.doGet(request, response);
         String result = sw.getBuffer().toString().trim();
-        String expectedStr = "{\"keywordCampaignId\":1,\"userId\":2,\"DSACampaignIds\":[4,2,5],\"name\":\"entity 1\",\"fromDate\":\"1/1/1\",\"toDate\":\"2/2/2\",";
-        expectedStr += "\"dailyBudget\":123.2,\"location\":\"CA\",\"domain\":\"google.com\",\"target\":\"google.com\",\"impressions\":432,\"clicks\":123,\"cost\":42.51}";
+        String expectedStr = "{\"keywordCampaignId\":\"1\",\"userId\":\"2\",\"DSACampaignIds\":\"4 2 5\",\"name\":\"entity 1\",";
+        expectedStr += "\"impressions\":432,\"clicks\":123,\"cost\":42.51}";
         assertEquals(new String(expectedStr), result);
     }
 }

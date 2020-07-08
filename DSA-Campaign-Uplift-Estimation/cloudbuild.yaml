@@ -1,5 +1,5 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: [ 'build', '-t', 'gcr.io/dsa-uplift-estimation-2020/dsa-uplift-estimation-image', '--build-arg=JAR_FILE=target/dsa-uplift-estimation-2020-1.war', '.' ]
+  args: [ 'build', 'test', '-t', 'gcr.io/dsa-uplift-estimation-2020/dsa-uplift-estimation-image', '--build-arg=JAR_FILE=target/dsa-uplift-estimation-2020-1.war', '.' ]
 images:
   - 'gcr.io/dsa-uplift-estimation-2020/dsa-uplift-estimation-image' 
