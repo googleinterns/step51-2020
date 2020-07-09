@@ -41,7 +41,7 @@ public class DSACampaignsServlet extends HttpServlet {
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, correspondingKeywordCampaignId)).addSort("DSACampaignId", SortDirection.ASCENDING);
-    	  PreparedQuery results = datastore.prepare(query);
+    	PreparedQuery results = datastore.prepare(query);
 
         ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
         for (Entity entity : results.asIterable()) {
@@ -58,9 +58,7 @@ public class DSACampaignsServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         DSACampaign DSACampaignObject = new DSACampaign(request.getParameter("DSACampaignId"), request.getParameter("userId"), request.getParameter("keywordCampaignId"),
             request.getParameter("name"), request.getParameter("campaignStatus"), request.getParameter("startDate"), request.getParameter("endDate"), 
-            Double.parseDouble(request.getParameter("manualCPC")), 
-            Double.parseDouble(request.getParameter("dailyBudget")), 
-            request.getParameter("locations"),
+            Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
             request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), Integer.parseInt(request.getParameter("impressions")),
             Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
 
