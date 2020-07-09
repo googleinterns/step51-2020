@@ -6,9 +6,10 @@
     <link rel="stylesheet" href="style-home.css"></link>
     <link rel="stylesheet" href="../Resources/NavBar/navbar_style.css"></link>
     <script src="../Resources/NavBar/navbar_script.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="script-home.js"></script>
   </head>
-  <body onload="getLogsStatus()">
+  <body onload="getKeywordCampaigns(); getLogsStatus();">
     <!-- Navbar -->
     <div id="mySidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -26,6 +27,33 @@
         <a href="#default" class="title">Estimate Overview</a>
       </div>
     </header>
+    <h3 id="center"> DSA Estimations </h3>
+
+    <div id="campaigns-container" class="center">
+        <div id="keyword-campaigns-container" class="select">
+            <h3>Select a keyword campaign</h3>
+            <select id="keyword-campaigns" onchange="getDSACampaigns();">
+                <option value=0>Select a keyword campaign</option>
+            </select>
+        </div>
+ 
+       <div id="DSA-campaigns-container">
+            <form id="DSA-campaigns">
+                <p>First select a keyword campaign.</p>
+            </form>
+        </div>
+    </div>
+
+    <div id="charts-display">
+        <div id="bar-chart2" class="bar-chart"></div>
+        <div id="table2" class="table"></div>
+
+        <div id="bar-chart1" class="bar-chart"></div>
+        <div id="table1" class="table"></div> 
+    </div>
+    <br><br>
     
+    <div id="pagination" class="pagination"></div>
+
   </body>
 </html>
