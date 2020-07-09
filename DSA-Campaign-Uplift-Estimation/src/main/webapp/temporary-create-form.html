@@ -7,25 +7,29 @@
   <body>
     <form method="POST" action="/DSA-campaigns">
         <p>DSA Campaign Id:</p>
-        <input type="number" name="DSACampaignId" value=0>
-        <p>User Id</p>
-        <input type="number" name="userId" value=0>       
+        <input type="number" name="DSACampaignId" value=0>     
         <p>Keyword Campaign Id</p>
         <input type="number" name="keywordCampaignId" value=0>   
         <p>Name</p> 
         <input type="text" name="name" value="">   
-        <p>From Date</p> 
-        <input type="text" name="fromDate" value="">  
-        <p>To Date</p> 
-        <input type="text" name="toDate" value=""> 
+        <p>Campaign Status</p> 
+        <input type="text" name="campaignStatus" value="">   
+        <p>Start Date</p> 
+        <input type="text" name="startDate" value="">  
+        <p>End Date</p> 
+        <input type="text" name="endDate" value=""> 
+        <p>Manual CPC</p>
+        <input type="number" step="0.01" name="manualCPC" value=0>
         <p>Daily Budget</p>
         <input type="number" step="0.01" name="dailyBudget" value=0>
-        <p>Location</p> 
-        <input type="text" name="location" value="">   
+        <p>Locations (comma-separated list, ex: "Houston, New York"</p> 
+        <input type="text" name="locations" value="">   
         <p>Domain</p> 
         <input type="text" name="domain" value="">   
-        <p>Target</p> 
-        <input type="text" name="target" value="">   
+        <p>Targets (comma-separated list, ex: "url1.com, url2.com"</p> 
+        <input type="text" name="targets" value="">   
+        <p>Ad Text</p> 
+        <input type="text" name="adText" value="">   
         <p>Impressions</p>
         <input type="number" name="impressions" value=0>
         <p>Clicks</p>

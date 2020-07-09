@@ -8,30 +8,16 @@
     <form method="POST" action="/keyword-campaigns">
         <p>Keyword Campaign Id:</p>
         <input type="number" name="keywordCampaignId" value=0>
-        <p>User Id</p>
-        <input type="number" name="userId" value=0> 
+        <p>DSA Campaign ID's (comma-separated list, ex: "1, 4, 5")</p> 
+        <input type="text" name="DSACampaignIds" value="">    
         <p>Name</p> 
         <input type="text" name="name" value="">    
-        <p>From Date</p> 
-        <input type="text" name="fromDate" value="">  
-        <p>To Date</p> 
-        <input type="text" name="toDate" value="">  
-        <p>Daily Budget</p> 
-        <input type="text" name="dailyBudget" value="">  
-        <p>Location</p> 
-        <input type="text" name="location" value="">  
-        <p>Domain</p> 
-        <input type="text" name="domain" value="">   
-        <p>Target</p> 
-        <input type="text" name="target" value="">     
         <p>Impressions</p>
         <input type="number" name="impressions" value=0>
         <p>Clicks</p>
         <input type="number" name="clicks" value=0>
         <p>Cost</p>
         <input type="number" step="0.01" name="cost" value=0>   
-        <p>DSA Campaign ID's (space separated list)</p> 
-        <input type="text" name="DSACampaignIds" value="1 4 7">    
         <br>
         <button>Submit</button>
     </form>
