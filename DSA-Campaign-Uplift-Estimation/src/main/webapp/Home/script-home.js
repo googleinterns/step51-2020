@@ -46,11 +46,12 @@ function getDSACampaigns() {
             for(var i = firstChart; i < secondChart; i++ ){
                 drawNewBarGraph(DSACampaigns[i], secondChart-i);
             }
-            if (firstChart == 0)
+            if (firstChart == 0){
                 makePagination((DSACampaigns.length / 2) + (DSACampaigns.length % 2), (Math.log(firstChart + 1)/Math.log(2)));
-            else
+            }
+            else{
                 makePagination((DSACampaigns.length / 2) + (DSACampaigns.length % 2), (Math.log(firstChart)/Math.log(2)));
-            
+            }            
         });
     }
 }
