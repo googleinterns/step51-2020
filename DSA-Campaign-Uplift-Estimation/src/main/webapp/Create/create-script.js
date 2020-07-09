@@ -137,7 +137,7 @@ function sendFormData() {
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.status === 0) {
       // once form is submitted, redirect to home page.
-      window.location.replace("../Home/home.html");
+      window.location.href("../Home/home.html");
     }
     else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
       alert("Could not submit form, please try again.")
@@ -165,40 +165,41 @@ function sendFormData() {
   keyval_pairs.push(encodeURIComponent("DSACampaignId") + "=" + encodeURIComponent("0"));
   keyval_pairs.push(encodeURIComponent("campaignStatus") + "=" + encodeURIComponent("pending"));
   keyval_pairs.push(encodeURIComponent("clicks") + "=" + encodeURIComponent("0"));
-  keyval_pairs.push(encodeURIComponent("costs") + "=" + encodeURIComponent("0"));
+  keyval_pairs.push(encodeURIComponent("cost") + "=" + encodeURIComponent("0"));
   keyval_pairs.push(encodeURIComponent("impressions") + "=" + encodeURIComponent("0"));
   
   let location = "";
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
-    // stop preset process if parameter is empty.
-    console.log(form.elements[i].nodeName);
-
     //Form contains buttons that are irrelevant to input - need to filter out only input
-    if (form.elements[i].nodeNode != "INPUT" || form.elements[i].nodeName != "SELECT") {
+    if (form.elements[i].nodeName === "BUTTON") {
       continue;
     }
+
+    // stop preset process if parameter is empty.
     if ((form.elements[i].value === null) || (form.elements[i].value === "")) {
-      console.log(form.elements[i].id);
+      console.log(form.elements[i].nodeName);
       alert("Not all the settings are filled out!");
       return;
     }
-    else if (form.elements[i].name.includes("region")) {
+    
+    //build location string (Region, Country)
+    if (form.elements[i].name.includes("region")) {
       location = form.elements[i].value + "," + location;
       keyval_pairs.push(encodeURIComponent("locations") + "=" + encodeURIComponent(location));
+      continue;
     }
     else if (form.elements[i].name.includes("country")) {
       location = form.elements[i].value;
     }
-    else {
-      var curr_element = form.elements[i];
-      keyval_pairs.push(encodeURIComponent(curr_element.name) + "=" + encodeURIComponent(curr_element.value));
-    }
+    
+    console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
+    keyval_pairs.push(encodeURIComponent(form.elements[i].name) + "=" + encodeURIComponent(form.elements[i].value));
   }
 
   // divide each parameter with '&'
   var queryString = keyval_pairs.join("&");
-  
+
   xmlhttp.open("POST", '/DSA-campaigns', true);
   xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
   console.log(queryString);
