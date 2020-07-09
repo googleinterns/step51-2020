@@ -168,7 +168,9 @@ function sendFormData() {
   keyval_pairs.push(encodeURIComponent("cost") + "=" + encodeURIComponent("0"));
   keyval_pairs.push(encodeURIComponent("impressions") + "=" + encodeURIComponent("0"));
   
+  //string to be built by for loop - represents location of the campaign
   let location = "";
+
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
     //Form contains buttons that are irrelevant to input - need to filter out only input
@@ -183,18 +185,18 @@ function sendFormData() {
       return;
     }
     
-    //build location string (Region, Country)
+    //build location string 'Region, Country' - country occurs in the form first.
     if (form.elements[i].name.includes("region")) {
       location = form.elements[i].value + "," + location;
       keyval_pairs.push(encodeURIComponent("locations") + "=" + encodeURIComponent(location));
-      continue;
     }
     else if (form.elements[i].name.includes("country")) {
       location = form.elements[i].value;
     }
-    
-    console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
-    keyval_pairs.push(encodeURIComponent(form.elements[i].name) + "=" + encodeURIComponent(form.elements[i].value));
+    else {  
+      console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
+      keyval_pairs.push(encodeURIComponent(form.elements[i].name) + "=" + encodeURIComponent(form.elements[i].value));
+    }
   }
 
   // divide each parameter with '&'
@@ -240,17 +242,40 @@ function addRegion() {
     tempCount++;
   }
   countryCount++;
-  var countryDiv = document.createElement('div');
-  countryDiv.className = 'form-group';
-  countryDiv.innerHTML = "<label class=\"control-label\">Country " + countryCount + "</label>" +
-                         "<select class=\"form-control gds-cr\" country-data-region-id=\"gds-cr-" + countryCount + "\" id=\"country" + countryCount + "\" data-language=\"en\" name=\"country" + countryCount + "\" required></select>";
-  var regionDiv = document.createElement('div');
-  regionDiv.className = 'form-group';
-  regionDiv.innerHTML = "<label for=\"gds-cr-" + countryCount + "\" class=\"control-label\">Region " + countryCount + "</label>" +
-                        "<select class=\"form-control\" id=\"gds-cr-" + countryCount + "\" name=\"region" + countryCount + "\" required></select>";
-  var locations = document.getElementById("locations");
-  locations.appendChild(countryDiv);
-  locations.appendChild(regionDiv);
+  var locationDiv = document.createElement('div');
+  locationDiv.className = 'form-group';
+  
+  var countryLabel = document.createElement('label');
+  countryLabel.className = 'control-label';
+  countryLabel.innerText = `Country ${countryCount}`;
+
+  var countrySelect = document.createElement('select');
+  countrySelect.className = 'form-control gds-cr';
+  countrySelect.setAttribute('country-data-region-id',`gds-cr-${countryCount}`);
+  countrySelect.setAttribute('id', `country${countryCount}`);
+  countrySelect.setAttribute('data-language', 'en');
+  countrySelect.setAttribute('name', `country${countryCount}`);
+  
+  locationDiv.appendChild(countryLabel);
+  locationDiv.appendChild(countrySelect);
+  locationDiv.appendChild(document.createElement('br'));
+
+
+  var regionLabel = document.createElement('label');
+  regionLabel.className = 'control-label';
+  regionLabel.innerText = `Region ${countryCount}`;
+  regionLabel.setAttribute('for', `gds-cr-${countryCount}`);
+
+  var regionSelect = document.createElement('select');
+  regionSelect.className = 'form-control';
+  regionSelect.setAttribute('id', `gds-cr-${countryCount}`);
+  regionSelect.setAttribute('name', `region${countryCount}`);
+  locationDiv.appendChild(regionLabel);
+  locationDiv.appendChild(regionSelect);
+  locationDiv.appendChild(document.createElement('br'));
+
+  var locations = document.getElementById("locations");  
+  locations.appendChild(locationDiv);
 }
 
 // TODO: validate DSA campaign inputs (e.g. campaign status must be "pending" or "complete")
