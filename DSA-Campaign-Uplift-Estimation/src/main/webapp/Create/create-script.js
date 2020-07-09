@@ -41,7 +41,9 @@ function verifyLoginStatus() {
   fetch('/userapi').then(response => response.json()).then(loginStatus => {
     userEmail = loginStatus.Email;
     userId = loginStatus.id;
-    console.log(loginStatus);
+    if (!loginStatus.isLoggedIn) {
+      window.location.replace("../index.html");
+    }
     return loginStatus.isLoggedIn;
   });
 
@@ -170,7 +172,14 @@ function sendFormData() {
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
     // stop preset process if parameter is empty.
+    console.log(form.elements[i].nodeName);
+
+    //Form contains buttons that are irrelevant to input - need to filter out only input
+    if (form.elements[i].nodeNode != "INPUT" || form.elements[i].nodeName != "SELECT") {
+      continue;
+    }
     if ((form.elements[i].value === null) || (form.elements[i].value === "")) {
+      console.log(form.elements[i].id);
       alert("Not all the settings are filled out!");
       return;
     }
@@ -215,15 +224,19 @@ function keywordSelection() {
   }
 }
 
-//TODO Fix 2nd dropdown menu not showing elements.
+//TODO Fix additional dropdown menu not showing elements.
 function addRegion() {
-  if (document.getElementById("country" + countryCount).value == "") {
-    alert("Specify country #" + countryCount + " first!");
-    return;
-  }
-  else if (document.getElementById("gds-cr-" + countryCount).value == "") {
-    alert("Specify region #" + countryCount + " first!");
-    return;
+  var tempCount = 1;
+  while (tempCount <= countryCount) {
+    if (document.getElementById("country" + tempCount).value == "") {
+      alert("Specify country " + tempCount + " first!");
+      return;
+    }
+    else if (document.getElementById("gds-cr-" + tempCount).value == "") {
+      alert("Specify region " + tempCount + " first!");
+      return;
+    }
+    tempCount++;
   }
   countryCount++;
   var countryDiv = document.createElement('div');
