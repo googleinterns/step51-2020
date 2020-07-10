@@ -57,7 +57,7 @@ public class PresetServlet extends HttpServlet {
     double manualCPC = Double.parseDouble(request.getParameter("manualCPC"));
 
     Entity presetEntity = new Entity("PresetData");      
-    presetEntity.setProperty("userEmail", userEmail);
+    presetEntity.setProperty("userId", userId);
     presetEntity.setProperty("presetId", presetId);
 
     // TODO: Fix preset data being added to datastore.
