@@ -73,8 +73,8 @@ public final class DSACampaignsServletTest {
         when(response.getWriter()).thenReturn(pw);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        DSACampaign DSACampaignObject = new DSACampaign("1", "2", "1", "entity 1", "pending", "1/1/1", "2/2/2", 23.1, 123.2, "California Texas", "google.com",
-            "test1.com test2.com", "sample ad text", 432, 123, 42.51);
+        DSACampaign DSACampaignObject = new DSACampaign("1", "2", "1", "entity 1", "pending", "1/1/1", "2/2/2", 23.1, 123.2, "California, Texas", "google.com",
+            "test1.com, test2.com", "sample ad text", 432, 123, 42.51);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
         assertEquals(1, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
@@ -82,39 +82,20 @@ public final class DSACampaignsServletTest {
         servlet.doGet(request, response);
         String result = sw.getBuffer().toString().trim();
         String expectedStr = "[{\"DSACampaignId\":\"1\",\"userId\":\"2\",\"keywordCampaignId\":\"1\",\"name\":\"entity 1\",\"campaignStatus\":\"pending\",\"startDate\":\"1/1/1\",\"endDate\":\"2/2/2\",";
-        expectedStr += "\"manualCPC\":23.1,\"dailyBudget\":123.2,\"locations\":\"California Texas\",\"domain\":\"google.com\",\"targets\":\"test1.com test2.com\",";
+        expectedStr += "\"manualCPC\":23.1,\"dailyBudget\":123.2,\"locations\":\"California, Texas\",\"domain\":\"google.com\",\"targets\":\"test1.com, test2.com\",";
         expectedStr += "\"adText\":\"sample ad text\",\"impressions\":432,\"clicks\":123,\"cost\":42.51}]";
         assertEquals(new String(expectedStr), result);
     }
 
     @Test
     public void DSACampaignsServletDoPost() throws IOException, ServletException {
-        when(request.getParameter("DSACampaignId")).thenReturn("3");
-        when(request.getParameter("userId")).thenReturn("2");
-        when(request.getParameter("keywordCampaignId")).thenReturn("1");
-        when(request.getParameter("name")).thenReturn("Test DSA Campaign");
-        when(request.getParameter("campaignStatus")).thenReturn("complete");
-        when(request.getParameter("startDate")).thenReturn("1/1/1");
-        when(request.getParameter("endDate")).thenReturn("2/2/2");
-        when(request.getParameter("manualCPC")).thenReturn("23.51");
-        when(request.getParameter("dailyBudget")).thenReturn("20.12");
-        when(request.getParameter("locations")).thenReturn("California Texas");
-        when(request.getParameter("domain")).thenReturn("google.com");
-        when(request.getParameter("targets")).thenReturn("test1.com test2.com");
-        when(request.getParameter("adText")).thenReturn("sample ad text");
-        when(request.getParameter("impressions")).thenReturn("12412");
-        when(request.getParameter("clicks")).thenReturn("535");
-        when(request.getParameter("cost")).thenReturn("2145.50");
-
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         assertEquals(0, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        when(response.getWriter()).thenReturn(pw);
+        DSACampaign DSACampaignObject = new DSACampaign("3", "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
+            "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
+        ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
 
-        DSACampaignsServlet servlet = new DSACampaignsServlet();
-        servlet.doPost(request, response);
 
         assertEquals(1, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
         
@@ -129,9 +110,9 @@ public final class DSACampaignsServletTest {
         assertEquals("2/2/2", (String) entity.getProperty("endDate"));
         assertEquals(23.51, (double) entity.getProperty("manualCPC"), .01);
         assertEquals(20.12, (double) entity.getProperty("dailyBudget"), .01);
-        assertEquals("California Texas", (String) entity.getProperty("locations"));
+        assertEquals("California, Texas", (String) entity.getProperty("locations"));
         assertEquals("google.com", (String) entity.getProperty("domain"));
-        assertEquals("test1.com test2.com", (String) entity.getProperty("targets"));
+        assertEquals("test1.com, test2.com", (String) entity.getProperty("targets"));
         assertEquals("sample ad text", (String) entity.getProperty("adText"));
         assertEquals(12412, (int) ((long) entity.getProperty("impressions")));
         assertEquals(535, (int) ((long) entity.getProperty("clicks")));

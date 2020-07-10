@@ -14,6 +14,8 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.classes.KeywordCampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -37,15 +39,22 @@ public class KeywordCampaignsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("keywordCampaign").addSort("keywordCampaignId", SortDirection.ASCENDING);
-    	PreparedQuery results = datastore.prepare(query);
+        UserService userService = UserServiceFactory.getUserService();
 
         ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
-        for (Entity entity : results.asIterable()) {
-            keywordCampaigns.add(createKeywordCampaignFromEntity(entity));
-        }
+        if (userService.isUserLoggedIn()) {
+            String userId = userService.getCurrentUser().getUserId();
 
+            // get the keyword campaigns associated with the logged in user from datastore
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId)).addSort("keywordCampaignId", SortDirection.ASCENDING);
+            PreparedQuery results = datastore.prepare(query);
+
+            for (Entity entity : results.asIterable()) {
+                keywordCampaigns.add(createKeywordCampaignFromEntity(entity));
+            }
+        }
+        
         Gson gson = new Gson();
         String json = gson.toJson(keywordCampaigns);
         response.setContentType("application/json;");
@@ -54,12 +63,20 @@ public class KeywordCampaignsServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
-    	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        KeywordCampaign keywordCampaignObject = new KeywordCampaign(request.getParameter("keywordCampaignId"), request.getParameter("userId"), request.getParameter("DSACampaignIds"), 
-            request.getParameter("name"),Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
-        datastore.put(createEntityFromKeywordCampaign(keywordCampaignObject));
-            
-        response.sendRedirect("/Compare/compare.html");
+        UserService userService = UserServiceFactory.getUserService();
+
+        if (userService.isUserLoggedIn()) {
+            String userId = userService.getCurrentUser().getUserId();
+
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            KeywordCampaign keywordCampaignObject = new KeywordCampaign(request.getParameter("keywordCampaignId"), userId, request.getParameter("DSACampaignIds"), 
+                request.getParameter("name"),Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
+            datastore.put(createEntityFromKeywordCampaign(keywordCampaignObject));
+                
+            response.sendRedirect("/Compare/compare.html");
+        } else {
+            response.sendRedirect("/index.html");
+        }
     }
 
     public static KeywordCampaign createKeywordCampaignFromEntity(Entity entity) {
