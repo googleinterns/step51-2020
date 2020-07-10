@@ -47,22 +47,22 @@ public class PresetServlet extends HttpServlet {
     String userEmail = request.getParameter("userEmail");
     String userId = request.getParameter("userId");
     String presetId = request.getParameter("presetId");
-    String simName = request.getParameter("name");
-    String fromDate = request.getParameter("startDate");
-    String toDate = request.getParameter("endDate");
+    String name = request.getParameter("name");
+    String startDate = request.getParameter("startDate");
+    String endDate = request.getParameter("endDate");
     double dailyBudget = Double.parseDouble(request.getParameter("dailyBudget"));
-    String location = request.getParameter("locations");
+    String locations = request.getParameter("locations");
     String domain = request.getParameter("domain");
-    String target = request.getParameter("targets");
+    String targets = request.getParameter("targets");
     String adText = request.getParameter("adText");
-    double cpc = Double.parseDouble(request.getParameter("manualCPC"));
+    double manualCPC = Double.parseDouble(request.getParameter("manualCPC"));
 
     Entity presetEntity = new Entity("PresetData");      
     presetEntity.setProperty("userEmail", userEmail);
     presetEntity.setProperty("presetId", presetId);
 
     // TODO: Fix preset data
-    DSACampaign dsaCampaign = new DSACampaign(0, userId, 0, name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, domain, targets, adText, 0, 0, 0);
+    DSACampaign dsaCampaign = new DSACampaign("0", userId, "0", name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, domain, targets, adText, 0, 0, 0);
     Gson gson = new Gson();
     String dsaCampaignData = gson.toJson(dsaCampaign);
     presetEntity.setProperty("presetData", dsaCampaignData);
