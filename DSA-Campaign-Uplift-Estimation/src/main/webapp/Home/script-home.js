@@ -138,7 +138,7 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
 
     var options = {
         chart: {
-            title: 'DSA Campaign Metrics',
+            title: DSACampaign.name + ' ' + 'DSA Campaign Metrics',
             subtitle: 'Impressions, Clicks, and Cost',
         },
         bars: 'horizontal' // Required for Material Bar Charts.
