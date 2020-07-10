@@ -32,7 +32,8 @@ function getKeywordCampaigns() {
 
 // Checks if user has selected a keyword campaign. If the user has selected a keyword
 // then the for loop draws 2 graphs and creates pagination to explore other charts.
-function getDSACampaigns() {
+function drawDsaCampaignCharts() {
+    const numChartsPerPage = 2;
     const dsaCampaignsList = document.getElementById('DSA-campaigns');
     dsaCampaignsList.innerHTML = '<p>First select a keyword campaign.</p>';
     var keywordCampaignId = document.getElementById("keyword-campaigns").value;
@@ -42,25 +43,25 @@ function getDSACampaigns() {
 
         fetch('/DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
 
-            var isNumberOfChartsOdd = (DSACampaigns.length % 2);
+            var isNumberOfChartsOdd = (DSACampaigns.length % numChartsPerPage);
 
             // chartsToShow checks what the active page and give a starting
             // point to display the next two charts.
-            var chartsToShow = currentPage * 2;
+            var chartsToShow = currentPage * numChartsPerPage;
 
             // chartCounter keeps track of which number each chart displayed is
             // (useful for drawing the graph) and is used as a flag to check if 
             // two charts have been processed.
             var chartCounter = 1;
 
-            while (chartCounter <= 2) {
+            while (chartCounter <= numChartsPerPage) {
                 drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
                 hideDiv(isNumberOfChartsOdd, DSACampaigns.length, chartsToShow);
                 chartsToShow++;
                 chartCounter++;
             }
 
-            makePagination((DSACampaigns.length / 2) + (DSACampaigns.length % 2), (currentPage));
+            makePagination((DSACampaigns.length / numChartsPerPage) + (DSACampaigns.length % numChartsPerPage), (currentPage));
                         
         });
     }
