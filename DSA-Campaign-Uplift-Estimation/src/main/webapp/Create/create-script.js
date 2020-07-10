@@ -213,8 +213,8 @@ function sendFormData() {
  * does not show. If not 0 (selected element), then form shows.
  */
 function keywordSelection() {
-  var select_element_value = document.getElementById("keyword-campaigns").value;
-  if (select_element_value == 0) {
+  var selectElementValue = document.getElementById("keyword-campaigns").value;
+  if (selectElementValue == 0) {
     document.getElementById("campaign-form").style.display = "none";
     document.getElementById("buttons").style.display = "none";
     keywordCampaignId = null;
@@ -222,7 +222,7 @@ function keywordSelection() {
   else {
     document.getElementById("campaign-form").style.display = "block";
     document.getElementById("buttons").style.display = "inline";
-    keywordCampaignId = select_element_value;
+    keywordCampaignId = selectElementValue;
   }
 }
 
