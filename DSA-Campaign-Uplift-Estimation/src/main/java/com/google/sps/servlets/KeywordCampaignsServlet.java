@@ -14,6 +14,8 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.classes.KeywordCampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -37,29 +39,22 @@ public class KeywordCampaignsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("keywordCampaign").addSort("keywordCampaignId", SortDirection.ASCENDING);
-    	PreparedQuery results = datastore.prepare(query);
+        UserService userService = UserServiceFactory.getUserService();
 
         ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
-        for (Entity entity : results.asIterable()) {
-            int keywordCampaignId = (int) ((long) entity.getProperty("keywordCampaignId"));
-            int userId = (int) ((long) entity.getProperty("userId"));
-            String name = (String) entity.getProperty("name");
-            String fromDate = (String) entity.getProperty("fromDate");
-            String toDate = (String) entity.getProperty("toDate");
-            double dailyBudget = (double) entity.getProperty("dailyBudget");
-            String location = (String) entity.getProperty("location");
-            String domain = (String) entity.getProperty("domain");
-            String target = (String) entity.getProperty("target");
-            int impressions = (int) ((long) entity.getProperty("impressions"));
-            int clicks = (int) ((long) entity.getProperty("clicks"));
-            double cost = (double) entity.getProperty("cost");
-            ArrayList<Integer> DSACampaignIds = (ArrayList<Integer>) entity.getProperty("DSACampaignIds");
-            KeywordCampaign keywordCampaignObject = new KeywordCampaign(keywordCampaignId, userId, name, fromDate, toDate, dailyBudget, location, domain, target, impressions, clicks, cost, DSACampaignIds);
-            keywordCampaigns.add(keywordCampaignObject);
-        }
+        if (userService.isUserLoggedIn()) {
+            String userId = userService.getCurrentUser().getUserId();
 
+            // get the keyword campaigns associated with the logged in user from datastore
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId)).addSort("keywordCampaignId", SortDirection.ASCENDING);
+            PreparedQuery results = datastore.prepare(query);
+
+            for (Entity entity : results.asIterable()) {
+                keywordCampaigns.add(createKeywordCampaignFromEntity(entity));
+            }
+        }
+        
         Gson gson = new Gson();
         String json = gson.toJson(keywordCampaigns);
         response.setContentType("application/json;");
@@ -67,45 +62,48 @@ public class KeywordCampaignsServlet extends HttpServlet {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int keywordCampaignId = Integer.parseInt(request.getParameter("keywordCampaignId"));
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        String name = request.getParameter("name");
-        String fromDate = request.getParameter("fromDate");
-        String toDate = request.getParameter("toDate");
-        double dailyBudget = Double.parseDouble(request.getParameter("dailyBudget"));
-        String location = request.getParameter("location");
-        String domain = request.getParameter("domain"); 
-        String target = request.getParameter("target");
-        int impressions = Integer.parseInt(request.getParameter("impressions"));
-        int clicks = Integer.parseInt(request.getParameter("clicks"));
-        double cost = Double.parseDouble(request.getParameter("cost"));
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
+        UserService userService = UserServiceFactory.getUserService();
 
-        String DSACampaignIdsStr = request.getParameter("DSACampaignIds");
-        String[] DSACampaignIdsArray = DSACampaignIdsStr.split(" ");
-        ArrayList<Integer> DSACampaignIds = new ArrayList<Integer>();
-        for (String id : DSACampaignIdsArray) {
-            DSACampaignIds.add(Integer.parseInt(id));
+        if (userService.isUserLoggedIn()) {
+            String userId = userService.getCurrentUser().getUserId();
+
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            KeywordCampaign keywordCampaignObject = new KeywordCampaign(request.getParameter("keywordCampaignId"), userId, request.getParameter("DSACampaignIds"), 
+                request.getParameter("name"),Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
+            datastore.put(createEntityFromKeywordCampaign(keywordCampaignObject));
+                
+            response.sendRedirect("/Compare/compare.html");
+        } else {
+            response.sendRedirect("/index.html");
         }
+    }
 
+    public static KeywordCampaign createKeywordCampaignFromEntity(Entity entity) {
+        String keywordCampaignId = (String) entity.getProperty("keywordCampaignId");
+        String userId = (String) entity.getProperty("userId");
+        String DSACampaignIds = (String) entity.getProperty("DSACampaignIds");
+        String name = (String) entity.getProperty("name");
+
+        int impressions = (int) ((long) entity.getProperty("impressions"));
+        int clicks = (int) ((long) entity.getProperty("clicks"));
+        double cost = (double) entity.getProperty("cost");
+
+        return new KeywordCampaign(keywordCampaignId, userId, DSACampaignIds, name, impressions, clicks, cost);
+    }
+
+    public static Entity createEntityFromKeywordCampaign(KeywordCampaign KeywordCampaign) {
         Entity keywordCampaignEntity = new Entity("keywordCampaign");
-        keywordCampaignEntity.setProperty("keywordCampaignId", keywordCampaignId);
-        keywordCampaignEntity.setProperty("userId", userId);
-        keywordCampaignEntity.setProperty("name", name);
-        keywordCampaignEntity.setProperty("fromDate", fromDate);
-        keywordCampaignEntity.setProperty("toDate", toDate);
-        keywordCampaignEntity.setProperty("dailyBudget", dailyBudget);
-        keywordCampaignEntity.setProperty("location", location);
-        keywordCampaignEntity.setProperty("domain", domain);
-        keywordCampaignEntity.setProperty("target", target);
-        keywordCampaignEntity.setProperty("impressions", impressions);
-        keywordCampaignEntity.setProperty("clicks", clicks);
-        keywordCampaignEntity.setProperty("cost", cost);
-        keywordCampaignEntity.setProperty("DSACampaignIds", DSACampaignIds);
-	
-    	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(keywordCampaignEntity);
-            
-        response.sendRedirect("/Compare/compare.html");
+
+        keywordCampaignEntity.setProperty("keywordCampaignId", KeywordCampaign.keywordCampaignId);
+        keywordCampaignEntity.setProperty("userId", KeywordCampaign.userId);
+        keywordCampaignEntity.setProperty("DSACampaignIds", KeywordCampaign.DSACampaignIds);
+        keywordCampaignEntity.setProperty("name", KeywordCampaign.name);
+       
+        keywordCampaignEntity.setProperty("impressions", KeywordCampaign.impressions);
+        keywordCampaignEntity.setProperty("clicks", KeywordCampaign.clicks);
+        keywordCampaignEntity.setProperty("cost", KeywordCampaign.cost);
+
+        return keywordCampaignEntity;
     }
 }
