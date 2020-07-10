@@ -1,12 +1,3 @@
-//boolean indicating if the creation phase has started.
-let creating = false;
-
-// variable to keep track of DSA creation phase.
-var phase_num = 0;
-
-//POST query string to be built by bot.
-let query_string = '';
-
 /**
  * Responds to a MESSAGE event in Hangouts Chat.
  *
@@ -24,30 +15,6 @@ function onMessage(event) {
   phase_num++;
   
   return { "text": message };
-}
-
-//map containing phases for DSA campaign creation.
-let phase_map = new Map([
-    [0, 'campaign_type'],
-    [1, 'sim_name'],
-    [2, 'start_date'],
-    [3, 'end_date'],
-    [3, 'budget'],
-    [4, 'country'],
-    [5, 'region'],
-    [6, 'domain'],
-    [7, 'target_page'],
-    [8, 'ad_text'],
-    [9, 'cpc']
-]);
-
-/**
- * Starts the configuration process for the DSA Campaign.
- *
- * @param {Object} event the event object from the Hangouts Chat
- */
-function startConfiguration(message) {
-   
 }
 
 /**
