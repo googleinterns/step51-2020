@@ -60,7 +60,6 @@ public class PresetServlet extends HttpServlet {
     presetEntity.setProperty("userId", userId);
     presetEntity.setProperty("presetId", presetId);
 
-    // TODO: Fix preset data being added to datastore.
     DSACampaign dsaCampaign = new DSACampaign("0", userId, "0", name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, domain, targets, adText, 0, 0, 0);
     Gson gson = new Gson();
     String dsaCampaignData = gson.toJson(dsaCampaign);
