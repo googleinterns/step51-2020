@@ -178,7 +178,7 @@ function sendFormData() {
       continue;
     }
 
-    // stop preset process if parameter is empty.
+    // stop submission process if parameter is empty.
     if ((form.elements[i].value === null) || (form.elements[i].value === "")) {
       console.log(form.elements[i].nodeName);
       alert("Not all the settings are filled out!");
@@ -199,7 +199,7 @@ function sendFormData() {
     }
   }
 
-  // divide each parameter with '&'
+  // separate each entity in keyval_pairs with '&' for query string
   var queryString = keyval_pairs.join("&");
 
   xmlhttp.open("POST", '/DSA-campaigns', true);
@@ -230,6 +230,7 @@ function keywordSelection() {
 //TODO Fix additional dropdown menu not showing elements.
 function addRegion() {
   var tempCount = 1;
+  //verify that all existing locations are specified before creating new input
   while (tempCount <= countryCount) {
     if (document.getElementById("country" + tempCount).value == "") {
       alert("Specify country " + tempCount + " first!");
@@ -241,7 +242,10 @@ function addRegion() {
     }
     tempCount++;
   }
+
   countryCount++;
+
+  //create the location input HTML elements
   var locationDiv = document.createElement('div');
   locationDiv.className = 'form-group';
   
