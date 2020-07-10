@@ -42,7 +42,6 @@ public class PresetServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    /*
     // parse each parameter from the save preset form.
     String userEmail = request.getParameter("userEmail");
     String userId = request.getParameter("userId");
@@ -51,11 +50,10 @@ public class PresetServlet extends HttpServlet {
     String fromDate = request.getParameter("start_date");
     String toDate = request.getParameter("end_date");
     double dailyBudget = Double.parseDouble(request.getParameter("daily_budget"));
-    String location = request.getParameter("location");
-    String language = request.getParameter("language");
+    String location = request.getParameter("locations");
     String domain = request.getParameter("domain");
-    String target = request.getParameter("target_page");
-    String adText = request.getParameter("ad_text");
+    String target = request.getParameter("targets");
+    String adText = request.getParameter("adText");
     double cpc = Double.parseDouble(request.getParameter("cpc"));
 
     Entity presetEntity = new Entity("PresetData");      
@@ -67,6 +65,5 @@ public class PresetServlet extends HttpServlet {
     presetEntity.setProperty("presetData", dsaCampaignData);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(presetEntity);
-    */
   }
 }
