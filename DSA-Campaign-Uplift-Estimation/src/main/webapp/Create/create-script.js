@@ -67,7 +67,7 @@ function submitPresetData() {
   var presetName;
   while (true) {
     presetName = prompt("What would you like to call the preset?", "");
-    
+
     // user clicked cancel
     if (presetName == null) {
       return;
@@ -93,6 +93,9 @@ function submitPresetData() {
   
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
+    if (form.elements[i].nodeName === 'BUTTON') {
+      continue;
+    }
     // stop preset process if parameter is empty.
     if ((form.elements[i].value === null) || (form.elements[i].value === "")) {
       alert("Not all the settings are filled out!");
