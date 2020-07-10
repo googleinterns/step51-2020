@@ -41,6 +41,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
 
+        ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
         if (userService.isUserLoggedIn()) {
             String userId = userService.getCurrentUser().getUserId();
 
@@ -49,18 +50,15 @@ public class KeywordCampaignsServlet extends HttpServlet {
             Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId)).addSort("keywordCampaignId", SortDirection.ASCENDING);
             PreparedQuery results = datastore.prepare(query);
 
-            ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
             for (Entity entity : results.asIterable()) {
                 keywordCampaigns.add(createKeywordCampaignFromEntity(entity));
             }
-
-            Gson gson = new Gson();
-            String json = gson.toJson(keywordCampaigns);
-            response.setContentType("application/json;");
-            response.getWriter().println(json);
-        } else {
-            response.sendRedirect("/index.html");
         }
+        
+        Gson gson = new Gson();
+        String json = gson.toJson(keywordCampaigns);
+        response.setContentType("application/json;");
+        response.getWriter().println(json);
     }
 
     @Override
