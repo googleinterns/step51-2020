@@ -42,24 +42,27 @@ public class PresetServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    
     // parse each parameter from the save preset form.
     String userEmail = request.getParameter("userEmail");
     String userId = request.getParameter("userId");
     String presetId = request.getParameter("presetId");
-    String simName = request.getParameter("sim_name");
-    String fromDate = request.getParameter("start_date");
-    String toDate = request.getParameter("end_date");
-    double dailyBudget = Double.parseDouble(request.getParameter("daily_budget"));
+    String simName = request.getParameter("name");
+    String fromDate = request.getParameter("startDate");
+    String toDate = request.getParameter("endDate");
+    double dailyBudget = Double.parseDouble(request.getParameter("dailyBudget"));
     String location = request.getParameter("locations");
     String domain = request.getParameter("domain");
     String target = request.getParameter("targets");
     String adText = request.getParameter("adText");
-    double cpc = Double.parseDouble(request.getParameter("cpc"));
+    double cpc = Double.parseDouble(request.getParameter("manualCPC"));
 
     Entity presetEntity = new Entity("PresetData");      
     presetEntity.setProperty("userEmail", userEmail);
     presetEntity.setProperty("presetId", presetId);
-    DSACampaign dsaCampaign = new DSACampaign(0, userId, 0, simName, fromDate, toDate, dailyBudget, location, domain, target);
+
+    // TODO: Fix preset data
+    DSACampaign dsaCampaign = new DSACampaign(0, userId, 0, name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, domain, targets, adText, 0, 0, 0);
     Gson gson = new Gson();
     String dsaCampaignData = gson.toJson(dsaCampaign);
     presetEntity.setProperty("presetData", dsaCampaignData);
