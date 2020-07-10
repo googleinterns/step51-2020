@@ -84,12 +84,12 @@ function submitPresetData() {
   }
 
   // dynamically build a URI string with form elements
-  var keyval_pairs = [];
+  var keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
-  keyval_pairs.push(encodeURIComponent("userEmail") + "=" + encodeURIComponent(userEmail));
-  keyval_pairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
-  keyval_pairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));
+  keyvalPairs.push(encodeURIComponent("userEmail") + "=" + encodeURIComponent(userEmail));
+  keyvalPairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
+  keyvalPairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));
   
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
@@ -101,12 +101,12 @@ function submitPresetData() {
       alert("Not all the settings are filled out!");
       return;
     }
-    var curr_element = form.elements[i];
-    keyval_pairs.push(encodeURIComponent(curr_element.name) + "=" + encodeURIComponent(curr_element.value));
+    var currElement = form.elements[i];
+    keyvalPairs.push(encodeURIComponent(currElement.name) + "=" + encodeURIComponent(currElement.value));
   }
 
   // divide each parameter with '&'
-  var queryString = keyval_pairs.join("&");
+  var queryString = keyvalPairs.join("&");
   
   xmlhttp.open("POST", '/preset', true);
   xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -144,28 +144,28 @@ function sendFormData() {
   }
 
   // dynamically build a URI string with form elements
-  var keyval_pairs = [];
+  var keyvalPairs = [];
 
   // verify that user is logged in before submission.
   if (userId == 0) {
     alert("Login before submitting!");
     return;
   }
-  keyval_pairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
+  keyvalPairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
 
   // verify that keywordCampaignId is set.
   if (keywordCampaignId == null) {
     alert("Select a keyword campaign before submitting!");
     return;
   }
-  keyval_pairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
+  keyvalPairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
   
   // default values for variables (not applicable to creation phase) sent to servlet
-  keyval_pairs.push(encodeURIComponent("DSACampaignId") + "=" + encodeURIComponent("0"));
-  keyval_pairs.push(encodeURIComponent("campaignStatus") + "=" + encodeURIComponent("pending"));
-  keyval_pairs.push(encodeURIComponent("clicks") + "=" + encodeURIComponent("0"));
-  keyval_pairs.push(encodeURIComponent("cost") + "=" + encodeURIComponent("0"));
-  keyval_pairs.push(encodeURIComponent("impressions") + "=" + encodeURIComponent("0"));
+  keyvalPairs.push(encodeURIComponent("DSACampaignId") + "=" + encodeURIComponent("0"));
+  keyvalPairs.push(encodeURIComponent("campaignStatus") + "=" + encodeURIComponent("pending"));
+  keyvalPairs.push(encodeURIComponent("clicks") + "=" + encodeURIComponent("0"));
+  keyvalPairs.push(encodeURIComponent("cost") + "=" + encodeURIComponent("0"));
+  keyvalPairs.push(encodeURIComponent("impressions") + "=" + encodeURIComponent("0"));
   
   // represents campaign location - built during runtime
   let location = "";
@@ -187,19 +187,19 @@ function sendFormData() {
     // build location string 'Region, Country' - country occurs in the form first.
     if (form.elements[i].name.includes("region")) {
       location = form.elements[i].value + "," + location;
-      keyval_pairs.push(encodeURIComponent("locations") + "=" + encodeURIComponent(location));
+      keyvalPairs.push(encodeURIComponent("locations") + "=" + encodeURIComponent(location));
     }
     else if (form.elements[i].name.includes("country")) {
       location = form.elements[i].value;
     }
     else {  
       console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
-      keyval_pairs.push(encodeURIComponent(form.elements[i].name) + "=" + encodeURIComponent(form.elements[i].value));
+      keyvalPairs.push(encodeURIComponent(form.elements[i].name) + "=" + encodeURIComponent(form.elements[i].value));
     }
   }
 
-  // separate each entity in keyval_pairs with '&' for query string
-  var queryString = keyval_pairs.join("&");
+  // separate each entity in keyvalPairs with '&' for query string
+  var queryString = keyvalPairs.join("&");
 
   xmlhttp.open("POST", '/DSA-campaigns', true);
   xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -213,8 +213,8 @@ function sendFormData() {
  * does not show. If not 0 (selected element), then form shows.
  */
 function keywordSelection() {
-  var select_element_value = document.getElementById("keyword-campaigns").value;
-  if (select_element_value == 0) {
+  var selectElementValue = document.getElementById("keyword-campaigns").value;
+  if (selectElementValue == 0) {
     document.getElementById("campaign-form").style.display = "none";
     document.getElementById("buttons").style.display = "none";
     keywordCampaignId = null;
@@ -222,7 +222,7 @@ function keywordSelection() {
   else {
     document.getElementById("campaign-form").style.display = "block";
     document.getElementById("buttons").style.display = "inline";
-    keywordCampaignId = select_element_value;
+    keywordCampaignId = selectElementValue;
   }
 }
 

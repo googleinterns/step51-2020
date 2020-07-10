@@ -44,7 +44,6 @@ public class PresetServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     
     // parse each parameter from the save preset form.
-    String userEmail = request.getParameter("userEmail");
     String userId = request.getParameter("userId");
     String presetId = request.getParameter("presetId");
     String name = request.getParameter("name");
