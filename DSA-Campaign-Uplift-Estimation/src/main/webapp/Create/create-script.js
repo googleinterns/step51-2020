@@ -13,18 +13,14 @@
 // limitations under the License.
 
 /* global variables used throughout creation phase. */
-
-// specifies user email
 let userEmail = null;
 
-//specifies user ID
 let userId = 0;
 
-//specifies selected keyword campaign ID.
 let keywordCampaignId = null;
 
-// number of locations being inputted
-let countryCount = 1;
+// number of locations
+let locationCount = 1;
 
 /* 
  * Submission form only requires 2 decimals, this function enforces that rule 
@@ -67,7 +63,7 @@ function submitPresetData() {
     }
   }
 
-  // error handling for the preset nickname prompt. JS prompt that sticks until valid name is inputted.
+  // error handling for the preset nickname prompt. JS prompt sticks until valid name input.
   var presetName;
   while (true) {
     presetName = prompt("What would you like to call the preset?", "");
@@ -79,7 +75,7 @@ function submitPresetData() {
 
     // start error handling.
     if (presetName != "") {
-      //TODO verify that the preset nickname does not already exist.
+      // TODO: verify that the preset nickname does not already exist.
       break;
     }
     else {
@@ -121,7 +117,7 @@ function submitPresetData() {
  * with all updated links.
  */
 function updatePresetData() {
-  //TODO
+  // TODO: implement
 }
 
 /**
@@ -154,26 +150,26 @@ function sendFormData() {
   }
   keyval_pairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
 
-  //verify that keywordCampaignId is set.
+  // verify that keywordCampaignId is set.
   if (keywordCampaignId == null) {
     alert("Select a keyword campaign before submitting!");
     return;
   }
   keyval_pairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
   
-  //default values for variables (not applicable to creation phase) sent to servlet
+  // default values for variables (not applicable to creation phase) sent to servlet
   keyval_pairs.push(encodeURIComponent("DSACampaignId") + "=" + encodeURIComponent("0"));
   keyval_pairs.push(encodeURIComponent("campaignStatus") + "=" + encodeURIComponent("pending"));
   keyval_pairs.push(encodeURIComponent("clicks") + "=" + encodeURIComponent("0"));
   keyval_pairs.push(encodeURIComponent("cost") + "=" + encodeURIComponent("0"));
   keyval_pairs.push(encodeURIComponent("impressions") + "=" + encodeURIComponent("0"));
   
-  //string to be built by for loop - represents location of the campaign
+  // represents campaign location - built during runtime
   let location = "";
 
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
-    //Form contains buttons that are irrelevant to input - need to filter out only input
+    // Form contains buttons that are irrelevant to input - need to filter out only input
     if (form.elements[i].nodeName === "BUTTON") {
       continue;
     }
@@ -185,7 +181,7 @@ function sendFormData() {
       return;
     }
     
-    //build location string 'Region, Country' - country occurs in the form first.
+    // build location string 'Region, Country' - country occurs in the form first.
     if (form.elements[i].name.includes("region")) {
       location = form.elements[i].value + "," + location;
       keyval_pairs.push(encodeURIComponent("locations") + "=" + encodeURIComponent(location));
@@ -227,11 +223,11 @@ function keywordSelection() {
   }
 }
 
-//TODO Fix additional dropdown menu not showing elements.
+// TODO: Fix additional dropdown menu not showing elements.
 function addRegion() {
   var tempCount = 1;
-  //verify that all existing locations are specified before creating new input
-  while (tempCount <= countryCount) {
+  // verify that all existing locations specified before creating new input
+  while (tempCount <= locationCount) {
     if (document.getElementById("country" + tempCount).value == "") {
       alert("Specify country " + tempCount + " first!");
       return;
@@ -243,22 +239,22 @@ function addRegion() {
     tempCount++;
   }
 
-  countryCount++;
+  locationCount++;
 
-  //create the location input HTML elements
+  // create the location input HTML elements
   var locationDiv = document.createElement('div');
   locationDiv.className = 'form-group';
   
   var countryLabel = document.createElement('label');
   countryLabel.className = 'control-label';
-  countryLabel.innerText = `Country ${countryCount}`;
+  countryLabel.innerText = `Country ${locationCount}`;
 
   var countrySelect = document.createElement('select');
   countrySelect.className = 'form-control gds-cr';
-  countrySelect.setAttribute('country-data-region-id',`gds-cr-${countryCount}`);
-  countrySelect.setAttribute('id', `country${countryCount}`);
+  countrySelect.setAttribute('country-data-region-id',`gds-cr-${locationCount}`);
+  countrySelect.setAttribute('id', `country${locationCount}`);
   countrySelect.setAttribute('data-language', 'en');
-  countrySelect.setAttribute('name', `country${countryCount}`);
+  countrySelect.setAttribute('name', `country${locationCount}`);
   
   locationDiv.appendChild(countryLabel);
   locationDiv.appendChild(countrySelect);
@@ -267,13 +263,13 @@ function addRegion() {
 
   var regionLabel = document.createElement('label');
   regionLabel.className = 'control-label';
-  regionLabel.innerText = `Region ${countryCount}`;
-  regionLabel.setAttribute('for', `gds-cr-${countryCount}`);
+  regionLabel.innerText = `Region ${locationCount}`;
+  regionLabel.setAttribute('for', `gds-cr-${locationCount}`);
 
   var regionSelect = document.createElement('select');
   regionSelect.className = 'form-control';
-  regionSelect.setAttribute('id', `gds-cr-${countryCount}`);
-  regionSelect.setAttribute('name', `region${countryCount}`);
+  regionSelect.setAttribute('id', `gds-cr-${locationCount}`);
+  regionSelect.setAttribute('name', `region${locationCount}`);
   locationDiv.appendChild(regionLabel);
   locationDiv.appendChild(regionSelect);
   locationDiv.appendChild(document.createElement('br'));
