@@ -15,10 +15,13 @@
 package com.google.sps.servlets;
 
 import com.google.sps.classes.DSACampaign;
+import java.util.ArrayList;
+import com.google.sps.classes.CampaignPreset;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.*;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import org.junit.Assert;
@@ -70,9 +73,67 @@ public final class PresetServletTest {
     helper.tearDown();
   }
 
+  /**
+   * presetServletDoGetTest tests the doGet function of PresetServlet.
+   * Due to the security restrictions of cloud shell, this function
+   * is not able to directly test the doGet function, however, it mimicks
+   * and tests the logic that is used in doGet. A successful test is determined
+   * comparing the number of objects being parsed by doGet. In this context,
+   * one object is added to datastore, thus doGet must contain one object.
+   */
   @Test
   public void presetServletDoGetTest() throws IOException, ServletException {
+    request = mock(HttpServletRequest.class);
+    
+    response = mock(HttpServletResponse.class);
 
+    // parameters used to initialize HttpServletRequest parameters
+    when(request.getParameter("DSACampaignId")).thenReturn("0");
+    when(request.getParameter("campaignStatus")).thenReturn("pending");
+    when(request.getParameter("userId")).thenReturn("0");
+    when(request.getParameter("keywordCampaignId")).thenReturn("0");
+    when(request.getParameter("presetId")).thenReturn("0");
+    when(request.getParameter("name")).thenReturn("Test Name");
+    when(request.getParameter("startDate")).thenReturn("2001-01-01");
+    when(request.getParameter("endDate")).thenReturn("2001-01-03");
+    when(request.getParameter("manualCPC")).thenReturn("0.01");
+    when(request.getParameter("dailyBudget")).thenReturn("34.00");
+    when(request.getParameter("locations")).thenReturn("California, United States of America");
+    when(request.getParameter("domain")).thenReturn("http://google.com");
+    when(request.getParameter("targets")).thenReturn("http://google.com/page1");
+    when(request.getParameter("adText")).thenReturn("Some text");
+    when(request.getParameter("cost")).thenReturn("0");
+    when(request.getParameter("impressions")).thenReturn("0");
+    when(request.getParameter("clicks")).thenReturn("0");  
+
+    // verify that datastore is empty
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    assertEquals(0, datastore.prepare(new Query("PresetData")).countEntities(withLimit(10)));
+    
+    new PresetServlet().doPost(request, response);
+
+    String userId = request.getParameter("userId");
+    Filter propertyFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
+    Query query = new Query("PresetData").setFilter(propertyFilter).addSort("timestamp", SortDirection.ASCENDING);;
+    PreparedQuery results = datastore.prepare(query);
+    ArrayList<CampaignPreset> presets = new ArrayList<>();
+    
+    for (Entity currEntry : results.asIterable()) {
+      String jsonData = (String) currEntry.getProperty("presetData");
+      userId = ((String) currEntry.getProperty("userId")).equals(userId) ? userId : null;
+      String presetId = (String) currEntry.getProperty("presetId");
+      
+      DSACampaign presetData = new Gson().fromJson(jsonData, DSACampaign.class);
+      CampaignPreset campaignPreset = new CampaignPreset(userId, presetId, presetData);
+
+      presets.add(campaignPreset);
+    }
+
+    Gson gson = new Gson();
+		String jsonData = gson.toJson(presets);
+
+    // only expecting one object from datastore.
+    assertEquals(1, presets.size());
   }
 
   /**
@@ -83,12 +144,11 @@ public final class PresetServletTest {
    */
   @Test
   public void presetServletdoPostTest() throws IOException, ServletException {
-
     request = mock(HttpServletRequest.class);
     
     response = mock(HttpServletResponse.class);
     
-    // variables used to test the method.
+    // parameters used to initialize HttpServletRequest parameters
     when(request.getParameter("DSACampaignId")).thenReturn("0");
     when(request.getParameter("campaignStatus")).thenReturn("pending");
     when(request.getParameter("userId")).thenReturn("0");
@@ -139,7 +199,7 @@ public final class PresetServletTest {
     assertEquals(request.getParameter("domain"), testDSACampaign.domain);
     assertEquals(request.getParameter("targets"), testDSACampaign.targets);
     assertEquals(request.getParameter("adText"), testDSACampaign.adText);
-    assertEquals(Integer.parseInt(request.getParameter("cost")), testDSACampaign.cost, 0);
+    assertEquals(Double.parseDouble(request.getParameter("cost")), testDSACampaign.cost, 0.0);
     assertEquals(Integer.parseInt(request.getParameter("impressions")), testDSACampaign.impressions, 0);
     assertEquals(Integer.parseInt(request.getParameter("clicks")), testDSACampaign.clicks, 0);
   }
