@@ -182,6 +182,10 @@ function sendFormData() {
       console.log(form.elements[i].nodeName);
       alert("Not all the settings are filled out!");
       return;
+    } else if ((form.elements[i].name.includes("Date")) &&
+               (form.elements[i].value.length > 10)) {
+      alert("Date must be in the format mm/dd/yyyy!");
+      return;
     }
     
     // build location string 'Region, Country' - country occurs in the form first.
