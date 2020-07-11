@@ -22,6 +22,9 @@ let keywordCampaignId = null;
 // number of locations
 let locationCount = 1;
 
+// array to keep track of all preset names belonging to user
+let userPresets = [];
+
 /* 
  * Submission form only requires 2 decimals, this function enforces that rule 
  */
@@ -40,6 +43,8 @@ function verifyLoginStatus() {
     if (!loginStatus.isLoggedIn) {
       window.location.replace("../index.html");
     }
+    // update preset data once login verified.
+    updatePresetData(); 
     return loginStatus.isLoggedIn;
   });
 
@@ -57,6 +62,7 @@ function submitPresetData() {
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.status === 0) {
       alert("Preset saved!");
+      updatePresetData();
     }
     else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
       alert("Error: Preset cannot be saved. Please try again later.");
@@ -75,7 +81,12 @@ function submitPresetData() {
 
     // start error handling.
     if (presetName != "") {
-      // TODO: verify that the preset nickname does not already exist.
+      for (var index = 0; index < userPresets.length; index++) {
+        if (userPresets[i].presetId === presetName) {
+          alert("Preset name already exists! Please pick a different name.");
+          continue;
+        }
+      }
       break;
     }
     else {
@@ -87,7 +98,6 @@ function submitPresetData() {
   var keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
-  keyvalPairs.push(encodeURIComponent("userEmail") + "=" + encodeURIComponent(userEmail));
   keyvalPairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
   keyvalPairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));
   
@@ -115,12 +125,54 @@ function submitPresetData() {
 }
 
 /*
- * updatePresetData takes in a presetId and userId and sends a GET request
- * to '/preset'. Once received, the preset data in the comment form is updated
+ * updatePresetData sends a GET request to '/preset' with a userId parameter.
+ * Upon successful request, the preset data in the comment form is updated
  * with all updated links.
  */
 function updatePresetData() {
-  // TODO: implement
+  if (userId != null) {
+    fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
+      for (var i = 0; i < presetData.length; i++) {
+        var presetContainer = document.getElementById('preset-container');
+        var liElement = document.createElement('li');
+        var aTag = document.createElement('a');
+        aTag.innerText = presetData[i].presetId;
+        aTag.setAttribute('href', 'javascript:;');
+        aTag.id = i;
+        aTag.setAttribute('onclick', `getPresetData(${i});`);
+
+        // for error handling (cannot create a preset name if it already exists)
+        userPresets.push(presetData[i]);
+        liElement.appendChild(aTag);
+        presetContainer.appendChild(liElement);
+      }
+    });
+  }
+}
+
+/**
+ * getPresetData() updates the creation form with the specified
+ * index. The index correlates to the object location in userPresets.
+ * @param indexSelection index of userPresets that user selects.
+ */
+function getPresetData(indexSelection) {
+  var presetSelection = userPresets[indexSelection].campaignData;
+  var keywordSelection = campaignData.keywordCampaignId;
+  for (var keywordIndex = 0; keywordIndex < document.getElementById('keyword-campaigns').options.length; keywordIndex++) {
+    if (document.getElementById('keyword-campaigns').options[keywordIndex].value == keywordSelection) {
+      var selectedOption = document.getElementById('keyword-campaigns').options[keywordIndex];
+      selectionOption.setAttribute('selected', true);
+      break;
+    }
+  }
+  for (var key in presetSelection) {
+    console.log(key);
+    if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
+        (key != 'userId') && (key != 'cost') && (key != 'impressions') && 
+        (key != 'clicks') && (key != 'locations') && (key != 'campaignStatus')) {
+      document.getElementById(key).value = presetSelection[key];
+    }
+  }
 }
 
 /**
