@@ -21,16 +21,53 @@
   font-weight: bold;
 }
 
-.header a.title:hover {
-  font-size: 25px;
-  font-weight: bold;
-  color: #f2f2f2;
-  text-decoration: none;
-}
-
 body {
   font-family: Arial;
   font-size: 17px;
   margin: 0;
-  background-color: white;
 }
+
+h3.center{
+    text-align: center;
+}
+
+div.center {
+    text-align: center;
+}
+
+div.select {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 30px;
+}
+
+div.bar-chart {
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
+}
+
+div.table {
+    padding-top: 75px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.pagination {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    text-align: center;
+}
+
+.pagination input {
+    color: black;
+    /*float: left;*/
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+.pagination input:hover{background-color: rgb(50, 144, 182);}
