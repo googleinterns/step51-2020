@@ -1,0 +1,27 @@
+{
+  "name": "country-region-dropdown-menu",
+  "version": "2.1.6",
+  "description": "A dropdown menu created with javascript that allows user to implement country-region dropdown list effortlessly.",
+  "main": "assets/js/geodatasource-cr.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geodatasource/country-region-dropdown-menu.git"
+  },
+  "keywords": [
+    "geodatasource",
+    "country",
+    "region",
+    "dropdown",
+    "menu",
+    "selector"
+  ],
+  "author": "GeoDataSource <support@geodatasource.com> (https://www.geodatasource.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/geodatasource/country-region-dropdown-menu/issues"
+  },
+  "homepage": "https://github.com/geodatasource/country-region-dropdown-menu#readme"
+}
