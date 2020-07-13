@@ -176,4 +176,3 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
 
     console.log("Drew table.");
 }
-
