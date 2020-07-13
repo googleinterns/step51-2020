@@ -38,7 +38,7 @@ function getLogsStatus() {
         if(logStatus.isLoggedIn) {
             if(window.location.pathname === "/index.html" || window.location.pathname === "/"){
                 console.log('User is Logged In');
-                link.href = '../Home/home.html';
+                window.location.pathname = "/Home/home.html";
             }
             else{
                 link.href = logStatus.Url;
