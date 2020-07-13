@@ -19,6 +19,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.FetchOptions;
 import org.junit.Assert;
 import org.junit.After;
 import org.junit.Before;
@@ -38,6 +39,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import java.util.List;
 
 /*
  * Tests the doGet() and doPost() functions in DSACampaignsServlet.java.
@@ -117,5 +119,32 @@ public final class DSACampaignsServletTest {
         assertEquals(12412, (int) ((long) entity.getProperty("impressions")));
         assertEquals(535, (int) ((long) entity.getProperty("clicks")));
         assertEquals(2145.5, (double) entity.getProperty("cost"), .01);
+    }
+
+    @Test
+    public void testUniqueCampaignId() throws IOException, ServletException{
+      DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+      assertEquals(0, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
+
+      DSACampaign DSACampaignObject = new DSACampaign("3", "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
+            "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
+      ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
+      assertEquals(1, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
+
+      String testInt = DSACampaignsServlet.assignUniqueCampaignId("1", "3");
+      DSACampaign DSACampaignObject2 = new DSACampaign(testInt, "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
+            "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
+      ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject2));
+      assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
+      Query query = new Query("DSACampaign");
+    	List<Entity> entities = ds.prepare(query).asList(FetchOptions.Builder.withLimit(2));
+      
+      String stringValue = "3";
+      int intValue = 3;
+      for (Entity entity : entities) {
+        assertEquals(stringValue, DSACampaignsServlet.createDSACampaignFromEntity(entity).DSACampaignId);
+        intValue++;
+        stringValue = Integer.toString(intValue);
+      }
     }
 }
