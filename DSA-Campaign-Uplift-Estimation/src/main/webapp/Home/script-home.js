@@ -52,13 +52,13 @@ function drawDsaCampaignCharts() {
             // chartCounter keeps track of which number each chart displayed is
             // (useful for drawing the graph) and is used as a flag to check if 
             // two charts have been processed.
-            var ChartCounter = 1;
+            var chartCounter = 1;
 
             while (ChartCounter <= numChartsPerPage) {
-                drawDSACampaignBarGraph(DSACampaigns[chartsToShow], ChartCounter);
+                drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
                 hideDiv(isNumberOfChartsOdd, DSACampaigns.length, chartsToShow);
                 chartsToShow++;
-                ChartCounter++;
+                chartCounter++;
             }
 
             makePagination((DSACampaigns.length / numChartsPerPage) + (DSACampaigns.length % numChartsPerPage), (currentPage));
