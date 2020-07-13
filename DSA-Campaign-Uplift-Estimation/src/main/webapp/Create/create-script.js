@@ -137,6 +137,7 @@ function updatePresetData() {
     fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
       for (var i = 0; i < presetData.length; i++) {
         var presetContainer = document.getElementById('preset-container');
+        presetContainer.innerHTML = "";
         var liElement = document.createElement('li');
         var aTag = document.createElement('a');
         aTag.innerText = presetData[i].presetId;
