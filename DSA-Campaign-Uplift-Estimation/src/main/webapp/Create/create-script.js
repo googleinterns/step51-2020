@@ -63,6 +63,7 @@ function submitPresetData() {
     if (xmlhttp.status === 0) {
       updatePresetData();
       alert("Preset saved!");
+      updatePresetData();
     }
     else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
       alert("Error: Preset cannot be saved. Please try again later.");
@@ -100,7 +101,10 @@ function submitPresetData() {
   var keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
+<<<<<<< HEAD
   keyvalPairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
+=======
+>>>>>>> c1c77f6ff689cb1d1821364ccbb2624b90cecdd1
   keyvalPairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
   keyvalPairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));
   
@@ -133,11 +137,19 @@ function submitPresetData() {
  * with all updated links.
  */
 function updatePresetData() {
+<<<<<<< HEAD
   if (userId != 0) {
     fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
       document.getElementById('preset-container').innerHTML = "";
       for (var i = 0; i < presetData.length; i++) {
         var presetContainer = document.getElementById('preset-container');
+=======
+  if (userId != null) {
+    fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
+      for (var i = 0; i < presetData.length; i++) {
+        var presetContainer = document.getElementById('preset-container');
+        presetContainer.innerHTML = "";
+>>>>>>> c1c77f6ff689cb1d1821364ccbb2624b90cecdd1
         var liElement = document.createElement('li');
         var aTag = document.createElement('a');
         aTag.innerText = presetData[i].presetId;
@@ -218,7 +230,10 @@ function sendFormData() {
     alert("Select a keyword campaign before submitting!");
     return;
   }
+<<<<<<< HEAD
   console.log(keywordCampaignId);
+=======
+>>>>>>> c1c77f6ff689cb1d1821364ccbb2624b90cecdd1
   keyvalPairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
   
   // default values for variables (not applicable to creation phase) sent to servlet
