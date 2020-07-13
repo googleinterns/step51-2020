@@ -105,7 +105,7 @@ function nextPage(numberOfPages) {
     if(increasePage + 1 <= numberOfPages){
         increasePage++;  
         currentPage++;
-        getDSACampaigns();
+        drawDsaCampaignCharts();
     }
     activePage.innerText = increasePage;
 }
@@ -121,7 +121,7 @@ function previousPage() {
     if(decreasePage - 1 > 0){
         decreasePage--; 
         currentPage--; 
-        getDSACampaigns(); 
+        drawDsaCampaignCharts(); 
     }
     activePage.innerText = decreasePage;
     
