@@ -133,7 +133,7 @@ public final class DSACampaignsServletTest {
       assertEquals(1, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
       String testCampaignId = DSACampaignsServlet.assignUniqueCampaignId("1", "3");
-      DSACampaign DSACampaignObject2 = new DSACampaign(testInt, "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
+      DSACampaign DSACampaignObject2 = new DSACampaign(testCampaignId, "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
             "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
       ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject2));
       assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
