@@ -54,7 +54,7 @@ function drawDsaCampaignCharts() {
             // two charts have been processed.
             var chartCounter = 1;
 
-            while (ChartCounter <= numChartsPerPage) {
+            while (chartCounter <= numChartsPerPage) {
                 drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
                 hideDiv(isNumberOfChartsOdd, DSACampaigns.length, chartsToShow);
                 chartsToShow++;
