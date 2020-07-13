@@ -188,7 +188,7 @@ function sendFormData() {
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.status === 0) {
       // once form is submitted, redirect to home page.
-      window.location.href("../Home/home.html");
+      window.location.href = "../Home/home.html";
     }
     else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
       alert("Could not submit form, please try again.")
