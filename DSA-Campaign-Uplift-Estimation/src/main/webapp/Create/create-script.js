@@ -82,7 +82,7 @@ function submitPresetData() {
     // start error handling.
     if (presetName != "") {
       for (var index = 0; index < userPresets.length; index++) {
-        if (userPresets[i].presetId === presetName) {
+        if (userPresets[index].presetId === presetName) {
           alert("Preset name already exists! Please pick a different name.");
           continue;
         }
@@ -90,7 +90,7 @@ function submitPresetData() {
       break;
     }
     else {
-      alert("Preset name is not valid or already exists! Please pick another name.");
+      alert("Preset name is not valid! Please pick another name.");
     }
   }
 
@@ -111,6 +111,7 @@ function submitPresetData() {
       alert("Not all the settings are filled out!");
       return;
     }
+
     var currElement = form.elements[i];
     keyvalPairs.push(encodeURIComponent(currElement.name) + "=" + encodeURIComponent(currElement.value));
   }
@@ -157,11 +158,11 @@ function updatePresetData() {
  */
 function getPresetData(indexSelection) {
   var presetSelection = userPresets[indexSelection].campaignData;
-  var keywordSelection = campaignData.keywordCampaignId;
+  var keywordSelection = presetSelection.keywordCampaignId;
   for (var keywordIndex = 0; keywordIndex < document.getElementById('keyword-campaigns').options.length; keywordIndex++) {
     if (document.getElementById('keyword-campaigns').options[keywordIndex].value == keywordSelection) {
       var selectedOption = document.getElementById('keyword-campaigns').options[keywordIndex];
-      selectionOption.setAttribute('selected', true);
+      selectedOption.setAttribute('selected', true);
       break;
     }
   }
