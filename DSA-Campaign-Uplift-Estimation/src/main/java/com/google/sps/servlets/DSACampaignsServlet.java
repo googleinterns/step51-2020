@@ -130,6 +130,14 @@ public class DSACampaignsServlet extends HttpServlet {
         return DSACampaignEntity;
     }
 
+    /**
+     * assignUniqueCampaignId takes in a keyword campaign and the proposed dsaCampaignId and
+     * checks with datastore to determine if it already exists. If campaign ID already exists, 
+     * then this function returns the highest existing DSA campaign ID plus one.
+     *
+     * @param correspondingKeywordCampaignId keyword campaign id associated with the DSA campaign.
+     * @param dsaCampaignId                  The proposed DSA campaign ID.
+     */
     public static String assignUniqueCampaignId(String correspondingKeywordCampaignId, String dsaCampaignId) {
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, dsaCampaignId));

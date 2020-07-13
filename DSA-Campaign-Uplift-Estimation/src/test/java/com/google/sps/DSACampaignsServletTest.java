@@ -126,12 +126,13 @@ public final class DSACampaignsServletTest {
       DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
       assertEquals(0, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
-      DSACampaign DSACampaignObject = new DSACampaign("3", "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
+      String expectedCampaignId = "3";
+      DSACampaign DSACampaignObject = new DSACampaign(expectedCampaignId, "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
             "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
       ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
       assertEquals(1, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
-      String testInt = DSACampaignsServlet.assignUniqueCampaignId("1", "3");
+      String testCampaignId = DSACampaignsServlet.assignUniqueCampaignId("1", "3");
       DSACampaign DSACampaignObject2 = new DSACampaign(testInt, "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
             "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
       ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject2));
@@ -139,12 +140,12 @@ public final class DSACampaignsServletTest {
       Query query = new Query("DSACampaign");
     	List<Entity> entities = ds.prepare(query).asList(FetchOptions.Builder.withLimit(2));
       
-      String stringValue = "3";
+      
       int intValue = 3;
       for (Entity entity : entities) {
-        assertEquals(stringValue, DSACampaignsServlet.createDSACampaignFromEntity(entity).DSACampaignId);
+        assertEquals(expectedCampaignId, DSACampaignsServlet.createDSACampaignFromEntity(entity).DSACampaignId);
         intValue++;
-        stringValue = Integer.toString(intValue);
+        expectedCampaignId = Integer.toString(intValue);
       }
     }
 }
