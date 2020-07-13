@@ -36,7 +36,7 @@ function getLogsStatus() {
         // login link should skip login and head into home. If the user is
         // not on the login screen then the url will be to sign out.
         if(logStatus.isLoggedIn) {
-            if(window.location.pathname === "/index.html"){
+            if(window.location.pathname === "/index.html" || window.location.pathname === "/"){
                 console.log('User is Logged In');
                 link.href = '../Home/home.html';
             }
@@ -55,7 +55,8 @@ function getLogsStatus() {
                 link.href = logStatus.Url;
             }
             else{
-                link.href = '../index.html';
+                window.alert("You must log in.");
+                window.location.pathname = "/";
             }
         }
     });
