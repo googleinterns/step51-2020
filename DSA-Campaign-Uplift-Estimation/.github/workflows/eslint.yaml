@@ -1,15 +1,14 @@
-name: Javascript Presubmit
+name: JavaScript Lint
 
-on: [pull_request]
+# Triggers the workflow on pull request events.
+on: pull_request
 
 jobs:
-  lint:
+  ESLint:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v1
-      - name: Install npm packages
-        run: npm install
-      - name: Lint
-        # Run ESLint on diffed JS files. Do not run if there are no diffs.
-        run: git diff --diff-filter=ACM --name-only origin/master HEAD -- . ':!node_modules' | grep -E "(.*)\.(jsx|js)$" | xargs --no-run-if-empty npx eslint
+      - uses: actions/checkout@v2
+      - uses: hallee/eslint-action@1.0.3
+        if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
+        with:
+          repo-token: ${{secrets.GITHUB_TOKEN}}
