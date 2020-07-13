@@ -61,8 +61,8 @@ function submitPresetData() {
 
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.status === 0) {
-      alert("Preset saved!");
       updatePresetData();
+      alert("Preset saved!");
     }
     else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
       alert("Error: Preset cannot be saved. Please try again later.");
@@ -71,6 +71,8 @@ function submitPresetData() {
 
   // error handling for the preset nickname prompt. JS prompt sticks until valid name input.
   var presetName;
+  
+  presetLoop:
   while (true) {
     presetName = prompt("What would you like to call the preset?", "");
 
@@ -84,7 +86,7 @@ function submitPresetData() {
       for (var index = 0; index < userPresets.length; index++) {
         if (userPresets[index].presetId === presetName) {
           alert("Preset name already exists! Please pick a different name.");
-          continue;
+          continue presetLoop;
         }
       }
       break;
@@ -98,6 +100,7 @@ function submitPresetData() {
   var keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
+  keyvalPairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
   keyvalPairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
   keyvalPairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));
   
@@ -121,7 +124,6 @@ function submitPresetData() {
   
   xmlhttp.open("POST", '/preset', true);
   xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-  alert(queryString);
   xmlhttp.send(queryString);
 }
 
@@ -131,8 +133,9 @@ function submitPresetData() {
  * with all updated links.
  */
 function updatePresetData() {
-  if (userId != null) {
+  if (userId != 0) {
     fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
+      document.getElementById('preset-container').innerHTML = "";
       for (var i = 0; i < presetData.length; i++) {
         var presetContainer = document.getElementById('preset-container');
         var liElement = document.createElement('li');
@@ -160,14 +163,18 @@ function getPresetData(indexSelection) {
   var presetSelection = userPresets[indexSelection].campaignData;
   var keywordSelection = presetSelection.keywordCampaignId;
   for (var keywordIndex = 0; keywordIndex < document.getElementById('keyword-campaigns').options.length; keywordIndex++) {
-    if (document.getElementById('keyword-campaigns').options[keywordIndex].value == keywordSelection) {
+    if (document.getElementById('keyword-campaigns').options[keywordIndex].value === keywordSelection) {
+      console.log(keywordSelection);
       var selectedOption = document.getElementById('keyword-campaigns').options[keywordIndex];
-      selectedOption.setAttribute('selected', true);
+      selectedOption.selected = true;
       break;
+    }
+    else {
+      var selectedOption = document.getElementById('keyword-campaigns').options[keywordIndex];
+      selectedOption.selected = false;
     }
   }
   for (var key in presetSelection) {
-    console.log(key);
     if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
         (key != 'userId') && (key != 'cost') && (key != 'impressions') && 
         (key != 'clicks') && (key != 'locations') && (key != 'campaignStatus')) {
@@ -211,6 +218,7 @@ function sendFormData() {
     alert("Select a keyword campaign before submitting!");
     return;
   }
+  console.log(keywordCampaignId);
   keyvalPairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
   
   // default values for variables (not applicable to creation phase) sent to servlet
