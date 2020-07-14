@@ -127,7 +127,7 @@ public class DSACampaignsServlet extends HttpServlet {
     }
 
     // Retrieves a unique DSA campaign id from datastore.
-    public static int getDSACampaignId() {
+    public static String getDSACampaignId() {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query query = new Query("numDSACampaigns");
         Entity numDSACampaignsEntity = datastore.prepare(query).asSingleEntity();
@@ -145,6 +145,6 @@ public class DSACampaignsServlet extends HttpServlet {
             datastore.put(newNumDSACampaignsEntity);
         }
 
-        return numDSACampaigns;
+        return Integer.toString(numDSACampaigns);
     }
 }
