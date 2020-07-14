@@ -20,6 +20,9 @@ let keywordCampaignId = null;
 // number of locations
 let locationCount = 1;
 
+// number of negative locations
+let negLocationCount = 1;
+
 // array to keep track of all preset names belonging to user
 const userPresets = [];
 
@@ -232,6 +235,7 @@ function sendFormData() {
   
   // represents campaign location - built during runtime
   let location = '';
+  let uriKey = 'locations';
 
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
@@ -252,18 +256,20 @@ function sendFormData() {
     }
     
     // build location string 'Region, Country' - country occurs in the form first.
-    if (form.elements[i].name.includes('region')) {
-      location = form.elements[i].value + ',' + location;
-      keyvalPairs.push(encodeURIComponent('locations') + '=' + encodeURIComponent(location));
-    }
-    else if (form.elements[i].name.includes('country')) {
-      location = form.elements[i].value;
-    }
-    else {  
+    if (!form.elements[i].name.includes('region') && !(form.elements[i].name.includes('country'))) {  
       console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
       keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' + encodeURIComponent(form.elements[i].value));
     }
   }
+
+  let locationString = '';
+  for (var locationIndex = 0; locationIndex < locationCount; locationIndex++) {
+    locationString = locationString + document.getElementById(`region${locationIndex}`) + ','
+                                    + document.getElementById(`country${locationIndex}`) + ',';
+  }
+
+  keyvalPairs.push(encodeURIComponent('locations') + '=' + encodeURIComponent(locationString));
+
 
   // separate each entity in keyvalPairs with '&' for query string
   var queryString = keyvalPairs.join('&');
@@ -296,35 +302,45 @@ function keywordSelection() {
 // TODO: Fix additional dropdown menu not showing elements.
 function addRegion() {
   var tempCount = 1;
+  let chosenValues = [];
   // verify that all existing locations specified before creating new input
-  while (tempCount <= locationCount) {
-    if (document.getElementById('country' + tempCount).value == '') {
-      alert('Specify country ' + tempCount + ' first!');
-      return;
-    }
-    else if (document.getElementById('gds-cr-' + tempCount).value == '') {
+  while (tempCount < locationCount + 1) {
+    var regionSelection = document.getElementById('gds-cr-' + tempCount);
+    if (regionSelection.options[regionSelection.selectedIndex].value == '') {
       alert('Specify region ' + tempCount + ' first!');
       return;
+    }
+    else {
+      if (chosenValues.includes(regionSelection.options[regionSelection.selectedIndex].value)) {
+        alert('Please remove duplicate regions!');
+        return;
+      }
+      chosenValues.push(regionSelection.options[regionSelection.selectedIndex].value);
     }
     tempCount++;
   }
 
-  locationCount++;
+  ++locationCount;
 
   // create the location input HTML elements
+  let regionSelect = document.getElementById(`gds-cr-${locationCount - 1}`).cloneNode(true);
+  regionSelect.id = `gds-cr-${locationCount}`;
+
+  let countrySelect = document.getElementById(`country${locationCount - 1}`).cloneNode(true);
+  countrySelect.id = `country${locationCount}`;
+  
+  var locations = document.getElementById('locations');
+  
   var locationDiv = document.createElement('div');
   locationDiv.className = 'form-group';
+  
+  let locationTag = document.createElement('h3');
+  locationTag.innerText = `Location ${locationCount}`;
+  locationDiv.appendChild(locationTag);
   
   var countryLabel = document.createElement('label');
   countryLabel.className = 'control-label';
   countryLabel.innerText = `Country ${locationCount}`;
-
-  var countrySelect = document.createElement('select');
-  countrySelect.className = 'form-control gds-cr';
-  countrySelect.setAttribute('country-data-region-id',`gds-cr-${locationCount}`);
-  countrySelect.setAttribute('id', `country${locationCount}`);
-  countrySelect.setAttribute('data-language', 'en');
-  countrySelect.setAttribute('name', `country${locationCount}`);
   
   locationDiv.appendChild(countryLabel);
   locationDiv.appendChild(countrySelect);
@@ -336,14 +352,9 @@ function addRegion() {
   regionLabel.innerText = `Region ${locationCount}`;
   regionLabel.setAttribute('for', `gds-cr-${locationCount}`);
 
-  var regionSelect = document.createElement('select');
-  regionSelect.className = 'form-control';
-  regionSelect.setAttribute('id', `gds-cr-${locationCount}`);
-  regionSelect.setAttribute('name', `region${locationCount}`);
   locationDiv.appendChild(regionLabel);
   locationDiv.appendChild(regionSelect);
   locationDiv.appendChild(document.createElement('br'));
 
-  var locations = document.getElementById('locations');  
   locations.appendChild(locationDiv);
 }
