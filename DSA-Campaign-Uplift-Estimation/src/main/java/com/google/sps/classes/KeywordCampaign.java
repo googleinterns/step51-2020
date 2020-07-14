@@ -21,26 +21,44 @@ public class KeywordCampaign {
     public String keywordCampaignId;
     // id of the user who created the keyword campaign
     public String userId;
-    // comma-separated string of the id's of all the DSA campaigns associated with this keyword campaign
-    // Ex: "2, 4, 7"
-    public String DSACampaignIds;
+
+    // campaign settings
+
     // name of the keyword campaign (used for display purposes)
     public String name;
+    // how much an advertiser spends each time a user clicks on their ad link
+    public double manualCPC;
+    /*
+     * comma-separated string containing the different locations the advertiser wants to target
+     * ads will only be targeted towards users living in the specified locations
+     * locations must be cities or states in the US, or the US itself
+     * locations cannot be abbreviations
+     * Ex: correct - "California, Houston, United States of America"; incorrect - "CA, Houston, USA")
+     */
+    public String locations;
+    /*
+     * comma-separated string (same format as locations) will contain the locations the advertiser specifically doesn’t want to target
+     * Ex: advertiser can choose to target all of the US except for Washington DC
+     */
+    public String negativeLocations;
 
-    // statistics used to calculate the uplift of a DSA campaign (e.g. impressions uplift = DSA campaign impressions - keyword campaign impressions)
+    // statistics used in the black box and to calculate DSA campaign uplift
 
-    //  how many times an ad appears on a search result page
+    //  how many times an ad appears on a search result page on average in a single day
     public int impressions;
-    // how many times a user clicks on an ad link
+    // number of clicks on an ad link on average in a single day
     public int clicks;
-    // total money spent on the ad campaign
+    // total money spent on the campaign on average in a single day
     public double cost;
 
-    public KeywordCampaign(String keywordCampaignId, String userId, String DSACampaignIds, String name, int impressions, int clicks, double cost) {
+    public KeywordCampaign(String keywordCampaignId, String userId, String name, double manualCPC, String locations, String negativeLocations, int impressions, int clicks, double cost) {
         this.keywordCampaignId = keywordCampaignId;
         this.userId = userId;
-        this.DSACampaignIds = DSACampaignIds;
+
         this.name = name;
+        this.manualCPC = manualCPC;
+        this.locations = locations;
+        this.negativeLocations = negativeLocations;
 
         this.impressions = impressions;
         this.clicks = clicks;

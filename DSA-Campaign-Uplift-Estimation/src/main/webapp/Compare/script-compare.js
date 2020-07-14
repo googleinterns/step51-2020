@@ -35,13 +35,19 @@ function getDSACampaigns() {
         DSACampaignsList.innerHTML = '';
 
         fetch('/DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
-            DSACampaigns.forEach(DSACampaign => {
-                DSACampaignsList.innerHTML += '<input class=\"checkbox\" type=\"checkbox\" value=' + DSACampaign.DSACampaignId + '>';
-                DSACampaignsList.innerHTML += '<label>' + DSACampaign.name + '</label>';
-            });
+            // no DSA campaigns associated with the keyword campaign
+            if (DSACampaigns.length == 0) {
+                DSACampaignsList.innerHTML += '<p>No DSA campaigns associated with this keyword campaign.</p>';
+            } else {
+                DSACampaigns.forEach(DSACampaign => {
+                    DSACampaignsList.innerHTML += '<input class=\"checkbox\" type=\"checkbox\" value=' + DSACampaign.DSACampaignId + '>';
+                    DSACampaignsList.innerHTML += '<label>' + DSACampaign.name + '</label>';
+                });
+
+                DSACampaignsList.innerHTML += '<input id="keyword-campaign-id-form" type=\"hidden\" name=\"keywordCampaignId\" value=' + keywordCampaignId + '>';
+                DSACampaignsList.innerHTML += '<input type=\"submit\" value=\"Submit\" style=\"margin-left: 15px;\">';
+            }
         });
-        DSACampaignsList.innerHTML += '<input id="keyword-campaign-id-form" type=\"hidden\" name=\"keywordCampaignId\" value=' + keywordCampaignId + '>';
-        DSACampaignsList.innerHTML += '<input type=\"submit\" value=\"Submit\">';
 
         console.log('Got DSA campaigns.');
     }
@@ -53,40 +59,46 @@ function drawBarGraph() {
     // add to DSACampaignIds the id's of all the DSA campaigns whose check boxes were checked
     var DSACampaignIds = "";
     var inputElements = document.getElementsByClassName('checkbox');
+    var numCheckedElements = 0;
+    
     for (var i=0; inputElements[i]; i++) {
         if (inputElements[i].checked) {
             DSACampaignIds += inputElements[i].value + " ";
+            numCheckedElements++;
         }
     }
 
-    fetch('/keyword-campaign-id?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(keywordCampaign => {
-        fetch('/DSA-campaign-id?DSACampaignIds=' + DSACampaignIds).then(response => response.json()).then(DSACampaignList => {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'DSA Campaign');
-            data.addColumn('number', 'Impressions Uplift');
-            data.addColumn('number', 'Clicks Uplift');
-            data.addColumn('number', 'Cost Uplift (USD)');
+    // make sure at least one DSA campaign was selected
+    if (numCheckedElements > 0) {
+        fetch('/keyword-campaign-id?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(keywordCampaign => {
+            fetch('/DSA-campaign-id?DSACampaignIds=' + DSACampaignIds).then(response => response.json()).then(DSACampaignList => {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'DSA Campaign');
+                data.addColumn('number', 'Impressions Uplift');
+                data.addColumn('number', 'Clicks Uplift');
+                data.addColumn('number', 'Cost Uplift (USD)');
 
-            DSACampaignList.forEach(DSACampaign => {
-                data.addRow([DSACampaign.name, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), calculateUplift(DSACampaign.clicks, keywordCampaign.clicks), 
-                            calculateUplift(DSACampaign.cost, keywordCampaign.cost)]);
+                DSACampaignList.forEach(DSACampaign => {
+                    data.addRow([DSACampaign.name, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), calculateUplift(DSACampaign.clicks, keywordCampaign.clicks), 
+                                calculateUplift(DSACampaign.cost, keywordCampaign.cost)]);
+                });
+
+                var options = {
+                    chart: {
+                        title: 'Statistics',
+                        subtitle: 'Impressions, Clicks, and Cost Uplift',
+                    },
+                    bars: 'horizontal' // Required for Material Bar Charts.
+                };
+
+                var chart = new google.charts.Bar(document.getElementById('bar-chart'));
+                chart.draw(data, google.charts.Bar.convertOptions(options));
+                console.log("Drew bar graph.");
+
+                drawTable(DSACampaignList, keywordCampaign);
             });
-
-            var options = {
-                chart: {
-                    title: 'Statistics',
-                    subtitle: 'Impressions, Clicks, and Cost Uplift',
-                },
-                bars: 'horizontal' // Required for Material Bar Charts.
-            };
-
-            var chart = new google.charts.Bar(document.getElementById('bar-chart'));
-            chart.draw(data, google.charts.Bar.convertOptions(options));
-            console.log("Drew bar graph.");
-
-            drawTable(DSACampaignList, keywordCampaign);
         });
-    });
+    }
 }
 
 function drawTable(DSACampaignList, keywordCampaign) {

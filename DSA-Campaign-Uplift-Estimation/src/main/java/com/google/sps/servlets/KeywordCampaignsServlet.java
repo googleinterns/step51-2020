@@ -69,8 +69,9 @@ public class KeywordCampaignsServlet extends HttpServlet {
             String userId = userService.getCurrentUser().getUserId();
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            KeywordCampaign keywordCampaignObject = new KeywordCampaign(request.getParameter("keywordCampaignId"), userId, request.getParameter("DSACampaignIds"), 
-                request.getParameter("name"),Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
+            KeywordCampaign keywordCampaignObject = new KeywordCampaign(request.getParameter("keywordCampaignId"), userId, request.getParameter("name"), 
+                Double.parseDouble(request.getParameter("manualCPC")), request.getParameter("locations"), request.getParameter("negativeLocations"), 
+                Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
             datastore.put(createEntityFromKeywordCampaign(keywordCampaignObject));
                 
             response.sendRedirect("/Compare/compare.html");
@@ -82,14 +83,17 @@ public class KeywordCampaignsServlet extends HttpServlet {
     public static KeywordCampaign createKeywordCampaignFromEntity(Entity entity) {
         String keywordCampaignId = (String) entity.getProperty("keywordCampaignId");
         String userId = (String) entity.getProperty("userId");
-        String DSACampaignIds = (String) entity.getProperty("DSACampaignIds");
+
         String name = (String) entity.getProperty("name");
+        Double manualCPC = (double) entity.getProperty("manualCPC");
+        String locations = (String) entity.getProperty("locations");
+        String negativeLocations = (String) entity.getProperty("negativeLocations");
 
         int impressions = (int) ((long) entity.getProperty("impressions"));
         int clicks = (int) ((long) entity.getProperty("clicks"));
         double cost = (double) entity.getProperty("cost");
 
-        return new KeywordCampaign(keywordCampaignId, userId, DSACampaignIds, name, impressions, clicks, cost);
+        return new KeywordCampaign(keywordCampaignId, userId, name, manualCPC, locations, negativeLocations, impressions, clicks, cost);
     }
 
     public static Entity createEntityFromKeywordCampaign(KeywordCampaign KeywordCampaign) {
@@ -97,8 +101,11 @@ public class KeywordCampaignsServlet extends HttpServlet {
 
         keywordCampaignEntity.setProperty("keywordCampaignId", KeywordCampaign.keywordCampaignId);
         keywordCampaignEntity.setProperty("userId", KeywordCampaign.userId);
-        keywordCampaignEntity.setProperty("DSACampaignIds", KeywordCampaign.DSACampaignIds);
+
         keywordCampaignEntity.setProperty("name", KeywordCampaign.name);
+        keywordCampaignEntity.setProperty("manualCPC", KeywordCampaign.manualCPC);
+        keywordCampaignEntity.setProperty("locations", KeywordCampaign.locations);
+        keywordCampaignEntity.setProperty("negativeLocations", KeywordCampaign.negativeLocations);
        
         keywordCampaignEntity.setProperty("impressions", KeywordCampaign.impressions);
         keywordCampaignEntity.setProperty("clicks", KeywordCampaign.clicks);

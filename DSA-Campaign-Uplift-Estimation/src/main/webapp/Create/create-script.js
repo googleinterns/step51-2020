@@ -232,6 +232,7 @@ function sendFormData() {
   
   // represents campaign location - built during runtime
   let location = '';
+  let uriKey = 'locations';
 
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
@@ -254,7 +255,9 @@ function sendFormData() {
     // build location string 'Region, Country' - country occurs in the form first.
     if (form.elements[i].name.includes('region')) {
       location = form.elements[i].value + ',' + location;
-      keyvalPairs.push(encodeURIComponent('locations') + '=' + encodeURIComponent(location));
+      keyvalPairs.push(encodeURIComponent(uriKey) + '=' + encodeURIComponent(location));
+      locations = '';
+      uriKey = 'negativeLocations';
     }
     else if (form.elements[i].name.includes('country')) {
       location = form.elements[i].value;

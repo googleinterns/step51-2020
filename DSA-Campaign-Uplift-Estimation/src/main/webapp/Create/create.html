@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="create-style.css"></link>
     <script src="create-script.js"></script>
 
+    <!-- Google charts -->
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+
     <!-- compare page source files (for drop down menus) -->
     <script src="../Compare/script-compare.js"></script>
 
@@ -93,6 +96,16 @@
                     <br>
                     <label for="gds-cr-1" class="control-label">Region 1</label>
                     <select class="form-control" id="gds-cr-1" name="region1" required></select>
+                  </div>
+                  <br>
+                </div>
+                <div id="negativeLocations">
+                  <div class="form-group">
+                    <label class="control-label">Negative Country 1</label>
+                    <select class="form-control gds-cr" country-data-region-id="gds-ncr-1" id="ncountry1" data-language="en" name="country1" required></select>
+                    <br>
+                    <label for="gds-ncr-1" class="control-label">Negative Region 1</label>
+                    <select class="form-control" id="gds-ncr-1" name="nregion1" required></select>
                   </div>
                   <br>
                 </div>
