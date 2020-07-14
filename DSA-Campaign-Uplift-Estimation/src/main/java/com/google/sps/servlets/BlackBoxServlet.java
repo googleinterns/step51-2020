@@ -59,4 +59,31 @@ public class BlackBoxServlet extends HttpServlet {
             response.sendRedirect("/index.html");
         }
     }
+
+    /*
+     * Runs the DSA campaign and obtains estimation results.
+     * Updates the DSA campaign entity with the estimation results and changes the campaign status from pending to complete.
+     * Implementation explanations are in the design doc.
+     */
+    public static void blackbox(Entity DSACampaignEntity) {
+        // retrieve the DSA campaign's corresponding keyword campaign from datastore
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, (String) DSACampaignEntity.getProperty("keywordCampaignId")));
+    	Entity keywordCampaignEntity = datastore.prepare(query).asSingleEntity();
+
+        // calculate the estimation results
+        double websiteFactor = getWebsiteFactor(keywordCampaignEntity, DSACampaignEntity);
+        int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
+        int clicks = getClicksEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
+        double cost = clicks*((double) DSACampaignEntity.getProperty("manualCPC"));
+
+        // update the DSA campaign entity in datastore with the estimation results
+        DSACampaignEntity.setProperty("impressions", impressions);
+        DSACampaignEntity.setProperty("clicks", clicks);
+        DSACampaignEntity.setProperty("cost", cost);
+        DSACampaignEntity.setProperty("campaignStatus", "complete");
+        datastore.put(DSACampaignEntity);
+
+        // TODO: SQR
+    }
 }
