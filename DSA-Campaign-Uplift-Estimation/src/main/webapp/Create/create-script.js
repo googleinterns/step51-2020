@@ -60,9 +60,6 @@ async function submitPresetData() {
     new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
   xmlhttp.onreadystatechange = function() {
-    console.log('status: ' + xmlhttp.status);
-
-    console.log('readystate ' + xmlhttp.readystate);
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       alert("Preset saved!");
       updatePresetData();
@@ -200,7 +197,7 @@ function sendFormData() {
     new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
   xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.status === 0) {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       // once form is submitted, redirect to home page.
       window.location.href = "../Home/home.html";
     }
