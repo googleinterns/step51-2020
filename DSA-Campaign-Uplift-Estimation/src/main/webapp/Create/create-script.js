@@ -24,7 +24,10 @@ let locationCount = 1;
 let negLocationCount = 1;
 
 // array to keep track of all preset names belonging to user
-const userPresets = [];
+const USERPRESETS = [];
+
+/* length of mm-dd-yyyy (error handling) */
+const DATE_LENGTH = 10;
 
 /**
  * Submission form only requires 2 decimals, this function enforces that rule
@@ -87,8 +90,8 @@ async function submitPresetData() {
 
     // start error handling.
     if (presetName != '') {
-      for (var index = 0; index < userPresets.length; index++) {
-        if (userPresets[index].presetId === presetName) {
+      for (var index = 0; index < USERPRESETS.length; index++) {
+        if (USERPRESETS[index].presetId === presetName) {
           alert('Preset name already exists! Please pick a different name.');
           continue presetLoop;
         }
@@ -106,41 +109,6 @@ async function submitPresetData() {
   // Encode email, user ID, and preset ID into POST URI string.
   keyvalPairs.push(encodeURIComponent('presetId') + '=' + encodeURIComponent(presetName));
   keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
-  /*
-  var form = document.getElementById('campaign-form'); // get the comment form
-  let locationString = '';
-  let negLocationString = '';
-  for (var i = 0; i < form.elements.length; i++) {
-    if (form.elements[i].nodeName === 'BUTTON') {
-      continue;
-    }
-
-    // stop preset process if parameter is required and empty.
-    if ((form.elements[i].required) && (form.elements[i].value === null) || (form.elements[i].value === '')) {
-      console.log(form.elements[i].nodeName);
-      alert('Not all the settings are filled out!');
-      return;
-    } else if ((form.elements[i].name.includes('Date')) &&
-               (form.elements[i].value.length > 10)) {
-      alert('Date must be in the format mm/dd/yyyy!');
-      return;
-    }
-    
-    // push parameter name and value to keyvalPairs.
-    if (!form.elements[i].name.includes('region') && !(form.elements[i].name.includes('country'))) {  
-      console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
-      keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' + encodeURIComponent(form.elements[i].value));
-    } 
-    else if (form.elements[i].name.includes('nregion')) {
-      negLocationString = negLocationString + ',' + form.elements[i].value;
-    }
-    else if (form.elements[i].name.includes('region')) {
-      locationString = locationString + ',' + form.elements[i].value;
-    }
-  }
-
-  keyvalPairs.push(encodeURIComponent('negativeLocations') + '=' + negLocationString);
-  keyvalPairs.push(encodeURIComponent('locations') + '=' + locationString);*/
   keyvalPairs = addFormElements(keyvalPairs);
 
   // divide each parameter with '&'
@@ -173,7 +141,7 @@ function updatePresetData() {
         aTag.setAttribute('onclick', `getPresetData(${i});`);
 
         // for error handling (cannot create a preset name if it already exists)
-        userPresets.push(presetData[i]);
+        USERPRESETS.push(presetData[i]);
 
         liElement.appendChild(aTag);
         presetContainer.appendChild(liElement);
@@ -184,11 +152,11 @@ function updatePresetData() {
 
 /**
  * getPresetData() updates the creation form with the specified
- * index. The index correlates to the object location in userPresets.
- * @param indexSelection index of userPresets that user selects.
+ * index. The index correlates to the object location in USERPRESETS.
+ * @param indexSelection index of USERPRESETS that user selects.
  */
 function getPresetData(indexSelection) {
-  var presetSelection = userPresets[indexSelection].campaignData;
+  var presetSelection = USERPRESETS[indexSelection].campaignData;
   var keywordSelection = presetSelection.keywordCampaignId;
   for (var keywordIndex = 0; keywordIndex < document.getElementById('keyword-campaigns').options.length; keywordIndex++) {
     if (document.getElementById('keyword-campaigns').options[keywordIndex].value === keywordSelection) {
@@ -337,7 +305,7 @@ function addFormElements(keyvalPairs) {
       alert('Not all the settings are filled out!');
       return;
     } else if ((form.elements[i].name.includes('Date')) &&
-               (form.elements[i].value.length > 10)) {
+               (form.elements[i].value.length > DATE_LENGTH)) {
       alert('Date must be in the format mm/dd/yyyy!');
       return;
     }
