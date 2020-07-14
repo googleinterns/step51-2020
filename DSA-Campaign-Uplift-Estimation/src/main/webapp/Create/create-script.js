@@ -292,9 +292,15 @@ function sendFormData() {
   // default values for variables (not applicable to creation phase) sent to servlet
   keyvalPairs.push(encodeURIComponent('DSACampaignId') + '=' + encodeURIComponent('0'));
   keyvalPairs.push(encodeURIComponent('campaignStatus') + '=' + encodeURIComponent('pending'));
-  keyvalPairs.push(encodeURIComponent('clicks') + '=' + encodeURIComponent('0'));
-  keyvalPairs.push(encodeURIComponent('cost') + '=' + encodeURIComponent('0'));
-  keyvalPairs.push(encodeURIComponent('impressions') + '=' + encodeURIComponent('0'));
+
+  /* temporary random generation for data */
+  let clicks = Math.ceil(Math.random() * 500000);
+  let cost = Math.random() * 23000;
+  let impressions = Math.ceil(Math.random() * 40000);
+
+  keyvalPairs.push(encodeURIComponent('clicks') + '=' + encodeURIComponent(clicks));
+  keyvalPairs.push(encodeURIComponent('cost') + '=' + encodeURIComponent(cost));
+  keyvalPairs.push(encodeURIComponent('impressions') + '=' + encodeURIComponent(impressions));
   keyvalPairs = addFormElements(keyvalPairs);
 
   // separate each entity in keyvalPairs with '&' for query string
