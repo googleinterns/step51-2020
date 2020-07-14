@@ -55,13 +55,15 @@ function verifyLoginStatus() {
  * This function allows preset data to be saved while the form is being
  * filled out. Alerts the user of the status of their saved preset. 
  */
-function submitPresetData() {
+async function submitPresetData() {
   let xmlhttp= window.XMLHttpRequest ?
     new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 
   xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.status === 0) {
-      updatePresetData();
+    console.log('status: ' + xmlhttp.status);
+
+    console.log('readystate ' + xmlhttp.readystate);
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       alert("Preset saved!");
       updatePresetData();
     }
@@ -101,10 +103,7 @@ function submitPresetData() {
   var keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
-<<<<<<< HEAD
   keyvalPairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
-=======
->>>>>>> c1c77f6ff689cb1d1821364ccbb2624b90cecdd1
   keyvalPairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
   keyvalPairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));
   
@@ -137,19 +136,13 @@ function submitPresetData() {
  * with all updated links.
  */
 function updatePresetData() {
-<<<<<<< HEAD
   if (userId != 0) {
     fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
+      console.log(presetData);
       document.getElementById('preset-container').innerHTML = "";
       for (var i = 0; i < presetData.length; i++) {
+        console.log('index: ' + i);
         var presetContainer = document.getElementById('preset-container');
-=======
-  if (userId != null) {
-    fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
-      for (var i = 0; i < presetData.length; i++) {
-        var presetContainer = document.getElementById('preset-container');
-        presetContainer.innerHTML = "";
->>>>>>> c1c77f6ff689cb1d1821364ccbb2624b90cecdd1
         var liElement = document.createElement('li');
         var aTag = document.createElement('a');
         aTag.innerText = presetData[i].presetId;
@@ -159,6 +152,7 @@ function updatePresetData() {
 
         // for error handling (cannot create a preset name if it already exists)
         userPresets.push(presetData[i]);
+
         liElement.appendChild(aTag);
         presetContainer.appendChild(liElement);
       }
@@ -230,10 +224,7 @@ function sendFormData() {
     alert("Select a keyword campaign before submitting!");
     return;
   }
-<<<<<<< HEAD
-  console.log(keywordCampaignId);
-=======
->>>>>>> c1c77f6ff689cb1d1821364ccbb2624b90cecdd1
+
   keyvalPairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
   
   // default values for variables (not applicable to creation phase) sent to servlet
