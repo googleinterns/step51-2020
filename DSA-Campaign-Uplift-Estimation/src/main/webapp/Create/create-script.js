@@ -36,6 +36,8 @@ function setTwoNumberDecimal() {
 /**
  * verifyLoginStatus() is ran on page load
  * and obtains the user email associated with the user.
+ *
+ * @returns user login status
  */
 function verifyLoginStatus() {
   fetch('/userapi').then(response => response.json()).then(loginStatus => {
@@ -374,7 +376,7 @@ function keywordSelection() {
 
 /**
  * addRegion is purposed to add location regions to the form
- * where necessary.
+ * where necessary. Terminates if criteria for new region is not met.
  *
  * @param negativeRegion boolean specifying if region is a negative location
  * @param submission     boolean specifying if region is being appended during submission process (for error handling) 
