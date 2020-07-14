@@ -76,6 +76,7 @@ public class PresetServlet extends HttpServlet {
     String endDate = request.getParameter("endDate");
     double dailyBudget = Double.parseDouble(request.getParameter("dailyBudget"));
     String locations = request.getParameter("locations");
+    String negativeLocations = request.getParameter("negativeLocations");
     String domain = request.getParameter("domain");
     String targets = request.getParameter("targets");
     String adText = request.getParameter("adText");
@@ -86,7 +87,7 @@ public class PresetServlet extends HttpServlet {
     presetEntity.setProperty("presetId", presetId);
     presetEntity.setProperty("timestamp", System.currentTimeMillis());
 
-    DSACampaign dsaCampaign = new DSACampaign("0", userId, keywordCampaignId, name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, domain, targets, adText, 0, 0, 0);
+    DSACampaign dsaCampaign = new DSACampaign("0", userId, keywordCampaignId, name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, negativeLocations, domain, targets, adText, 0, 0, 0);
     Gson gson = new Gson();
     String dsaCampaignData = gson.toJson(dsaCampaign);
     presetEntity.setProperty("presetData", dsaCampaignData);
