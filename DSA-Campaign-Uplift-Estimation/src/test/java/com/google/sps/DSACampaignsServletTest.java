@@ -124,11 +124,11 @@ public final class DSACampaignsServletTest {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         assertEquals(0, ds.prepare(new Query("numDSACampaigns")).countEntities(withLimit(10)));
 
-        String id = DSACampaignsServlet.getDSACampaignId();
+        String id = DSACampaignsServlet.getNewDSACampaignId();
         assertEquals(1, ds.prepare(new Query("numDSACampaigns")).countEntities(withLimit(10)));
         assertEquals("1", id);
 
-        String newId = DSACampaignsServlet.getDSACampaignId();
+        String newId = DSACampaignsServlet.getNewDSACampaignId();
         assertEquals(1, ds.prepare(new Query("numDSACampaigns")).countEntities(withLimit(10)));
         assertEquals("2", newId);
     }
