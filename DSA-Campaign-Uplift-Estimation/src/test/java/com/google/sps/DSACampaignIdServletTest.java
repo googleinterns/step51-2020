@@ -38,6 +38,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import java.util.ArrayList;
+import com.google.gson.Gson;
 
 /*
  * Tests the doGet() function in DSACampaignIdServlet.java.
@@ -73,12 +75,12 @@ public final class DSACampaignIdServletTest {
         when(response.getWriter()).thenReturn(pw);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        DSACampaign DSACampaignObject1 = new DSACampaign("1", "2", "1", "entity 1", "complete", "1/1/1", "2/2/2", 12.1, 123.2, "California, Texas",
-            "google.com", "url1.com, url2.com", "sample ad text 1", 432, 123, 42.51);
+        DSACampaign DSACampaignObject1 = new DSACampaign("1", "2", "1", "entity 1", "complete", "1/1/1", "2/2/2", 12.1, 123.2, "United States of America",
+            "California, Texas", "google.com", "url1.com, url2.com", "sample ad text 1", 432, 123, 42.51);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject1));
 
-        DSACampaign DSACampaignObject2 = new DSACampaign("2", "2", "1", "entity 2", "pending", "1/1/1", "2/2/2", 12.1, 123.2, "California, Texas",
-            "google.com", "url1.com, url2.com", "sample ad text 2", 432, 123, 42.51);
+        DSACampaign DSACampaignObject2 = new DSACampaign("2", "2", "1", "entity 2", "pending", "1/1/1", "2/2/2", 12.1, 123.2, "United States of America",
+            "California, Texas", "google.com", "url1.com, url2.com", "sample ad text 2", 432, 123, 42.51);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject2));
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
@@ -86,12 +88,13 @@ public final class DSACampaignIdServletTest {
         DSACampaignIdServlet servlet = new DSACampaignIdServlet();
         servlet.doGet(request, response);
         String result = sw.getBuffer().toString().trim();
-        String expectedStr = "[{\"DSACampaignId\":\"1\",\"userId\":\"2\",\"keywordCampaignId\":\"1\",\"name\":\"entity 1\",\"campaignStatus\":\"complete\",\"startDate\":\"1/1/1\",\"endDate\":\"2/2/2\",";
-        expectedStr += "\"manualCPC\":12.1,\"dailyBudget\":123.2,\"locations\":\"California, Texas\",\"domain\":\"google.com\",\"targets\":\"url1.com, url2.com\",\"adText\":\"sample ad text 1\",";
-        expectedStr += "\"impressions\":432,\"clicks\":123,\"cost\":42.51},";
-        expectedStr += "{\"DSACampaignId\":\"2\",\"userId\":\"2\",\"keywordCampaignId\":\"1\",\"name\":\"entity 2\",\"campaignStatus\":\"pending\",\"startDate\":\"1/1/1\",\"endDate\":\"2/2/2\",";
-        expectedStr += "\"manualCPC\":12.1,\"dailyBudget\":123.2,\"locations\":\"California, Texas\",\"domain\":\"google.com\",\"targets\":\"url1.com, url2.com\",\"adText\":\"sample ad text 2\",";
-        expectedStr += "\"impressions\":432,\"clicks\":123,\"cost\":42.51}]";
-        assertEquals(new String(expectedStr), result);
+
+        ArrayList<DSACampaign> DSACampaignsList = new ArrayList<DSACampaign>();
+        DSACampaignsList.add(DSACampaignObject1);
+        DSACampaignsList.add(DSACampaignObject2);
+        Gson gson = new Gson();
+        String expectedStr = gson.toJson(DSACampaignsList);
+
+        assertEquals(expectedStr, result);
     }
 }
