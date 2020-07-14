@@ -86,4 +86,18 @@ public class BlackBoxServlet extends HttpServlet {
 
         // TODO: SQR
     }
+
+     public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
+        double manualCPCFactor = getManualCPCFactor(keywordCampaignEntity, DSACampaignEntity);
+        double locationsFactor = getLocationsFactor(DSACampaignEntity);
+        double upliftFactor = .25*manualCPCFactor + .25*locationsFactor + .50*websiteFactor;
+
+        return (int) Math.round(upliftFactor*((int) keywordCampaignEntity.getProperty("impressions")));
+    }
+
+    public static double getManualCPCFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
+        double ratio = ((double) DSACampaignEntity.getProperty("manualCPC"))/((double) keywordCampaignEntity.getProperty("manualCPC"));
+        ratio = Math.sqrt(ratio);
+        return Math.min(ratio, 3);
+    }
 }
