@@ -1,20 +1,18 @@
 // Copyright 2019 Google LLC
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the 'License');
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
 //     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
+// distributed under the License is distributed on an 'AS IS' BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
 /* global variables used throughout creation phase. */
-let userEmail = null;
-
 let userId = 0;
 
 let keywordCampaignId = null;
@@ -23,25 +21,24 @@ let keywordCampaignId = null;
 let locationCount = 1;
 
 // array to keep track of all preset names belonging to user
-let userPresets = [];
+const userPresets = [];
 
-/* 
- * Submission form only requires 2 decimals, this function enforces that rule 
+/**
+ * Submission form only requires 2 decimals, this function enforces that rule
  */
 function setTwoNumberDecimal() {
   this.value = parseFloat(this.value).toFixed(2);
 }
 
-/*
+/**
  * verifyLoginStatus() is ran on page load
  * and obtains the user email associated with the user.
  */
 function verifyLoginStatus() {
   fetch('/userapi').then(response => response.json()).then(loginStatus => {
-    userEmail = loginStatus.Email;
     userId = loginStatus.id;
     if (!loginStatus.isLoggedIn) {
-      window.location.replace("../index.html");
+      window.location.replace('../index.html');
     }
     // update preset data once login verified.
     updatePresetData(); 
@@ -51,28 +48,32 @@ function verifyLoginStatus() {
   return false;
 }
 
-/* 
+/**
  * This function allows preset data to be saved while the form is being
- * filled out. Alerts the user of the status of their saved preset. 
+ * filled out. Alerts the user of the status of their saved preset.
  */
-function submitPresetData() {
-  let xmlhttp= window.XMLHttpRequest ?
-    new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+async function submitPresetData() {
+  const xmlhttp= window.XMLHttpRequest ?
+    new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
   xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.status === 0) {
-      alert("Preset saved!");
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      alert('Preset saved!');
       updatePresetData();
     }
     else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
-      alert("Error: Preset cannot be saved. Please try again later.");
+      alert('Error: Preset cannot be saved. Please try again later.');
     }
   }
 
-  // error handling for the preset nickname prompt. JS prompt sticks until valid name input.
-  var presetName;
+  /*
+   * error handling for the preset nickname prompt.
+   * JS prompt sticks until valid name input.
+   */
+  let presetName;
+  presetLoop:
   while (true) {
-    presetName = prompt("What would you like to call the preset?", "");
+    presetName = prompt('What would you like to call the preset?', '');
 
     // user clicked cancel
     if (presetName == null) {
@@ -80,17 +81,17 @@ function submitPresetData() {
     }
 
     // start error handling.
-    if (presetName != "") {
+    if (presetName != '') {
       for (var index = 0; index < userPresets.length; index++) {
         if (userPresets[index].presetId === presetName) {
-          alert("Preset name already exists! Please pick a different name.");
-          continue;
+          alert('Preset name already exists! Please pick a different name.');
+          continue presetLoop;
         }
       }
       break;
     }
     else {
-      alert("Preset name is not valid! Please pick another name.");
+      alert('Preset name is not valid! Please pick another name.');
     }
   }
 
@@ -98,8 +99,9 @@ function submitPresetData() {
   var keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
-  keyvalPairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
-  keyvalPairs.push(encodeURIComponent("presetId") + "=" + encodeURIComponent(presetName));
+  keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' + encodeURIComponent(keywordCampaignId));
+  keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
+  keyvalPairs.push(encodeURIComponent('presetId') + '=' + encodeURIComponent(presetName));
   
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
@@ -107,21 +109,20 @@ function submitPresetData() {
       continue;
     }
     // stop preset process if parameter is empty.
-    if ((form.elements[i].value === null) || (form.elements[i].value === "")) {
-      alert("Not all the settings are filled out!");
+    if ((form.elements[i].value === null) || (form.elements[i].value === '')) {
+      alert('Not all the settings are filled out!');
       return;
     }
 
     var currElement = form.elements[i];
-    keyvalPairs.push(encodeURIComponent(currElement.name) + "=" + encodeURIComponent(currElement.value));
+    keyvalPairs.push(encodeURIComponent(currElement.name) + '=' + encodeURIComponent(currElement.value));
   }
 
   // divide each parameter with '&'
-  var queryString = keyvalPairs.join("&");
+  var queryString = keyvalPairs.join('&');
   
-  xmlhttp.open("POST", '/preset', true);
-  xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-  alert(queryString);
+  xmlhttp.open('POST', '/preset', true);
+  xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
   xmlhttp.send(queryString);
 }
 
@@ -131,9 +132,12 @@ function submitPresetData() {
  * with all updated links.
  */
 function updatePresetData() {
-  if (userId != null) {
+  if (userId != 0) {
     fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
+      console.log(presetData);
+      document.getElementById('preset-container').innerHTML = '';
       for (var i = 0; i < presetData.length; i++) {
+        console.log('index: ' + i);
         var presetContainer = document.getElementById('preset-container');
         var liElement = document.createElement('li');
         var aTag = document.createElement('a');
@@ -144,6 +148,7 @@ function updatePresetData() {
 
         // for error handling (cannot create a preset name if it already exists)
         userPresets.push(presetData[i]);
+
         liElement.appendChild(aTag);
         presetContainer.appendChild(liElement);
       }
@@ -160,14 +165,18 @@ function getPresetData(indexSelection) {
   var presetSelection = userPresets[indexSelection].campaignData;
   var keywordSelection = presetSelection.keywordCampaignId;
   for (var keywordIndex = 0; keywordIndex < document.getElementById('keyword-campaigns').options.length; keywordIndex++) {
-    if (document.getElementById('keyword-campaigns').options[keywordIndex].value == keywordSelection) {
+    if (document.getElementById('keyword-campaigns').options[keywordIndex].value === keywordSelection) {
+      console.log(keywordSelection);
       var selectedOption = document.getElementById('keyword-campaigns').options[keywordIndex];
-      selectedOption.setAttribute('selected', true);
+      selectedOption.selected = true;
       break;
+    }
+    else {
+      var selectedOption = document.getElementById('keyword-campaigns').options[keywordIndex];
+      selectedOption.selected = false;
     }
   }
   for (var key in presetSelection) {
-    console.log(key);
     if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
         (key != 'userId') && (key != 'cost') && (key != 'impressions') && 
         (key != 'clicks') && (key != 'locations') && (key != 'campaignStatus')) {
@@ -183,16 +192,16 @@ function getPresetData(indexSelection) {
  * error occurs at any point during creation phase, then the function terminates.
  */
 function sendFormData() {
-  let xmlhttp= window.XMLHttpRequest ?
-    new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+  const xmlhttp= window.XMLHttpRequest ?
+    new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
   xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.status === 0) {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       // once form is submitted, redirect to home page.
-      window.location.href = "../Home/home.html";
+      window.location.href = '../Home/home.html';
     }
     else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
-      alert("Could not submit form, please try again.")
+      alert('Could not submit form, please try again.')
     }
   }
 
@@ -201,65 +210,66 @@ function sendFormData() {
 
   // verify that user is logged in before submission.
   if (userId == 0) {
-    alert("Login before submitting!");
+    alert('Login before submitting!');
     return;
   }
-  keyvalPairs.push(encodeURIComponent("userId") + "=" + encodeURIComponent(userId));
+  keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
 
   // verify that keywordCampaignId is set.
   if (keywordCampaignId == null) {
-    alert("Select a keyword campaign before submitting!");
+    alert('Select a keyword campaign before submitting!');
     return;
   }
-  keyvalPairs.push(encodeURIComponent("keywordCampaignId") + "=" + encodeURIComponent(keywordCampaignId));
+
+  keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' + encodeURIComponent(keywordCampaignId));
   
   // default values for variables (not applicable to creation phase) sent to servlet
-  keyvalPairs.push(encodeURIComponent("DSACampaignId") + "=" + encodeURIComponent("0"));
-  keyvalPairs.push(encodeURIComponent("campaignStatus") + "=" + encodeURIComponent("pending"));
-  keyvalPairs.push(encodeURIComponent("clicks") + "=" + encodeURIComponent("0"));
-  keyvalPairs.push(encodeURIComponent("cost") + "=" + encodeURIComponent("0"));
-  keyvalPairs.push(encodeURIComponent("impressions") + "=" + encodeURIComponent("0"));
+  keyvalPairs.push(encodeURIComponent('DSACampaignId') + '=' + encodeURIComponent('0'));
+  keyvalPairs.push(encodeURIComponent('campaignStatus') + '=' + encodeURIComponent('pending'));
+  keyvalPairs.push(encodeURIComponent('clicks') + '=' + encodeURIComponent('0'));
+  keyvalPairs.push(encodeURIComponent('cost') + '=' + encodeURIComponent('0'));
+  keyvalPairs.push(encodeURIComponent('impressions') + '=' + encodeURIComponent('0'));
   
   // represents campaign location - built during runtime
-  let location = "";
+  let location = '';
 
   var form = document.getElementById('campaign-form'); // get the comment form
   for (var i = 0; i < form.elements.length; i++) {
     // Form contains buttons that are irrelevant to input - need to filter out only input
-    if (form.elements[i].nodeName === "BUTTON") {
+    if (form.elements[i].nodeName === 'BUTTON') {
       continue;
     }
 
     // stop submission process if parameter is empty.
-    if ((form.elements[i].value === null) || (form.elements[i].value === "")) {
+    if ((form.elements[i].value === null) || (form.elements[i].value === '')) {
       console.log(form.elements[i].nodeName);
-      alert("Not all the settings are filled out!");
+      alert('Not all the settings are filled out!');
       return;
-    } else if ((form.elements[i].name.includes("Date")) &&
+    } else if ((form.elements[i].name.includes('Date')) &&
                (form.elements[i].value.length > 10)) {
-      alert("Date must be in the format mm/dd/yyyy!");
+      alert('Date must be in the format mm/dd/yyyy!');
       return;
     }
     
     // build location string 'Region, Country' - country occurs in the form first.
-    if (form.elements[i].name.includes("region")) {
-      location = form.elements[i].value + "," + location;
-      keyvalPairs.push(encodeURIComponent("locations") + "=" + encodeURIComponent(location));
+    if (form.elements[i].name.includes('region')) {
+      location = form.elements[i].value + ',' + location;
+      keyvalPairs.push(encodeURIComponent('locations') + '=' + encodeURIComponent(location));
     }
-    else if (form.elements[i].name.includes("country")) {
+    else if (form.elements[i].name.includes('country')) {
       location = form.elements[i].value;
     }
     else {  
       console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
-      keyvalPairs.push(encodeURIComponent(form.elements[i].name) + "=" + encodeURIComponent(form.elements[i].value));
+      keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' + encodeURIComponent(form.elements[i].value));
     }
   }
 
   // separate each entity in keyvalPairs with '&' for query string
-  var queryString = keyvalPairs.join("&");
+  var queryString = keyvalPairs.join('&');
 
-  xmlhttp.open("POST", '/DSA-campaigns', true);
-  xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  xmlhttp.open('POST', '/DSA-campaigns', true);
+  xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
   console.log(queryString);
   xmlhttp.send(queryString);
 }
@@ -270,15 +280,15 @@ function sendFormData() {
  * does not show. If not 0 (selected element), then form shows.
  */
 function keywordSelection() {
-  var selectElementValue = document.getElementById("keyword-campaigns").value;
+  var selectElementValue = document.getElementById('keyword-campaigns').value;
   if (selectElementValue == 0) {
-    document.getElementById("campaign-form").style.display = "none";
-    document.getElementById("buttons").style.display = "none";
+    document.getElementById('campaign-form').style.display = 'none';
+    document.getElementById('buttons').style.display = 'none';
     keywordCampaignId = null;
   }
   else {
-    document.getElementById("campaign-form").style.display = "block";
-    document.getElementById("buttons").style.display = "inline";
+    document.getElementById('campaign-form').style.display = 'block';
+    document.getElementById('buttons').style.display = 'inline';
     keywordCampaignId = selectElementValue;
   }
 }
@@ -288,12 +298,12 @@ function addRegion() {
   var tempCount = 1;
   // verify that all existing locations specified before creating new input
   while (tempCount <= locationCount) {
-    if (document.getElementById("country" + tempCount).value == "") {
-      alert("Specify country " + tempCount + " first!");
+    if (document.getElementById('country' + tempCount).value == '') {
+      alert('Specify country ' + tempCount + ' first!');
       return;
     }
-    else if (document.getElementById("gds-cr-" + tempCount).value == "") {
-      alert("Specify region " + tempCount + " first!");
+    else if (document.getElementById('gds-cr-' + tempCount).value == '') {
+      alert('Specify region ' + tempCount + ' first!');
       return;
     }
     tempCount++;
@@ -334,8 +344,6 @@ function addRegion() {
   locationDiv.appendChild(regionSelect);
   locationDiv.appendChild(document.createElement('br'));
 
-  var locations = document.getElementById("locations");  
+  var locations = document.getElementById('locations');  
   locations.appendChild(locationDiv);
 }
-
-// TODO: validate DSA campaign inputs (e.g. campaign status must be "pending" or "complete")

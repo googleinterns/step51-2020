@@ -1,4 +1,5 @@
 target/
 .idea
+node_modules/
 *.json
 !appsscript.json
