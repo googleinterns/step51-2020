@@ -62,7 +62,7 @@ public class DSACampaignsServlet extends HttpServlet {
         if (userService.isUserLoggedIn()) {
             String userId = userService.getCurrentUser().getUserId();
 
-            DSACampaign DSACampaignObject = new DSACampaign(getDSACampaignId(), userId, request.getParameter("keywordCampaignId"),
+            DSACampaign DSACampaignObject = new DSACampaign(getNewDSACampaignId(), userId, request.getParameter("keywordCampaignId"),
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
                 request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), Integer.parseInt(request.getParameter("impressions")),
@@ -126,7 +126,7 @@ public class DSACampaignsServlet extends HttpServlet {
     }
 
     // Retrieves a unique DSA campaign id from datastore.
-    public static String getDSACampaignId() {
+    public static String getNewDSACampaignId() {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query query = new Query("numDSACampaigns");
         Entity numDSACampaignsEntity = datastore.prepare(query).asSingleEntity();
