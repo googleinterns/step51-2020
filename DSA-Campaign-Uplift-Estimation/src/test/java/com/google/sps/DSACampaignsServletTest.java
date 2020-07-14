@@ -39,7 +39,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import java.util.List;
+import java.util.ArrayList;
+import com.google.gson.Gson;
 
 /*
  * Tests the doGet() and doPost() functions in DSACampaignsServlet.java.
@@ -75,7 +76,7 @@ public final class DSACampaignsServletTest {
         when(response.getWriter()).thenReturn(pw);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        DSACampaign DSACampaignObject = new DSACampaign("1", "2", "1", "entity 1", "pending", "1/1/1", "2/2/2", 23.1, 123.2, "California, Texas", "google.com",
+        DSACampaign DSACampaignObject = new DSACampaign("1", "2", "1", "entity 1", "pending", "1/1/1", "2/2/2", 23.1, 123.2, "United States of America", "California, Texas", "google.com",
             "test1.com, test2.com", "sample ad text", 432, 123, 42.51);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
         assertEquals(1, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
@@ -83,10 +84,13 @@ public final class DSACampaignsServletTest {
         DSACampaignsServlet servlet = new DSACampaignsServlet();
         servlet.doGet(request, response);
         String result = sw.getBuffer().toString().trim();
-        String expectedStr = "[{\"DSACampaignId\":\"1\",\"userId\":\"2\",\"keywordCampaignId\":\"1\",\"name\":\"entity 1\",\"campaignStatus\":\"pending\",\"startDate\":\"1/1/1\",\"endDate\":\"2/2/2\",";
-        expectedStr += "\"manualCPC\":23.1,\"dailyBudget\":123.2,\"locations\":\"California, Texas\",\"domain\":\"google.com\",\"targets\":\"test1.com, test2.com\",";
-        expectedStr += "\"adText\":\"sample ad text\",\"impressions\":432,\"clicks\":123,\"cost\":42.51}]";
-        assertEquals(new String(expectedStr), result);
+
+        ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
+        DSACampaigns.add(DSACampaignObject);
+        Gson gson = new Gson();
+        String expectedStr = gson.toJson(DSACampaigns);
+
+        assertEquals(expectedStr, result);
     }
 
     @Test
@@ -94,7 +98,7 @@ public final class DSACampaignsServletTest {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         assertEquals(0, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
-        DSACampaign DSACampaignObject = new DSACampaign("3", "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
+        DSACampaign DSACampaignObject = new DSACampaign("3", "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, "United States of America",
             "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
 
@@ -112,7 +116,8 @@ public final class DSACampaignsServletTest {
         assertEquals("2/2/2", (String) entity.getProperty("endDate"));
         assertEquals(23.51, (double) entity.getProperty("manualCPC"), .01);
         assertEquals(20.12, (double) entity.getProperty("dailyBudget"), .01);
-        assertEquals("California, Texas", (String) entity.getProperty("locations"));
+        assertEquals("United States of America", (String) entity.getProperty("locations"));
+        assertEquals("California, Texas", (String) entity.getProperty("negativeLocations"));
         assertEquals("google.com", (String) entity.getProperty("domain"));
         assertEquals("test1.com, test2.com", (String) entity.getProperty("targets"));
         assertEquals("sample ad text", (String) entity.getProperty("adText"));
@@ -122,30 +127,16 @@ public final class DSACampaignsServletTest {
     }
 
     @Test
-    public void testUniqueCampaignId() throws IOException, ServletException{
-      DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-      assertEquals(0, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
+    public void DSACampaignsServletGetDSACampaignId() throws IOException, ServletException {
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        assertEquals(0, ds.prepare(new Query("numDSACampaigns")).countEntities(withLimit(10)));
 
-      String expectedCampaignId = "3";
-      DSACampaign DSACampaignObject = new DSACampaign(expectedCampaignId, "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
-            "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
-      ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
-      assertEquals(1, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
+        String id = DSACampaignsServlet.getNewDSACampaignId();
+        assertEquals(1, ds.prepare(new Query("numDSACampaigns")).countEntities(withLimit(10)));
+        assertEquals("1", id);
 
-      String testCampaignId = DSACampaignsServlet.assignUniqueCampaignId("1", "3");
-      DSACampaign DSACampaignObject2 = new DSACampaign(testCampaignId, "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, 
-            "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
-      ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject2));
-      assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
-      Query query = new Query("DSACampaign");
-    	List<Entity> entities = ds.prepare(query).asList(FetchOptions.Builder.withLimit(2));
-      
-      
-      int intValue = 3;
-      for (Entity entity : entities) {
-        assertEquals(expectedCampaignId, DSACampaignsServlet.createDSACampaignFromEntity(entity).DSACampaignId);
-        intValue++;
-        expectedCampaignId = Integer.toString(intValue);
-      }
+        String newId = DSACampaignsServlet.getNewDSACampaignId();
+        assertEquals(1, ds.prepare(new Query("numDSACampaigns")).countEntities(withLimit(10)));
+        assertEquals("2", newId);
     }
 }

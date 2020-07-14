@@ -102,30 +102,51 @@ async function submitPresetData() {
   var keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
-  keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' + encodeURIComponent(keywordCampaignId));
-  keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
   keyvalPairs.push(encodeURIComponent('presetId') + '=' + encodeURIComponent(presetName));
-  
+  keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
+  /*
   var form = document.getElementById('campaign-form'); // get the comment form
+  let locationString = '';
+  let negLocationString = '';
   for (var i = 0; i < form.elements.length; i++) {
     if (form.elements[i].nodeName === 'BUTTON') {
       continue;
     }
-    // stop preset process if parameter is empty.
-    if ((form.elements[i].value === null) || (form.elements[i].value === '')) {
+
+    // stop preset process if parameter is required and empty.
+    if ((form.elements[i].required) && (form.elements[i].value === null) || (form.elements[i].value === '')) {
+      console.log(form.elements[i].nodeName);
       alert('Not all the settings are filled out!');
       return;
+    } else if ((form.elements[i].name.includes('Date')) &&
+               (form.elements[i].value.length > 10)) {
+      alert('Date must be in the format mm/dd/yyyy!');
+      return;
     }
-
-    var currElement = form.elements[i];
-    keyvalPairs.push(encodeURIComponent(currElement.name) + '=' + encodeURIComponent(currElement.value));
+    
+    // push parameter name and value to keyvalPairs.
+    if (!form.elements[i].name.includes('region') && !(form.elements[i].name.includes('country'))) {  
+      console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
+      keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' + encodeURIComponent(form.elements[i].value));
+    } 
+    else if (form.elements[i].name.includes('nregion')) {
+      negLocationString = negLocationString + ',' + form.elements[i].value;
+    }
+    else if (form.elements[i].name.includes('region')) {
+      locationString = locationString + ',' + form.elements[i].value;
+    }
   }
+
+  keyvalPairs.push(encodeURIComponent('negativeLocations') + '=' + negLocationString);
+  keyvalPairs.push(encodeURIComponent('locations') + '=' + locationString);*/
+  keyvalPairs = addFormElements(keyvalPairs);
 
   // divide each parameter with '&'
   var queryString = keyvalPairs.join('&');
   
   xmlhttp.open('POST', '/preset', true);
   xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+  console.log(queryString);
   xmlhttp.send(queryString);
 }
 
@@ -171,6 +192,8 @@ function getPresetData(indexSelection) {
     if (document.getElementById('keyword-campaigns').options[keywordIndex].value === keywordSelection) {
       console.log(keywordSelection);
       var selectedOption = document.getElementById('keyword-campaigns').options[keywordIndex];
+
+      // mark keyword campaign
       selectedOption.selected = true;
       break;
     }
@@ -184,6 +207,46 @@ function getPresetData(indexSelection) {
         (key != 'userId') && (key != 'cost') && (key != 'impressions') && 
         (key != 'clicks') && (key != 'locations') && (key != 'campaignStatus')) {
       document.getElementById(key).value = presetSelection[key];
+    }
+    
+    if (key == 'locations') {
+      fillOutLocations(presetSelection[key].split(','), false);
+    }
+    else if (key == 'negativeLocations') {
+      fillOutLocations(presetSelection[key].split(','), true);
+    }
+  }
+}
+
+/**
+ * fillOutLocations is called upon a preset click. This function appends and
+ * sets location nodes based on preset data.
+ *
+ * @param locationsArray     the array of locations to be set
+ * @param isNegativeLocation boolean representing whether the locations are negative locations
+ */
+function fillOutLocations(locationsArray, isNegativeLocation) {
+  let regionIndex = 1;
+  console.log(locationsArray);
+  for (var locationIndex = 0; locationIndex < locationsArray.length; locationIndex++) {
+    let regionId = isNegativeLocation ? `gds-ncr-${regionIndex}` : `gds-cr-${regionIndex}`;
+    regionIndex++;
+    var currElement = null;
+    if (document.getElementById(regionId) != null) {
+      currElement = document.getElementById(regionId);
+    }
+    else {
+      addRegion(isNegativeLocation, false);
+      currElement = document.getElementById(regionId);
+    }
+
+    for (var stateSelection = 0; stateSelection < currElement.options.length; stateSelection++) {
+      if (currElement.options[stateSelection].value == locationsArray[locationIndex]) {
+        currElement.options[stateSelection].selected = true;
+      }
+      else {
+        currElement.options[stateSelection].selected = false;
+      }
     }
   }
 }
@@ -224,52 +287,13 @@ function sendFormData() {
     return;
   }
 
-  keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' + encodeURIComponent(keywordCampaignId));
-  
   // default values for variables (not applicable to creation phase) sent to servlet
   keyvalPairs.push(encodeURIComponent('DSACampaignId') + '=' + encodeURIComponent('0'));
   keyvalPairs.push(encodeURIComponent('campaignStatus') + '=' + encodeURIComponent('pending'));
   keyvalPairs.push(encodeURIComponent('clicks') + '=' + encodeURIComponent('0'));
   keyvalPairs.push(encodeURIComponent('cost') + '=' + encodeURIComponent('0'));
   keyvalPairs.push(encodeURIComponent('impressions') + '=' + encodeURIComponent('0'));
-  
-  // represents campaign location - built during runtime
-  let location = '';
-  let uriKey = 'locations';
-
-  var form = document.getElementById('campaign-form'); // get the comment form
-  for (var i = 0; i < form.elements.length; i++) {
-    // Form contains buttons that are irrelevant to input - need to filter out only input
-    if (form.elements[i].nodeName === 'BUTTON') {
-      continue;
-    }
-
-    // stop submission process if parameter is empty.
-    if ((form.elements[i].value === null) || (form.elements[i].value === '')) {
-      console.log(form.elements[i].nodeName);
-      alert('Not all the settings are filled out!');
-      return;
-    } else if ((form.elements[i].name.includes('Date')) &&
-               (form.elements[i].value.length > 10)) {
-      alert('Date must be in the format mm/dd/yyyy!');
-      return;
-    }
-    
-    // build location string 'Region, Country' - country occurs in the form first.
-    if (!form.elements[i].name.includes('region') && !(form.elements[i].name.includes('country'))) {  
-      console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
-      keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' + encodeURIComponent(form.elements[i].value));
-    }
-  }
-
-  let locationString = '';
-  for (var locationIndex = 0; locationIndex < locationCount; locationIndex++) {
-    locationString = locationString + document.getElementById(`region${locationIndex}`) + ','
-                                    + document.getElementById(`country${locationIndex}`) + ',';
-  }
-
-  keyvalPairs.push(encodeURIComponent('locations') + '=' + encodeURIComponent(locationString));
-
+  keyvalPairs = addFormElements(keyvalPairs);
 
   // separate each entity in keyvalPairs with '&' for query string
   var queryString = keyvalPairs.join('&');
@@ -278,6 +302,55 @@ function sendFormData() {
   xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
   console.log(queryString);
   xmlhttp.send(queryString);
+}
+
+/**
+ * addFormElements parses through the campaign form and returns an encoded key value
+ * array to be used for POST requests.
+ *
+ * @param keyvalPairs existing array to contain new form data.
+ * @returns           updated keyvalPairs array with campaign form data
+ */
+function addFormElements(keyvalPairs) {
+  keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' + encodeURIComponent(keywordCampaignId));
+  var form = document.getElementById('campaign-form'); // get the comment form
+  let locationString = '';
+  let negLocationString = '';
+  for (var i = 0; i < form.elements.length; i++) {
+    // Form contains buttons that are irrelevant to input - need to filter out only input
+    if (form.elements[i].nodeName === 'BUTTON') {
+      continue;
+    }
+
+    // stop submission process if parameter is required and empty.
+    if ((form.elements[i].required) && ((form.elements[i].value === null) || (form.elements[i].value === ''))) {
+      console.log(form.elements[i].nodeName);
+      console.log(form.elements[i].required);
+      alert('Not all the settings are filled out!');
+      return;
+    } else if ((form.elements[i].name.includes('Date')) &&
+               (form.elements[i].value.length > 10)) {
+      alert('Date must be in the format mm/dd/yyyy!');
+      return;
+    }
+    
+    // push parameter name and value to keyvalPairs.
+    if (!form.elements[i].name.includes('region') && !(form.elements[i].name.includes('country'))) {  
+      console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
+      keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' + encodeURIComponent(form.elements[i].value));
+    }
+    else if (form.elements[i].name.includes('nregion')) {
+      negLocationString = negLocationString == '' ? form.elements[i].value : negLocationString + ',' + form.elements[i].value;
+    }
+    else if (form.elements[i].name.includes('region')) {
+      locationString = locationString == '' ? form.elements[i].value : locationString + ',' + form.elements[i].value;
+    }
+  }
+
+  keyvalPairs.push(encodeURIComponent('negativeLocations') + '=' + encodeURIComponent(negLocationString));
+  keyvalPairs.push(encodeURIComponent('locations') + '=' + encodeURIComponent(locationString));
+
+  return keyvalPairs;
 }
 
 /**
@@ -299,20 +372,32 @@ function keywordSelection() {
   }
 }
 
-// TODO: Fix additional dropdown menu not showing elements.
-function addRegion() {
+/**
+ * addRegion is purposed to add location regions to the form
+ * where necessary.
+ *
+ * @param negativeRegion boolean specifying if region is a negative location
+ * @param submission     boolean specifying if region is being appended during submission process (for error handling) 
+ */
+function addRegion(negativeRegion, submission) {
+  let regionId = negativeRegion ? 'gds-ncr-' : 'gds-cr-';
+  let countryId = negativeRegion ? 'ncountry' : 'country';
+  let locationId = negativeRegion ? 'negativeLocations' : 'locations';
+
   var tempCount = 1;
   let chosenValues = [];
-  // verify that all existing locations specified before creating new input
-  while (tempCount < locationCount + 1) {
-    var regionSelection = document.getElementById('gds-cr-' + tempCount);
+  // verify that all existing locations specified before creating new input (only if submitting)
+  while ((tempCount <= locationCount) && submission) {
+    var regionSelection = document.getElementById(regionId + '' + tempCount);
     if (regionSelection.options[regionSelection.selectedIndex].value == '') {
-      alert('Specify region ' + tempCount + ' first!');
+      let specifyMsg = negativeRegion ? 'Specify negative region ' + tempCount + ' first!' : 'Specify region ' + tempCount + ' first!';
+      alert(specifyMsg);
       return;
     }
     else {
       if (chosenValues.includes(regionSelection.options[regionSelection.selectedIndex].value)) {
-        alert('Please remove duplicate regions!');
+        let duplicateMsg = negativeRegion ? 'Please remove duplicate negative regions!' : 'Please remove duplicate regions!';
+        alert(duplicateMsg);
         return;
       }
       chosenValues.push(regionSelection.options[regionSelection.selectedIndex].value);
@@ -323,19 +408,20 @@ function addRegion() {
   ++locationCount;
 
   // create the location input HTML elements
-  let regionSelect = document.getElementById(`gds-cr-${locationCount - 1}`).cloneNode(true);
-  regionSelect.id = `gds-cr-${locationCount}`;
+  let regionSelect = document.getElementById(`${regionId}${locationCount - 1}`).cloneNode(true);
+  regionSelect.id = `${regionId}${locationCount}`;
 
-  let countrySelect = document.getElementById(`country${locationCount - 1}`).cloneNode(true);
-  countrySelect.id = `country${locationCount}`;
+  let countrySelect = document.getElementById(`${countryId}${locationCount - 1}`).cloneNode(true);
+  countrySelect.id = `${countryId}${locationCount}`;
   
-  var locations = document.getElementById('locations');
+  var locations = document.getElementById(locationId);
   
   var locationDiv = document.createElement('div');
   locationDiv.className = 'form-group';
   
   let locationTag = document.createElement('h3');
-  locationTag.innerText = `Location ${locationCount}`;
+  let locationTagString = negativeRegion ? `Negative Location ${locationCount}` : `Location ${locationCount}`;
+  locationTag.innerText = locationTagString;
   locationDiv.appendChild(locationTag);
   
   var countryLabel = document.createElement('label');
@@ -350,7 +436,7 @@ function addRegion() {
   var regionLabel = document.createElement('label');
   regionLabel.className = 'control-label';
   regionLabel.innerText = `Region ${locationCount}`;
-  regionLabel.setAttribute('for', `gds-cr-${locationCount}`);
+  regionLabel.setAttribute('for', `${regionId}${locationCount}`);
 
   locationDiv.appendChild(regionLabel);
   locationDiv.appendChild(regionSelect);

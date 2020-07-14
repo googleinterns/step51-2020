@@ -25,7 +25,6 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import java.io.IOException;
-import java.io.PrintWriter;
 import com.google.gson.Gson;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -63,15 +62,11 @@ public class DSACampaignsServlet extends HttpServlet {
 
         if (userService.isUserLoggedIn()) {
             String userId = userService.getCurrentUser().getUserId();
-            String DSACampaignId = request.getParameter("DSACampaignId");
-            String keywordCampaignId = request.getParameter("keywordCampaignId");
-            DSACampaignId = assignUniqueCampaignId(keywordCampaignId, DSACampaignId);
-            
-            DSACampaign DSACampaignObject = new DSACampaign(DSACampaignId, userId, keywordCampaignId,
-                request.getParameter("name"), request.getParameter("campaignStatus"), request.getParameter("startDate"), request.getParameter("endDate"), 
+            DSACampaign DSACampaignObject = new DSACampaign(getNewDSACampaignId(), userId, request.getParameter("keywordCampaignId"),
+                request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
-                request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), Integer.parseInt(request.getParameter("impressions")),
-                Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
+                request.getParameter("negativeLocations"), request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), 
+                Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             datastore.put(createEntityFromDSACampaign(DSACampaignObject));
@@ -94,6 +89,7 @@ public class DSACampaignsServlet extends HttpServlet {
         double manualCPC = (double) entity.getProperty("manualCPC");
         double dailyBudget = (double) entity.getProperty("dailyBudget");
         String locations = (String) entity.getProperty("locations");
+        String negativeLocations = (String) entity.getProperty("negativeLocations");
         String domain = (String) entity.getProperty("domain");
         String targets = (String) entity.getProperty("targets");
         String adText = (String) entity.getProperty("adText");
@@ -102,7 +98,7 @@ public class DSACampaignsServlet extends HttpServlet {
         int clicks = (int) ((long) entity.getProperty("clicks"));
         double cost = (double) entity.getProperty("cost");
 
-        return new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, campaignStatus, startDate, endDate, manualCPC, dailyBudget, locations, domain, targets, adText, impressions, clicks, cost);
+        return new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, campaignStatus, startDate, endDate, manualCPC, dailyBudget, locations, negativeLocations, domain, targets, adText, impressions, clicks, cost);
     }
 
     public static Entity createEntityFromDSACampaign(DSACampaign DSACampaignObject) {
@@ -119,6 +115,7 @@ public class DSACampaignsServlet extends HttpServlet {
         DSACampaignEntity.setProperty("manualCPC", DSACampaignObject.manualCPC);
         DSACampaignEntity.setProperty("dailyBudget", DSACampaignObject.dailyBudget);
         DSACampaignEntity.setProperty("locations", DSACampaignObject.locations);
+        DSACampaignEntity.setProperty("negativeLocations", DSACampaignObject.negativeLocations);
         DSACampaignEntity.setProperty("domain", DSACampaignObject.domain);
         DSACampaignEntity.setProperty("targets", DSACampaignObject.targets);
         DSACampaignEntity.setProperty("adText", DSACampaignObject.adText);
@@ -130,29 +127,25 @@ public class DSACampaignsServlet extends HttpServlet {
         return DSACampaignEntity;
     }
 
-    /**
-     * assignUniqueCampaignId takes in a keyword campaign and the proposed dsaCampaignId and
-     * checks with datastore to determine if dsaCampaignId already exists. If campaign ID already exists, 
-     * then this method returns the highest existing DSA campaign ID plus one.
-     *
-     * @param correspondingKeywordCampaignId keyword campaign id associated with the DSA campaign.
-     * @param dsaCampaignId                  The proposed DSA campaign ID.
-     * @return                               String representing available dsa campaign id.
-     */
-    public static String assignUniqueCampaignId(String correspondingKeywordCampaignId, String dsaCampaignId) {
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, dsaCampaignId));
-      PreparedQuery results = datastore.prepare(query);
-      if (results.countEntities(FetchOptions.Builder.withLimit(1)) > 0) {
-        query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, correspondingKeywordCampaignId))
-                                        .addSort("DSACampaignId", SortDirection.DESCENDING);
-        Entity dsaCampaign = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1)).get(0);
-        DSACampaign highestDSACampaignId = createDSACampaignFromEntity(dsaCampaign);
-        int newDSACampaignId = Integer.parseInt(highestDSACampaignId.DSACampaignId) + 1;
-        return Integer.toString(newDSACampaignId);
-      }
-      else {
-        return dsaCampaignId;
-      }
+    // Retrieves a unique DSA campaign id from datastore.
+    public static String getNewDSACampaignId() {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("numDSACampaigns");
+        Entity numDSACampaignsEntity = datastore.prepare(query).asSingleEntity();
+        int numDSACampaigns = 1;
+
+        if (numDSACampaignsEntity != null) {
+            // There are DSA campaigns in datastore, the numDSACampaignsEntity was already created.
+            numDSACampaigns = (int) ((long) numDSACampaignsEntity.getProperty("number"));
+            numDSACampaignsEntity.setProperty("number", ++numDSACampaigns);
+            datastore.put(numDSACampaignsEntity);
+        } else {
+            // There are no DSA campaigns in datastore - need to create numDSACampaignsEntity.
+            Entity newNumDSACampaignsEntity = new Entity("numDSACampaigns");
+            newNumDSACampaignsEntity.setProperty("number", numDSACampaigns);
+            datastore.put(newNumDSACampaignsEntity);
+        }
+
+        return Integer.toString(numDSACampaigns);
     }
 }
