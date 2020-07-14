@@ -46,6 +46,11 @@ public class DSACampaign {
      * Ex: correct - "California, Houston, United States of America"; incorrect - "CA, Houston, USA")
      */
     public String locations;
+    /*
+     * comma-separated string (same format as locations) will contain the locations the advertiser specifically doesn’t want to target
+     * Ex: advertiser can choose to target all of the US except for Washington DC
+     */
+    public String negativeLocations;
     // url of the main web page to be advertised
     public String domain;
     /*
@@ -65,7 +70,7 @@ public class DSACampaign {
     // total money spent on the ad campaign
     public double cost;
 
-    public DSACampaign(String DSACampaignId, String userId, String keywordCampaignId, String name, String campaignStatus, String startDate, String endDate, double manualCPC, double dailyBudget, String locations, String domain, String targets, String adText, int impressions, int clicks, double cost) {
+    public DSACampaign(String DSACampaignId, String userId, String keywordCampaignId, String name, String campaignStatus, String startDate, String endDate, double manualCPC, double dailyBudget, String locations, String negativeLocations, String domain, String targets, String adText, int impressions, int clicks, double cost) {
         this.DSACampaignId = DSACampaignId;
         this.userId = userId;
         this.keywordCampaignId = keywordCampaignId;
@@ -77,6 +82,7 @@ public class DSACampaign {
         this.manualCPC = manualCPC;
         this.dailyBudget = dailyBudget;
         this.locations = locations;
+        this.negativeLocations = negativeLocations;
         this.domain = domain;
         this.targets = targets;
         this.adText = adText;

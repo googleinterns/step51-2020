@@ -38,6 +38,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.gson.Gson;
 
 /*
  * Tests the doGet() function in KeywordCampaignIdServlet.java.
@@ -80,8 +81,10 @@ public final class KeywordCampaignIdServletTest {
         KeywordCampaignIdServlet servlet = new KeywordCampaignIdServlet();
         servlet.doGet(request, response);
         String result = sw.getBuffer().toString().trim();
-        String expectedStr = "{\"keywordCampaignId\":\"1\",\"userId\":\"2\",\"DSACampaignIds\":\"4, 2, 5\",\"name\":\"entity 1\",";
-        expectedStr += "\"impressions\":432,\"clicks\":123,\"cost\":42.51}";
-        assertEquals(new String(expectedStr), result);
+
+        Gson gson = new Gson();
+        String expectedStr = gson.toJson(keywordCampaignObject);
+
+        assertEquals(expectedStr, result);
     }
 }
