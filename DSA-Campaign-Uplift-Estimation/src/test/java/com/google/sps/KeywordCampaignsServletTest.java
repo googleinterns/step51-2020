@@ -70,7 +70,7 @@ public final class KeywordCampaignsServletTest {
     @Test
     public void keywordCampaignsServletDoGet() throws IOException, ServletException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "4, 2, 5", "entity 1", 432, 123, 42.51);
+        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "entity 1", 123, "United States of America", "California, Texas", 432, 123, 42.51);
         ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
 
         Query query = new Query("keywordCampaign").addSort("keywordCampaignId", SortDirection.ASCENDING);
@@ -89,7 +89,7 @@ public final class KeywordCampaignsServletTest {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         assertEquals(0, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
 
-        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "2, 5, 3, 7", "Test Keyword Campaign", 12412, 535, 2145.50);
+        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "Test Keyword Campaign", 123, "United States of America", "California, Texas", 12412, 535, 2145.50);
         ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
 
         assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
@@ -98,8 +98,10 @@ public final class KeywordCampaignsServletTest {
     	Entity entity = ds.prepare(query).asSingleEntity();
         assertEquals("1", (String) entity.getProperty("keywordCampaignId"));
         assertEquals("2", (String) entity.getProperty("userId"));
-        assertEquals("2, 5, 3, 7", (String) entity.getProperty("DSACampaignIds"));
         assertEquals("Test Keyword Campaign", (String) entity.getProperty("name"));
+        assertEquals(123, (double) entity.getProperty("manualCPC"), .01);
+        assertEquals("United States of America", (String) entity.getProperty("locations"));
+        assertEquals("California, Texas", (String) entity.getProperty("negativeLocations"));
         assertEquals(12412, (int) ((long) entity.getProperty("impressions")));
         assertEquals(535, (int) ((long) entity.getProperty("clicks")));
         assertEquals(2145.5, (double) entity.getProperty("cost"), .01);

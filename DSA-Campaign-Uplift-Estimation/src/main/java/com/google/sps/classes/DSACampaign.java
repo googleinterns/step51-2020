@@ -63,11 +63,11 @@ public class DSACampaign {
 
     // estimation results
 
-    //  how many times an ad appears on a search result page
+    //  how many times an ad appears on a search result page on average in a single day
     public int impressions;
-    // how many times a user clicks on an ad link
+    // number of clicks on an ad link on average in a single day
     public int clicks;
-    // total money spent on the ad campaign
+    // total money spent on the campaign on average in a single day
     public double cost;
 
     public DSACampaign(String DSACampaignId, String userId, String keywordCampaignId, String name, String campaignStatus, String startDate, String endDate, double manualCPC, double dailyBudget, String locations, String negativeLocations, String domain, String targets, String adText, int impressions, int clicks, double cost) {

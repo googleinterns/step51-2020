@@ -5,15 +5,11 @@
     <title>Create Data</title>
   </head>
   <body>
-    <form method="POST" action="/DSA-campaigns">
-        <p>DSA Campaign Id:</p>
-        <input type="number" name="DSACampaignId" value=0>     
+    <form method="POST" action="/DSA-campaigns"> 
         <p>Keyword Campaign Id</p>
         <input type="number" name="keywordCampaignId" value=0>   
         <p>Name</p> 
         <input type="text" name="name" value="">   
-        <p>Campaign Status</p> 
-        <input type="text" name="campaignStatus" value="">   
         <p>Start Date</p> 
         <input type="text" name="startDate" value="">  
         <p>End Date</p> 
@@ -22,11 +18,13 @@
         <input type="number" step="0.01" name="manualCPC" value=0>
         <p>Daily Budget</p>
         <input type="number" step="0.01" name="dailyBudget" value=0>
-        <p>Locations (comma-separated list, ex: "Houston, New York"</p> 
+        <p>Locations (comma-separated list, ex: "Houston, New York")</p> 
         <input type="text" name="locations" value="">   
+        <p>Negative Locations (comma-separated list, ex: "Houston, New York")</p> 
+        <input type="text" name="negativeLocations" value="">   
         <p>Domain</p> 
         <input type="text" name="domain" value="">   
-        <p>Targets (comma-separated list, ex: "url1.com, url2.com"</p> 
+        <p>Targets (comma-separated list, ex: "url1.com, url2.com)"</p> 
         <input type="text" name="targets" value="">   
         <p>Ad Text</p> 
         <input type="text" name="adText" value="">   
