@@ -68,6 +68,7 @@ public class PresetServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     
     // parse each parameter from the save preset form.
+    String keywordCampaignId = request.getParameter("keywordCampaignId");
     String userId = request.getParameter("userId");
     String presetId = request.getParameter("presetId");
     String name = request.getParameter("name");
@@ -85,7 +86,7 @@ public class PresetServlet extends HttpServlet {
     presetEntity.setProperty("presetId", presetId);
     presetEntity.setProperty("timestamp", System.currentTimeMillis());
 
-    DSACampaign dsaCampaign = new DSACampaign("0", userId, "0", name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, domain, targets, adText, 0, 0, 0);
+    DSACampaign dsaCampaign = new DSACampaign("0", userId, keywordCampaignId, name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, domain, targets, adText, 0, 0, 0);
     Gson gson = new Gson();
     String dsaCampaignData = gson.toJson(dsaCampaign);
     presetEntity.setProperty("presetData", dsaCampaignData);
