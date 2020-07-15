@@ -27,12 +27,12 @@ let negLocationCount = 1;
 let selectedPreset = -1;
 
 // array to keep track of all preset names belonging to user
-const USERPRESETS = [];
+const USER_PRESETS = [];
 
 // length of mm-dd-yyyy (error handling)
 const DATE_LENGTH = 10;
 
-// number of max presets (to prevent random page behavior)
+// number of max presets (to prevent unecessary page extensions)
 const MAX_PRESETS = 20;
 
 /**
@@ -70,7 +70,7 @@ async function submitPresetData() {
   const xmlhttp= window.XMLHttpRequest ?
     new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
-  if (USERPRESETS.length === MAX_PRESETS) {
+  if (USER_PRESETS.length === MAX_PRESETS) {
     alert('Preset limit reached, please delete presets.');
     return;
   }
@@ -102,8 +102,8 @@ async function submitPresetData() {
 
     // start error handling.
     if (presetName != '') {
-      for (var index = 0; index < USERPRESETS.length; index++) {
-        if (USERPRESETS[index].presetId
+      for (var index = 0; index < USER_PRESETS.length; index++) {
+        if (USER_PRESETS[index].presetId
                               .toLowerCase() === presetName.toLowerCase()) {
           alert('Preset name already exists! Please pick a different name.');
           continue presetLoop;
@@ -162,7 +162,7 @@ function updatePresetData() {
         aTag.setAttribute('onclick', `getPresetData(${i});`);
 
         // for error handling (cannot create a preset name if it already exists)
-        USERPRESETS.push(presetData[i]);
+        USER_PRESETS.push(presetData[i]);
 
         liElement.appendChild(aTag);
         presetContainer.appendChild(liElement);
@@ -173,15 +173,16 @@ function updatePresetData() {
 
 /**
  * getPresetData() updates the creation form with the specified
- * index. The index correlates to the object location in USERPRESETS.
- * @param indexSelection index of USERPRESETS that user selects.
+ * index. The index correlates to the object location in USER_PRESETS.
+ *
+ * @param indexSelection index of USER_PRESETS that user selects.
  */
 function getPresetData(indexSelection) {
   if (!confirm('Are you sure you want to apply this preset?' +
                ' All existing values in the form may reset.')) {
     return;
   }
-  var presetSelection = USERPRESETS[indexSelection].campaignData;
+  var presetSelection = USER_PRESETS[indexSelection].campaignData;
   selectedPreset = indexSelection;
   document.getElementById('preset-delete-btn').style.display = 'inline-block';
   var keywordSelection = presetSelection.keywordCampaignId;
@@ -222,7 +223,7 @@ function getPresetData(indexSelection) {
 }
 
 function deleteCurrentAppliedPreset() {
-  let presetId = USERPRESETS[selectedPreset].presetId;
+  let presetId = USER_PRESETS[selectedPreset].presetId;
   if (confirm(`Are you sure you would like to delete ${presetId}?` +
               ` Existing data in the form will not be deleted.`)) {
       const xmlhttp= window.XMLHttpRequest ?
@@ -231,7 +232,7 @@ function deleteCurrentAppliedPreset() {
       xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
           alert('Preset deleted.');
-          USERPRESETS.splice(selectedPreset, 1);
+          USER_PRESETS.splice(selectedPreset, 1);
           selectedPreset = -1;
           document.getElementById('preset-delete-btn').style.display = 'none';
           updatePresetData();
