@@ -29,8 +29,11 @@ let selectedPreset = -1;
 // array to keep track of all preset names belonging to user
 const USERPRESETS = [];
 
-/* length of mm-dd-yyyy (error handling) */
+// length of mm-dd-yyyy (error handling)
 const DATE_LENGTH = 10;
+
+// number of max presets (to prevent random page behavior)
+const MAX_PRESETS = 20;
 
 /**
  * Submission form only requires 2 decimals, this function enforces that rule
@@ -67,6 +70,11 @@ async function submitPresetData() {
   const xmlhttp= window.XMLHttpRequest ?
     new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
+  if (USERPRESETS.length === MAX_PRESETS) {
+    alert('Preset limit reached, please delete presets.');
+    return;
+  }
+
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       alert('Preset saved!');
@@ -84,7 +92,7 @@ async function submitPresetData() {
   let presetName;
   presetLoop:
   while (true) {
-    presetName = prompt('What would you like to call the preset?', '');
+    presetName = prompt('What would you like to call the preset? (Max 20 presets)', '');
 
     // user clicked cancel
     if (presetName == null) {

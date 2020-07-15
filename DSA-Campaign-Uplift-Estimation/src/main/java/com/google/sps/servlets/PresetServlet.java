@@ -60,9 +60,7 @@ public class PresetServlet extends HttpServlet {
       
       DSACampaign presetData = new Gson().fromJson(jsonData, DSACampaign.class);
       CampaignPreset campaignPreset = new CampaignPreset(userId, presetId, presetData);
-      if (!((Boolean) currEntry.getProperty("deleted"))) {
-        presets.add(campaignPreset);
-      }
+      presets.add(campaignPreset);
     }
 
     Gson gson = new Gson();
