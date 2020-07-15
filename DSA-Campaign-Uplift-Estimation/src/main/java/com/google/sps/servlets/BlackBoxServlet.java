@@ -73,9 +73,17 @@ public class BlackBoxServlet extends HttpServlet {
 
         // calculate the estimation results
         double websiteFactor = getWebsiteFactor(keywordCampaignEntity, DSACampaignEntity);
+        double impressionsToClicksFactor = getImpressionsToClicksFactor(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
-        int clicks = getClicksEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor, impressions);
-        double cost = clicks*((double) DSACampaignEntity.getProperty("manualCPC"));
+        int clicks = (int) Math.round(impressions * impressionsToClicksFactor);;
+        double cost = clicks * ((double) DSACampaignEntity.getProperty("manualCPC"));
+
+        // if exceeded the daily budget, must cap impressions, clicks, and cost
+        if (cost > ((double) DSACampaignEntity.getProperty("dailyBudget"))) {
+            cost = (double) DSACampaignEntity.getProperty("dailyBudget");
+            clicks = (int) Math.round(cost / ((double) DSACampaignEntity.getProperty("manualCPC")));
+            impressions = (int) Math.round(clicks / impressionsToClicksFactor);
+        }
 
         // update the DSA campaign entity in datastore with the estimation results
         DSACampaignEntity.setProperty("impressions", impressions);
@@ -110,10 +118,9 @@ public class BlackBoxServlet extends HttpServlet {
         return 1;
     }
 
-    public static int getClicksEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor, int impressions) {
+    public static int getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
         double adTextFactor = getAdTextFactor(DSACampaignEntity);
-        double impressionsToClicksFactor = 1 - (1/(.80*websiteFactor + .20*adTextFactor));
-        return (int) Math.round(impressions * impressionsToClicksFactor);
+        return 1 - (1/(.80*websiteFactor + .20*adTextFactor));
     }
 
     public static double getAdTextFactor(Entity DSACampaignEntity) {
