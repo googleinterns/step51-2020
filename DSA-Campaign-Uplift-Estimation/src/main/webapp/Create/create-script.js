@@ -148,8 +148,8 @@ async function submitPresetData() {
  */
 function updatePresetData() {
   if (userId != 0) {
-    fetch('/preset?userId=' + userId).then(response => response.json())
-    .then(presetData => {
+    const presetURL = '/preset?userId=' + userId;
+    fetch(presetURL).then(response => response.json()).then(presetData => {
       console.log(presetData);
       document.getElementById('preset-container').innerHTML = '';
       for (let i = 0; i < presetData.length; i++) {
