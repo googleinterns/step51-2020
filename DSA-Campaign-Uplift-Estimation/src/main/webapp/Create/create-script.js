@@ -110,6 +110,9 @@ async function submitPresetData() {
   keyvalPairs.push(encodeURIComponent('presetId') + '=' + encodeURIComponent(presetName));
   keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
   keyvalPairs = addFormElements(keyvalPairs);
+  if (keyvalPairs == null) {
+    return;
+  }
 
   // divide each parameter with '&'
   var queryString = keyvalPairs.join('&');
@@ -117,7 +120,10 @@ async function submitPresetData() {
   xmlhttp.open('POST', '/preset', true);
   xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
   console.log(queryString);
-  xmlhttp.send(queryString);
+  
+  if (determineValidity) {
+    xmlhttp.send(queryString);
+  }
 }
 
 /*
@@ -267,9 +273,12 @@ function sendFormData() {
   let impressions = Math.ceil(Math.random() * 40000);
 
   keyvalPairs.push(encodeURIComponent('clicks') + '=' + encodeURIComponent(clicks));
-  keyvalPairs.push(encodeURIComponent('cost') + '=' + encodeURIComponent(cost));
+  keyvalPairs.push(encodeURIComponent('cost') + '=' + encodeURIComponent(cost.toFixed(2)));
   keyvalPairs.push(encodeURIComponent('impressions') + '=' + encodeURIComponent(impressions));
   keyvalPairs = addFormElements(keyvalPairs);
+  if (keyvalPairs == null) {
+    return;
+  }
 
   // separate each entity in keyvalPairs with '&' for query string
   var queryString = keyvalPairs.join('&');
@@ -277,7 +286,9 @@ function sendFormData() {
   xmlhttp.open('POST', '/DSA-campaigns', true);
   xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
   console.log(queryString);
-  xmlhttp.send(queryString);
+  if (determineValidity()) {
+    xmlhttp.send(queryString);
+  }
 }
 
 /**
@@ -302,12 +313,13 @@ function addFormElements(keyvalPairs) {
     if ((form.elements[i].required) && ((form.elements[i].value === null) || (form.elements[i].value === ''))) {
       console.log(form.elements[i].nodeName);
       console.log(form.elements[i].required);
+      console.log(form.elements[i].name);
       alert('Not all the settings are filled out!');
-      return;
+      return null;
     } else if ((form.elements[i].name.includes('Date')) &&
                (form.elements[i].value.length > DATE_LENGTH)) {
       alert('Date must be in the format mm/dd/yyyy!');
-      return;
+      return null;
     }
     
     // push parameter name and value to keyvalPairs.
@@ -419,4 +431,21 @@ function addRegion(negativeRegion, submission) {
   locationDiv.appendChild(document.createElement('br'));
 
   locations.appendChild(locationDiv);
+}
+
+/**
+ * determineValidity() uses the built in Javascript
+ * checkValidity function to determine if function
+ * is ready to submit. 
+ *
+ * @returns boolean representing validity of form.
+ */
+function determineValidity() {
+  var campaignForm = document.getElementById('campaign-form').elements;
+  for (element in campaignForm) {
+    if ((element.nodeName === 'INPUT') && (!element.checkValidity())) {
+      return false;
+    }
+  }
+  return true;
 }
