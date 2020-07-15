@@ -136,8 +136,16 @@ label {
   background-color: rgb(230, 125, 40);
 }
 
+.reset-btn {
+  background-color: rgb(235, 87, 76);
+}
+
 .preset-btn {
   background-color: rgb(172, 171, 171);
+}
+
+.reset-btn:hover {
+  background-color: rgb(185, 63, 54);
 }
 
 .submit-btn:hover {

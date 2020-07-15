@@ -449,3 +449,10 @@ function determineValidity() {
   }
   return true;
 }
+
+function resetCampaignForm() {
+  var confirmation = confirm("Are you sure you want to clear the form?");
+  if (confirmation) {
+    document.getElementById('campaign-form').reset();
+  }
+}
