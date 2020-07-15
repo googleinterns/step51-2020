@@ -333,9 +333,9 @@ function sendFormData() {
   keyvalPairs.push(encodeURIComponent('campaignStatus') + '=' + encodeURIComponent('pending'));
 
   /* temporary random generation for data */
-  let clicks = Math.ceil(Math.random() * 500000);
-  let cost = Math.random() * 23000;
-  let impressions = Math.ceil(Math.random() * 40000);
+  let impressions = Math.round(1000 + Math.random()*1000);
+  let clicks = Math.round(250 + Math.random()*250);
+  let cost = Math.round(100 + Math.random()*100);
 
   keyvalPairs.push(encodeURIComponent('clicks') + '=' + encodeURIComponent(clicks));
   keyvalPairs.push(encodeURIComponent('cost') + '=' + encodeURIComponent(cost.toFixed(2)));
