@@ -426,20 +426,23 @@ function addRegion(negativeRegion, submission) {
   let regionId = negativeRegion ? 'gds-ncr-' : 'gds-cr-';
   let countryId = negativeRegion ? 'ncountry' : 'country';
   let locationId = negativeRegion ? 'negativeLocations' : 'locations';
+  let locationCounter = negativeRegion ? negativeRegion : locationCount;
 
   var tempCount = 1;
   let chosenValues = [];
   // verify that all existing locations specified before creating new input (only if submitting)
-  while ((tempCount <= locationCount) && submission) {
+  while ((tempCount <= locationCounter) && submission) {
     var regionSelection = document.getElementById(regionId + '' + tempCount);
     if (regionSelection.options[regionSelection.selectedIndex].value == '') {
-      let specifyMsg = negativeRegion ? 'Specify negative region ' + tempCount + ' first!' : 'Specify region ' + tempCount + ' first!';
+      let specifyMsg = negativeRegion ? 'Specify negative region ' + tempCount + ' first!' : 
+                                        'Specify region ' + tempCount + ' first!';
       alert(specifyMsg);
       return;
     }
     else {
       if (chosenValues.includes(regionSelection.options[regionSelection.selectedIndex].value)) {
-        let duplicateMsg = negativeRegion ? 'Please remove duplicate negative regions!' : 'Please remove duplicate regions!';
+        let duplicateMsg = negativeRegion ? 'Please remove duplicate negative regions!' :
+                                            'Please remove duplicate regions!';
         alert(duplicateMsg);
         return;
       }
@@ -448,14 +451,23 @@ function addRegion(negativeRegion, submission) {
     tempCount++;
   }
 
-  ++locationCount;
+  ++locationCounter;
+
+  if (negativeRegion) {
+    // reset global variable for negative location count
+    negLocationCount = locationCounter;
+  }
+  else {
+    // reset global variable for regular location count
+    locationCount = locationCounter;
+  }
 
   // create the location input HTML elements
-  let regionSelect = document.getElementById(`${regionId}${locationCount - 1}`).cloneNode(true);
-  regionSelect.id = `${regionId}${locationCount}`;
+  let regionSelect = document.getElementById(`${regionId}${locationCounter - 1}`).cloneNode(true);
+  regionSelect.id = `${regionId}${locationCounter}`;
 
-  let countrySelect = document.getElementById(`${countryId}${locationCount - 1}`).cloneNode(true);
-  countrySelect.id = `${countryId}${locationCount}`;
+  let countrySelect = document.getElementById(`${countryId}${locationCounter - 1}`).cloneNode(true);
+  countrySelect.id = `${countryId}${locationCounter}`;
   
   var locations = document.getElementById(locationId);
   
@@ -463,13 +475,13 @@ function addRegion(negativeRegion, submission) {
   locationDiv.className = 'form-group';
   
   let locationTag = document.createElement('h3');
-  let locationTagString = negativeRegion ? `Negative Location ${locationCount}` : `Location ${locationCount}`;
+  let locationTagString = negativeRegion ? `Negative Location ${locationCounter}` : `Location ${locationCounter}`;
   locationTag.innerText = locationTagString;
   locationDiv.appendChild(locationTag);
   
   var countryLabel = document.createElement('label');
   countryLabel.className = 'control-label';
-  countryLabel.innerText = `Country ${locationCount}`;
+  countryLabel.innerText = `Country ${locationCounter}`;
   
   locationDiv.appendChild(countryLabel);
   locationDiv.appendChild(countrySelect);
@@ -478,8 +490,8 @@ function addRegion(negativeRegion, submission) {
 
   var regionLabel = document.createElement('label');
   regionLabel.className = 'control-label';
-  regionLabel.innerText = `Region ${locationCount}`;
-  regionLabel.setAttribute('for', `${regionId}${locationCount}`);
+  regionLabel.innerText = `Region ${locationCounter}`;
+  regionLabel.setAttribute('for', `${regionId}${locationCounter}`);
 
   locationDiv.appendChild(regionLabel);
   locationDiv.appendChild(regionSelect);
