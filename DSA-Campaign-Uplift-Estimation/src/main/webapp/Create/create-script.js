@@ -374,13 +374,20 @@ function addFormElements(keyvalPairs) {
       continue;
     }
 
-    // stop submission process if parameter is required and empty.
+    // stop submission process if parameter is required and incorrect.
     if ((form.elements[i].required) && ((form.elements[i].value === null) || (form.elements[i].value === ''))) {
-      console.log(form.elements[i].nodeName);
-      console.log(form.elements[i].required);
-      console.log(form.elements[i].name);
-      console.log(form.elements[i].value);
-      alert('Not all the settings are filled out!');
+      if (form.elements[i].name.includes('Date')) {
+        alert('Date is not valid!');
+      }
+      else if (form.elements[i].name.includes('Budget')) {
+        alert('Daily Budget is not valid!');
+      }
+      else if (form.elements[i].name.includes('CPC')) {
+        alert('Manual CPC is not valid!');
+      }
+      else {
+        alert('Invalid configuration, please double check your settings.');
+      }
       return null;
     } else if ((form.elements[i].name.includes('Date')) &&
                (form.elements[i].value.length > DATE_LENGTH)) {
