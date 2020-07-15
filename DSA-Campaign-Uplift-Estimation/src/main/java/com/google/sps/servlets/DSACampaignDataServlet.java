@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
-// runs all the pending DSA campaigns through the black box and updates estimation results
-@WebServlet("/black-box")
-public class BlackBoxServlet extends HttpServlet {
+// obtains estimation results for all the pending DSA campaigns
+@WebServlet("/data")
+public class DSACampaignDataServlet extends HttpServlet {
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
@@ -44,8 +44,8 @@ public class BlackBoxServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query);
         
         for (Entity DSACampaignEntity : results.asIterable()) {
-            // run the DSA campaign through the black box
-            blackbox(DSACampaignEntity);
+            // obtain the DSA campaign estimation results
+            estimationResults(DSACampaignEntity);
         }
 
         response.sendRedirect("/Home/home.html");
@@ -56,7 +56,7 @@ public class BlackBoxServlet extends HttpServlet {
      * Updates the DSA campaign entity with the estimation results and changes the campaign status from pending to complete.
      * Implementation explanations are in the design doc.
      */
-    public static void blackbox(Entity DSACampaignEntity) {
+    public static void estimationResults(Entity DSACampaignEntity) {
         // retrieve the DSA campaign's corresponding keyword campaign from datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, (String) DSACampaignEntity.getProperty("keywordCampaignId")));

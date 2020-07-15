@@ -39,10 +39,10 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 /*
- * Tests the doPost() function in BlackBoxServlet.java.
+ * Tests the doPost() function in DSACampaignDataServlet.java.
  */
 @RunWith(JUnit4.class)
-public final class BlackBoxServletTest {
+public final class DSACampaignDataServletTest {
     
     @Mock
     HttpServletRequest request;
@@ -64,7 +64,7 @@ public final class BlackBoxServletTest {
     }
 
     @Test
-    public void BlackBoxDoPost() throws IOException, ServletException {
+    public void DSACampaignDataServletdoPost() throws IOException, ServletException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "1", "Test KC", .4, "United States", "Texas, California", 1500, 300, 75.12);
         ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
@@ -81,7 +81,7 @@ public final class BlackBoxServletTest {
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
-        BlackBoxServlet servlet = new BlackBoxServlet();
+        DSACampaignDataServlet servlet = new DSACampaignDataServlet();
         servlet.doPost(request, response);
 
         Query firstQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "1"));
