@@ -481,7 +481,7 @@ function addRegion(negativeRegion, submission) {
   
   var countryLabel = document.createElement('label');
   countryLabel.className = 'control-label';
-  countryLabel.innerText = `Country ${locationCounter}`;
+  countryLabel.innerText = negativeRegion ? `Negative Country ${locationCounter}` : `Country ${locationCounter}`;
   
   locationDiv.appendChild(countryLabel);
   locationDiv.appendChild(countrySelect);
@@ -490,7 +490,7 @@ function addRegion(negativeRegion, submission) {
 
   var regionLabel = document.createElement('label');
   regionLabel.className = 'control-label';
-  regionLabel.innerText = `Region ${locationCounter}`;
+  regionLabel.innerText = negativeRegion ? `Negative Region ${locationCounter}` : `Region ${locationCounter}`;
   regionLabel.setAttribute('for', `${regionId}${locationCounter}`);
 
   locationDiv.appendChild(regionLabel);
