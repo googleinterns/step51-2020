@@ -80,8 +80,7 @@ async function submitPresetData() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       alert('Preset saved!');
       updatePresetData();
-    }
-    else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
+    } else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
       alert('Error: Preset cannot be saved. Please try again later.');
     }
   };
@@ -111,8 +110,7 @@ async function submitPresetData() {
         }
       }
       break;
-    }
-    else {
+    } else {
       alert('Preset name is not valid! Please pick another name.');
     }
   }
@@ -131,7 +129,7 @@ async function submitPresetData() {
   }
 
   // divide each parameter with '&'
-  let queryString = keyvalPairs.join('&');
+  const queryString = keyvalPairs.join('&');
   
   xmlhttp.open('POST', '/preset', true);
   xmlhttp.setRequestHeader('Content-type',
@@ -185,7 +183,7 @@ function getPresetData(indexSelection) {
                ' All existing values in the form may reset.')) {
     return;
   }
-  
+
   const presetSelection = USER_PRESETS[indexSelection].campaignData;
   selectedPreset = indexSelection;
   document.getElementById('preset-delete-btn').style.display = 'inline-block';
@@ -201,8 +199,7 @@ function getPresetData(indexSelection) {
       // mark keyword campaign
       selectedOption.selected = true;
       break;
-    }
-    else {
+    } else {
       const selectedOption = document.getElementById('keyword-campaigns')
           .options[i];
       selectedOption.selected = false;
@@ -211,16 +208,15 @@ function getPresetData(indexSelection) {
 
   for (const key in presetSelection) {
     if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
-        (key != 'userId') && (key != 'cost') && (key != 'impressions') && 
+        (key != 'userId') && (key != 'cost') && (key != 'impressions') &&
         (key != 'clicks') && (key != 'locations') &&
         (key != 'campaignStatus')) {
       document.getElementById(key).value = presetSelection[key];
     }
-    
+
     if (key == 'locations') {
       fillOutLocations(presetSelection[key].split(','), false);
-    }
-    else if (key == 'negativeLocations') {
+    } else if (key == 'negativeLocations') {
       fillOutLocations(presetSelection[key].split(','), true);
     }
   }
@@ -240,8 +236,7 @@ function deleteCurrentAppliedPreset() {
         selectedPreset = -1;
         document.getElementById('preset-delete-btn').style.display = 'none';
         updatePresetData();
-      }
-      else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
+      } else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
         alert('Error: Preset cannot be deleted. Please try again later.');
       }
     };
@@ -287,8 +282,7 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
     let currElement = null;
     if (document.getElementById(regionId) != null) {
       currElement = document.getElementById(regionId);
-    }
-    else {
+    } else {
       addRegion(isNegativeLocation, false);
       currElement = document.getElementById(regionId);
     }
@@ -298,8 +292,7 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
       if (currElement.options[stateSelection].value ==
           locationsArray[locationIndex]) {
         currElement.options[stateSelection].selected = true;
-      }
-      else {
+      } else {
         currElement.options[stateSelection].selected = false;
       }
     }
@@ -321,8 +314,7 @@ function sendFormData() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       // once form is submitted, redirect to home page.
       window.location.href = '../Home/home.html';
-    }
-    else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
+    } else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
       alert('Could not submit form, please try again.');
     }
   };
@@ -408,17 +400,13 @@ function addFormElements(keyvalPairs) {
         (form.elements[i].value === ''))) {
       if (form.elements[i].name.includes('startDate')) {
         alert('Start Date is not valid!');
-      }
-      else if (form.elements[i].name.includes('endDate')) {
+      } else if (form.elements[i].name.includes('endDate')) {
         alert('End Date is not valid!');
-      }
-      else if (form.elements[i].name.includes('Budget')) {
+      } else if (form.elements[i].name.includes('Budget')) {
         alert('Daily Budget is not valid!');
-      }
-      else if (form.elements[i].name.includes('CPC')) {
+      } else if (form.elements[i].name.includes('CPC')) {
         alert('Manual CPC is not valid!');
-      }
-      else {
+      } else {
         alert('Invalid configuration, please double check your settings.');
       }
       return null;
@@ -434,12 +422,10 @@ function addFormElements(keyvalPairs) {
       console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
       keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' +
                        encodeURIComponent(form.elements[i].value));
-    }
-    else if (form.elements[i].name.includes('nregion')) {
+    } else if (form.elements[i].name.includes('nregion')) {
       negLocationString = negLocationString == '' ? form.elements[i].value :
                           negLocationString + ',' + form.elements[i].value;
-    }
-    else if (form.elements[i].name.includes('region')) {
+    } else if (form.elements[i].name.includes('region')) {
       locationString = locationString == '' ? form.elements[i].value :
                        locationString + ',' + form.elements[i].value;
     }
@@ -464,8 +450,7 @@ function keywordSelection() {
     document.getElementById('campaign-form').style.display = 'none';
     document.getElementById('buttons').style.display = 'none';
     keywordCampaignId = null;
-  }
-  else {
+  } else {
     document.getElementById('campaign-form').style.display = 'block';
     document.getElementById('buttons').style.display = 'inline';
     keywordCampaignId = selectElementValue;
@@ -501,8 +486,7 @@ function addRegion(negativeRegion, submission) {
                                           ' first!';
       alert(specifyMsg);
       return;
-    }
-    else {
+    } else {
       if (chosenValues.includes(regionSelection
                 .options[regionSelection.selectedIndex]
                 .value)) {
@@ -523,8 +507,7 @@ function addRegion(negativeRegion, submission) {
   if (negativeRegion) {
     // reset global variable for negative location count
     negLocationCount = locationCounter;
-  }
-  else {
+  } else {
     // reset global variable for regular location count
     locationCount = locationCounter;
   }
