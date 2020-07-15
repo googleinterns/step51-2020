@@ -74,7 +74,7 @@ public class BlackBoxServlet extends HttpServlet {
         // calculate the estimation results
         double websiteFactor = getWebsiteFactor(keywordCampaignEntity, DSACampaignEntity);
         int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
-        int clicks = getClicksEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
+        int clicks = getClicksEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor, impressions);
         double cost = clicks*((double) DSACampaignEntity.getProperty("manualCPC"));
 
         // update the DSA campaign entity in datastore with the estimation results
@@ -87,17 +87,41 @@ public class BlackBoxServlet extends HttpServlet {
         // TODO: SQR
     }
 
+    public static double getWebsiteFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
+        // TODO
+        return 1;
+    }
+
      public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
         double manualCPCFactor = getManualCPCFactor(keywordCampaignEntity, DSACampaignEntity);
-        double locationsFactor = getLocationsFactor(DSACampaignEntity);
+        double locationsFactor = getLocationsFactor(keywordCampaignEntity, DSACampaignEntity);
         double upliftFactor = .25*manualCPCFactor + .25*locationsFactor + .50*websiteFactor;
-
-        return (int) Math.round(upliftFactor*((int) keywordCampaignEntity.getProperty("impressions")));
+        return (int) Math.round(upliftFactor * ((int) keywordCampaignEntity.getProperty("impressions")));
     }
 
     public static double getManualCPCFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
         double ratio = ((double) DSACampaignEntity.getProperty("manualCPC"))/((double) keywordCampaignEntity.getProperty("manualCPC"));
         ratio = Math.sqrt(ratio);
         return Math.min(ratio, 3);
+    }
+
+    public static double getLocationsFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
+        // TODO
+        return 1;
+    }
+
+    public static int getClicksEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor, int impressions) {
+        double adTextFactor = getAdTextFactor(DSACampaignEntity);
+        double impressionsToClicksFactor = 1 - (1/(.80*websiteFactor + .20*adTextFactor));
+        return (int) Math.round(impressions * impressionsToClicksFactor);
+    }
+
+    public static double getAdTextFactor(Entity DSACampaignEntity) {
+        // an ad description line can be at most 90 characters, so 4 lines = 360 characters
+        if (((String) DSACampaignEntity.getProperty("adText")).length() > 360) {
+            return 1;
+        } else {
+            return 1.25;
+        }
     }
 }
