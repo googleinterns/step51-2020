@@ -376,8 +376,11 @@ function addFormElements(keyvalPairs) {
 
     // stop submission process if parameter is required and incorrect.
     if ((form.elements[i].required) && ((form.elements[i].value === null) || (form.elements[i].value === ''))) {
-      if (form.elements[i].name.includes('Date')) {
-        alert('Date is not valid!');
+      if (form.elements[i].name.includes('startDate')) {
+        alert('Start Date is not valid!');
+      }
+      else if (form.elements[i].name.includes('endDate')) {
+        alert('End Date is not valid!');
       }
       else if (form.elements[i].name.includes('Budget')) {
         alert('Daily Budget is not valid!');
