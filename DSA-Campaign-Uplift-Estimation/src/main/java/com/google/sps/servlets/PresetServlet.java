@@ -18,12 +18,10 @@ import com.google.sps.classes.*;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 import com.google.gson.Gson;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -49,7 +47,10 @@ public class PresetServlet extends HttpServlet {
     String userId = request.getParameter("userId");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter propertyFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
-    Query query = new Query("PresetData").setFilter(propertyFilter).addSort("timestamp", SortDirection.ASCENDING);
+    Query query =
+        new Query("PresetData")
+            .setFilter(propertyFilter)
+            .addSort("timestamp", SortDirection.ASCENDING);
     PreparedQuery results = datastore.prepare(query);
     ArrayList<CampaignPreset> presets = new ArrayList<>();
     
@@ -105,7 +106,24 @@ public class PresetServlet extends HttpServlet {
     presetEntity.setProperty("presetId", presetId);
     presetEntity.setProperty("timestamp", System.currentTimeMillis());
 
-    DSACampaign dsaCampaign = new DSACampaign("0", userId, keywordCampaignId, name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, negativeLocations, domain, targets, adText, 0, 0, 0);
+    DSACampaign dsaCampaign = new DSACampaign(
+                                  "0",
+                                  userId,
+                                  keywordCampaignId,
+                                  name,
+                                  "pending",
+                                  startDate,
+                                  endDate,
+                                  manualCPC,
+                                  dailyBudget,
+                                  locations,
+                                  negativeLocations,
+                                  domain,
+                                  targets,
+                                  adText,
+                                  0,
+                                  0,
+                                  0);
     Gson gson = new Gson();
     String dsaCampaignData = gson.toJson(dsaCampaign);
     presetEntity.setProperty("presetData", dsaCampaignData);
