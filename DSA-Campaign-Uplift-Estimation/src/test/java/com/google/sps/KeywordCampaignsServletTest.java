@@ -108,16 +108,28 @@ public final class KeywordCampaignsServletTest {
     }
 
     @Test
-    public void KeywordCampaignsServletGetKeywordCampaignId() throws IOException, ServletException {
+    public void KeywordCampaignsServletGetCampaignId() throws IOException, ServletException {
+        // test getting unique keyword campaign ids
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         assertEquals(0, ds.prepare(new Query("numKeywordCampaigns")).countEntities(withLimit(10)));
 
-        String id = KeywordCampaignsServlet.getNewKeywordCampaignId();
+        String id = KeywordCampaignsServlet.getNewCampaignId(true);
         assertEquals(1, ds.prepare(new Query("numKeywordCampaigns")).countEntities(withLimit(10)));
         assertEquals("1", id);
 
-        String newId = KeywordCampaignsServlet.getNewKeywordCampaignId();
+        id = KeywordCampaignsServlet.getNewCampaignId(true);
         assertEquals(1, ds.prepare(new Query("numKeywordCampaigns")).countEntities(withLimit(10)));
-        assertEquals("2", newId);
+        assertEquals("2", id);
+
+        // test getting unique DSA campaign ids
+        assertEquals(0, ds.prepare(new Query("numDSACampaigns")).countEntities(withLimit(10)));
+
+        id = KeywordCampaignsServlet.getNewCampaignId(false);
+        assertEquals(1, ds.prepare(new Query("numDSACampaigns")).countEntities(withLimit(10)));
+        assertEquals("1", id);
+
+        id = KeywordCampaignsServlet.getNewCampaignId(false);
+        assertEquals(1, ds.prepare(new Query("numDSACampaigns")).countEntities(withLimit(10)));
+        assertEquals("2", id);
     }
 }

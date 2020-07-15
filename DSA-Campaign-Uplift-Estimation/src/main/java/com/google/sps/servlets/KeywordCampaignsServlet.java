@@ -69,7 +69,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
             String userId = userService.getCurrentUser().getUserId();
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            KeywordCampaign keywordCampaignObject = new KeywordCampaign(getNewKeywordCampaignId(), userId, request.getParameter("name"), 
+            KeywordCampaign keywordCampaignObject = new KeywordCampaign(getNewCampaignId(true), userId, request.getParameter("name"), 
                 Double.parseDouble(request.getParameter("manualCPC")), request.getParameter("locations"), request.getParameter("negativeLocations"), 
                 Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
             datastore.put(createEntityFromKeywordCampaign(keywordCampaignObject));
@@ -134,5 +134,36 @@ public class KeywordCampaignsServlet extends HttpServlet {
         }
 
         return Integer.toString(numKeywordCampaigns);
+    }
+
+    /*
+     * Retrieves a unique campaign id from datastore.
+     * If isKeywordCampaign is true, then it will generate the id for a keyword campaign.
+     * If false, it will generate the id for a DSA campaign.
+     */
+    public static String getNewCampaignId(boolean isKeywordCampaign) {
+        String queryKind = "numKeywordCampaigns";
+        if (!isKeywordCampaign) {
+            queryKind = "numDSACampaigns";
+        }
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query(queryKind);
+        Entity numCampaignsEntity = datastore.prepare(query).asSingleEntity();
+        int numCampaigns = 1;
+
+        if (numCampaignsEntity != null) {
+            // There are campaigns in datastore, numCampaignsEntity was already created.
+            numCampaigns = (int) ((long) numCampaignsEntity.getProperty("number"));
+            numCampaignsEntity.setProperty("number", ++numCampaigns);
+            datastore.put(numCampaignsEntity);
+        } else {
+            // There are no campaigns in datastore - need to create numCampaignsEntity.
+            Entity newNumCampaignsEntity = new Entity(queryKind);
+            newNumCampaignsEntity.setProperty("number", numCampaigns);
+            datastore.put(newNumCampaignsEntity);
+        }
+
+        return Integer.toString(numCampaigns);
     }
 }
