@@ -74,10 +74,10 @@ public final class DeletePresetTest {
   }
 
   /**
-   * presetServletdoPostTest works by first creating a mock HttpServletRequest
-   * object and calling PresetServlet.doPost(). Following, the function has
-   * multiple assertEquals to verify that the datastore accurately stores
-   * the request data.
+   * deleteServletdoPostTest works by first creating a mock HttpServletRequest
+   * object and calling PresetServlet.doPost() to put a preset in datastore.
+   * Following, the function calls PresetServlet.doPost() with the appropriate 
+   * parameters to delete a preset and verifies that the preset has been deleted.
    */
   @Test
   public void deletePresetDoPostTest() throws IOException, ServletException {
@@ -123,9 +123,10 @@ public final class DeletePresetTest {
 
     HttpServletResponse deleteRespose = mock(HttpServletResponse.class);
 
+    when(deleteRequest.getParameter("delete")).thenReturn("true");
     when(deleteRequest.getParameter("userId")).thenReturn("0");
     when(deleteRequest.getParameter("presetId")).thenReturn("0");
-    new DeletePresetServlet().doPost(deleteRequest, deleteRespose);
+    new PresetServlet().doPost(deleteRequest, deleteRespose);
     
     assertEquals(0, datastore.prepare(new Query("PresetData")).countEntities(withLimit(10)));
   }

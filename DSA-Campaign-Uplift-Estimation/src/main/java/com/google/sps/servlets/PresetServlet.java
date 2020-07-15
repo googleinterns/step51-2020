@@ -79,7 +79,14 @@ public class PresetServlet extends HttpServlet {
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
+    if (request.getParameter("delete") != null) {
+      System.out.println("Not null");
+      String userId = request.getParameter("userId");
+      String presetId = request.getParameter("presetId");
+      deletePreset(userId, presetId);
+      return;
+    }
+    System.out.println(request.getParameter("delete"));
     // parse each parameter from the save preset form.
     String keywordCampaignId = request.getParameter("keywordCampaignId");
     String userId = request.getParameter("userId");
@@ -106,5 +113,25 @@ public class PresetServlet extends HttpServlet {
     presetEntity.setProperty("presetData", dsaCampaignData);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(presetEntity);
+  }
+
+  /**
+   * deletePreset handles preset delete requests. This function deletes the preset
+   * associated with the user id and preset id parameters. 
+   *
+   * @param userId   userId associated with the preset.
+   * @param presetId presetId to be deleted.
+   */
+  public void deletePreset(String userId, String presetId) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Filter userIdFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
+    Query query = new Query("PresetData").setFilter(userIdFilter);
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity presetEntity : results.asIterable()) {
+      if (presetEntity.getProperty("presetId").equals(presetId)) {
+        datastore.delete(presetEntity.getKey());
+        return;
+      }
+    }
   }
 }

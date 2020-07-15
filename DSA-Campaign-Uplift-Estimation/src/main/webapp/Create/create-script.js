@@ -246,13 +246,14 @@ function deleteCurrentAppliedPreset() {
     var keyvalPairs = [];
 
     // Encode user ID and preset ID into POST URI string.
+    keyvalPairs.push(encodeURIComponent("delete") + '=' + encodeURIComponent(true));
     keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
     keyvalPairs.push(encodeURIComponent('presetId') + '=' + encodeURIComponent(presetId));
 
     // divide each parameter with '&'
     var queryString = keyvalPairs.join('&');
     
-    xmlhttp.open('POST', '/delete-preset', true);
+    xmlhttp.open('POST', '/preset', true);
     xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
     console.log(queryString);
     
