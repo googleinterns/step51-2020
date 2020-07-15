@@ -49,7 +49,7 @@ function setTwoNumberDecimal() {
  * @returns user login status
  */
 function verifyLoginStatus() {
-  fetch('/userapi').then(response => (response.json())).then(loginStatus => ({
+  fetch('/userapi').then(response => response.json()).then(loginStatus => {
     userId = loginStatus.id;
     if (!loginStatus.isLoggedIn) {
       window.location.replace('../index.html');
@@ -57,7 +57,7 @@ function verifyLoginStatus() {
     // update preset data once login verified.
     updatePresetData();
     return loginStatus.isLoggedIn;
-  }));
+  });
 
   return false;
 }
