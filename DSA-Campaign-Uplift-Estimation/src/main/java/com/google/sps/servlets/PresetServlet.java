@@ -36,13 +36,20 @@ import java.util.ArrayList;
 @WebServlet("/preset")
 public class PresetServlet extends HttpServlet {
 
-  //TODO: write preset data GET and POST request handlers
+  /**
+   * doGet handles GET requests to '/preset'. In this context, it returns
+   * JSON data representing user specific preset data to be used by 
+   * '../Create/create.html'.
+   *
+   * @param request  HttpServletRequest being made containing the request headers and data
+   * @param response HttpServletResponse sent back in response to request. 
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String userId = request.getParameter("userId");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter propertyFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
-    Query query = new Query("PresetData").setFilter(propertyFilter).addSort("timestamp", SortDirection.ASCENDING);;
+    Query query = new Query("PresetData").setFilter(propertyFilter).addSort("timestamp", SortDirection.ASCENDING);
     PreparedQuery results = datastore.prepare(query);
     ArrayList<CampaignPreset> presets = new ArrayList<>();
     
@@ -53,8 +60,9 @@ public class PresetServlet extends HttpServlet {
       
       DSACampaign presetData = new Gson().fromJson(jsonData, DSACampaign.class);
       CampaignPreset campaignPreset = new CampaignPreset(userId, presetId, presetData);
-
-      presets.add(campaignPreset);
+      if (!((Boolean) currEntry.getProperty("deleted"))) {
+        presets.add(campaignPreset);
+      }
     }
 
     Gson gson = new Gson();
@@ -64,6 +72,13 @@ public class PresetServlet extends HttpServlet {
 		response.getWriter().println(jsonData);
   }
 
+  /**
+   * doPost handles POST requests to '/preset'. In this context, it posts
+   * preset data to datastore.
+   *
+   * @param request  (HttpServletRequest) request being made containing the request headers and data
+   * @param response (HttpServletResponse) variable used to send back a response to request. 
+   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     

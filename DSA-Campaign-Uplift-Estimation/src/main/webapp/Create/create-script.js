@@ -23,6 +23,9 @@ let locationCount = 1;
 // number of negative locations
 let negLocationCount = 1;
 
+// preset index selected.
+let selectedPreset = -1;
+
 // array to keep track of all preset names belonging to user
 const USERPRESETS = [];
 
@@ -91,7 +94,7 @@ async function submitPresetData() {
     // start error handling.
     if (presetName != '') {
       for (var index = 0; index < USERPRESETS.length; index++) {
-        if (USERPRESETS[index].presetId === presetName) {
+        if (USERPRESETS[index].presetId.toLowerCase() === presetName.toLowerCase()) {
           alert('Preset name already exists! Please pick a different name.');
           continue presetLoop;
         }
@@ -162,7 +165,12 @@ function updatePresetData() {
  * @param indexSelection index of USERPRESETS that user selects.
  */
 function getPresetData(indexSelection) {
+  if (!confirm('Are you sure you want to apply this preset? All existing values in the form may reset.')) {
+    return;
+  }
   var presetSelection = USERPRESETS[indexSelection].campaignData;
+  selectedPreset = indexSelection;
+  document.getElementById('preset-delete-btn').style.display = 'inline-block';
   var keywordSelection = presetSelection.keywordCampaignId;
   for (var keywordIndex = 0; keywordIndex < document.getElementById('keyword-campaigns').options.length; keywordIndex++) {
     if (document.getElementById('keyword-campaigns').options[keywordIndex].value === keywordSelection) {
@@ -178,6 +186,7 @@ function getPresetData(indexSelection) {
       selectedOption.selected = false;
     }
   }
+
   for (var key in presetSelection) {
     if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
         (key != 'userId') && (key != 'cost') && (key != 'impressions') && 
@@ -191,6 +200,43 @@ function getPresetData(indexSelection) {
     else if (key == 'negativeLocations') {
       fillOutLocations(presetSelection[key].split(','), true);
     }
+  }
+}
+
+function deleteCurrentAppliedPreset() {
+  let presetId = USERPRESETS[selectedPreset].presetId;
+  if (confirm(`Are you sure you would like to delete ${presetId}? Existing data in the form will not be deleted.`)) {
+      const xmlhttp= window.XMLHttpRequest ?
+        new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          alert('Preset deleted.');
+          USERPRESETS.splice(selectedPreset, 1);
+          selectedPreset = -1;
+          document.getElementById('preset-delete-btn').style.display = 'none';
+          updatePresetData();
+        }
+        else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
+          alert('Error: Preset cannot be deleted. Please try again later.');
+        }
+      }
+
+    // dynamically build a URI string with form elements
+    var keyvalPairs = [];
+
+    // Encode user ID and preset ID into POST URI string.
+    keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
+    keyvalPairs.push(encodeURIComponent('presetId') + '=' + encodeURIComponent(presetId));
+
+    // divide each parameter with '&'
+    var queryString = keyvalPairs.join('&');
+    
+    xmlhttp.open('POST', '/delete-preset', true);
+    xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    console.log(queryString);
+    
+    xmlhttp.send(queryString);
   }
 }
 
@@ -314,6 +360,7 @@ function addFormElements(keyvalPairs) {
       console.log(form.elements[i].nodeName);
       console.log(form.elements[i].required);
       console.log(form.elements[i].name);
+      console.log(form.elements[i].value);
       alert('Not all the settings are filled out!');
       return null;
     } else if ((form.elements[i].name.includes('Date')) &&
@@ -441,15 +488,19 @@ function addRegion(negativeRegion, submission) {
  * @returns boolean representing validity of form.
  */
 function determineValidity() {
-  var campaignForm = document.getElementById('campaign-form').elements;
-  for (element in campaignForm) {
-    if ((element.nodeName === 'INPUT') && (!element.checkValidity())) {
+  var elements = document.getElementsByTagName('input');
+  for (var i = 0; i < elements.length; i++) {
+    if (!elements[i].checkValidity()) {
+      console.log(elements[i].id);
       return false;
     }
   }
   return true;
 }
 
+/**
+ * used by reset button on campaign form to reset the entries.
+ */
 function resetCampaignForm() {
   var confirmation = confirm("Are you sure you want to clear the form?");
   if (confirmation) {
