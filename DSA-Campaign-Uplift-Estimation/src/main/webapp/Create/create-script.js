@@ -49,15 +49,15 @@ function setTwoNumberDecimal() {
  * @returns user login status
  */
 function verifyLoginStatus() {
-  fetch('/userapi').then(response => response.json()).then(loginStatus => {
+  fetch('/userapi').then(response => (response.json())).then(loginStatus => ({
     userId = loginStatus.id;
     if (!loginStatus.isLoggedIn) {
       window.location.replace('../index.html');
     }
     // update preset data once login verified.
-    updatePresetData(); 
+    updatePresetData();
     return loginStatus.isLoggedIn;
-  });
+  }));
 
   return false;
 }
@@ -104,7 +104,7 @@ async function submitPresetData() {
     if (presetName != '') {
       for (let index = 0; index < USER_PRESETS.length; index++) {
         if (USER_PRESETS[index].presetId
-                              .toLowerCase() === presetName.toLowerCase()) {
+            .toLowerCase() === presetName.toLowerCase()) {
           alert('Preset name already exists! Please pick a different name.');
           continue presetLoop;
         }
@@ -120,10 +120,10 @@ async function submitPresetData() {
   let keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
-  keyvalPairs.push(encodeURIComponent('presetId') + '=' 
-                 + encodeURIComponent(presetName));
-  keyvalPairs.push(encodeURIComponent('userId') + '=' 
-                 + encodeURIComponent(userId));
+  keyvalPairs.push(encodeURIComponent('presetId') + '=' +
+                   encodeURIComponent(presetName));
+  keyvalPairs.push(encodeURIComponent('userId') + '=' +
+                   encodeURIComponent(userId));
   keyvalPairs = addFormElements(keyvalPairs);
   if (keyvalPairs == null) {
     return;
@@ -148,7 +148,8 @@ async function submitPresetData() {
  */
 function updatePresetData() {
   if (userId != 0) {
-    fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
+    fetch('/preset?userId=' + userId).then(response => response.json())
+      .then(presetData => {
       console.log(presetData);
       document.getElementById('preset-container').innerHTML = '';
       for (let i = 0; i < presetData.length; i++) {
