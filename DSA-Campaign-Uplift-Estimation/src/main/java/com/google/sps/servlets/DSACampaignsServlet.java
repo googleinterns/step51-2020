@@ -62,7 +62,7 @@ public class DSACampaignsServlet extends HttpServlet {
         if (userService.isUserLoggedIn()) {
             String userId = userService.getCurrentUser().getUserId();
 
-            DSACampaign DSACampaignObject = new DSACampaign(getNewDSACampaignId(), userId, request.getParameter("keywordCampaignId"),
+            DSACampaign DSACampaignObject = new DSACampaign(KeywordCampaignsServlet.getNewCampaignId(false), userId, request.getParameter("keywordCampaignId"),
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
                 request.getParameter("negativeLocations"), request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), 
@@ -125,27 +125,5 @@ public class DSACampaignsServlet extends HttpServlet {
         DSACampaignEntity.setProperty("cost", DSACampaignObject.cost);
 
         return DSACampaignEntity;
-    }
-
-    // Retrieves a unique DSA campaign id from datastore.
-    public static String getNewDSACampaignId() {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("numDSACampaigns");
-        Entity numDSACampaignsEntity = datastore.prepare(query).asSingleEntity();
-        int numDSACampaigns = 1;
-
-        if (numDSACampaignsEntity != null) {
-            // There are DSA campaigns in datastore, the numDSACampaignsEntity was already created.
-            numDSACampaigns = (int) ((long) numDSACampaignsEntity.getProperty("number"));
-            numDSACampaignsEntity.setProperty("number", ++numDSACampaigns);
-            datastore.put(numDSACampaignsEntity);
-        } else {
-            // There are no DSA campaigns in datastore - need to create numDSACampaignsEntity.
-            Entity newNumDSACampaignsEntity = new Entity("numDSACampaigns");
-            newNumDSACampaignsEntity.setProperty("number", numDSACampaigns);
-            datastore.put(newNumDSACampaignsEntity);
-        }
-
-        return Integer.toString(numDSACampaigns);
     }
 }
