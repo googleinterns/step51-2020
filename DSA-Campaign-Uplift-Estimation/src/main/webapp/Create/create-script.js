@@ -92,7 +92,8 @@ async function submitPresetData() {
   let presetName;
   presetLoop:
   while (true) {
-    presetName = prompt('What would you like to call the preset? (Max 20 presets)', '');
+    presetName = prompt('What would you like to call the preset? ' +
+                        ' (Max 20 presets)', '');
 
     // user clicked cancel
     if (presetName == null) {
@@ -102,7 +103,8 @@ async function submitPresetData() {
     // start error handling.
     if (presetName != '') {
       for (var index = 0; index < USERPRESETS.length; index++) {
-        if (USERPRESETS[index].presetId.toLowerCase() === presetName.toLowerCase()) {
+        if (USERPRESETS[index].presetId
+                              .toLowerCase() === presetName.toLowerCase()) {
           alert('Preset name already exists! Please pick a different name.');
           continue presetLoop;
         }
@@ -118,8 +120,10 @@ async function submitPresetData() {
   var keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
-  keyvalPairs.push(encodeURIComponent('presetId') + '=' + encodeURIComponent(presetName));
-  keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
+  keyvalPairs.push(encodeURIComponent('presetId') + '=' 
+                 + encodeURIComponent(presetName));
+  keyvalPairs.push(encodeURIComponent('userId') + '=' 
+                 + encodeURIComponent(userId));
   keyvalPairs = addFormElements(keyvalPairs);
   if (keyvalPairs == null) {
     return;
@@ -173,24 +177,29 @@ function updatePresetData() {
  * @param indexSelection index of USERPRESETS that user selects.
  */
 function getPresetData(indexSelection) {
-  if (!confirm('Are you sure you want to apply this preset? All existing values in the form may reset.')) {
+  if (!confirm('Are you sure you want to apply this preset?' +
+               ' All existing values in the form may reset.')) {
     return;
   }
   var presetSelection = USERPRESETS[indexSelection].campaignData;
   selectedPreset = indexSelection;
   document.getElementById('preset-delete-btn').style.display = 'inline-block';
   var keywordSelection = presetSelection.keywordCampaignId;
-  for (var keywordIndex = 0; keywordIndex < document.getElementById('keyword-campaigns').options.length; keywordIndex++) {
-    if (document.getElementById('keyword-campaigns').options[keywordIndex].value === keywordSelection) {
+
+  const keywordCampaignElements = document.getElementById('keyword-campaigns')
+                                          .options;
+  for (var i = 0; i < keywordCampaignElements.length; i++) {
+    if (keywordCampaignElements[i].value === keywordSelection) {
       console.log(keywordSelection);
-      var selectedOption = document.getElementById('keyword-campaigns').options[keywordIndex];
+      var selectedOption = keywordCampaignElements[i];
 
       // mark keyword campaign
       selectedOption.selected = true;
       break;
     }
     else {
-      var selectedOption = document.getElementById('keyword-campaigns').options[keywordIndex];
+      var selectedOption = document.getElementById('keyword-campaigns')
+                                   .options[i];
       selectedOption.selected = false;
     }
   }
@@ -198,7 +207,8 @@ function getPresetData(indexSelection) {
   for (var key in presetSelection) {
     if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
         (key != 'userId') && (key != 'cost') && (key != 'impressions') && 
-        (key != 'clicks') && (key != 'locations') && (key != 'campaignStatus')) {
+        (key != 'clicks') && (key != 'locations') &&
+        (key != 'campaignStatus')) {
       document.getElementById(key).value = presetSelection[key];
     }
     
@@ -213,7 +223,8 @@ function getPresetData(indexSelection) {
 
 function deleteCurrentAppliedPreset() {
   let presetId = USERPRESETS[selectedPreset].presetId;
-  if (confirm(`Are you sure you would like to delete ${presetId}? Existing data in the form will not be deleted.`)) {
+  if (confirm(`Are you sure you would like to delete ${presetId}?` +
+              ` Existing data in the form will not be deleted.`)) {
       const xmlhttp= window.XMLHttpRequest ?
         new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
