@@ -130,7 +130,7 @@ async function submitPresetData() {
 
   // divide each parameter with '&'
   const queryString = keyvalPairs.join('&');
-  
+
   xmlhttp.open('POST', '/preset', true);
   xmlhttp.setRequestHeader('Content-type',
       'application/x-www-form-urlencoded');
@@ -212,9 +212,7 @@ function getPresetData(indexSelection) {
         (key != 'clicks') && (key != 'locations') &&
         (key != 'campaignStatus')) {
       document.getElementById(key).value = presetSelection[key];
-    }
-
-    if (key == 'locations') {
+    } else if (key == 'locations') {
       fillOutLocations(presetSelection[key].split(','), false);
     } else if (key == 'negativeLocations') {
       fillOutLocations(presetSelection[key].split(','), true);
@@ -254,9 +252,9 @@ function deleteCurrentAppliedPreset() {
 
     // divide each parameter with '&'
     const queryString = keyvalPairs.join('&');
-    
+
     xmlhttp.open('POST', '/preset', true);
-    xmlhttp.setRequestHeader('Content-type', 
+    xmlhttp.setRequestHeader('Content-type',
                              'application/x-www-form-urlencoded');
     console.log(queryString);
     xmlhttp.send(queryString);
@@ -383,13 +381,14 @@ function sendFormData() {
 function addFormElements(keyvalPairs) {
   keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' +
                    encodeURIComponent(keywordCampaignId));
-  const form = document.getElementById('campaign-form'); // get the comment form
+  // get the comment form                 
+  const form = document.getElementById('campaign-form');
   let locationString = '';
   let negLocationString = '';
   for (let i = 0; i < form.elements.length; i++) {
     /*
      * Form contains buttons that are irrelevant to input - need to filter out
-     * only input 
+     * only input
      */
     if (form.elements[i].nodeName === 'BUTTON') {
       continue;
