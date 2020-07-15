@@ -108,7 +108,7 @@ public class BlackBoxServlet extends HttpServlet {
     }
 
     public static double getManualCPCFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
-        double ratio = ((double) DSACampaignEntity.getProperty("manualCPC"))/((double) keywordCampaignEntity.getProperty("manualCPC"));
+        double ratio = ((double) DSACampaignEntity.getProperty("manualCPC")) / ((double) keywordCampaignEntity.getProperty("manualCPC"));
         ratio = Math.sqrt(ratio);
         return Math.min(ratio, 3);
     }
@@ -118,9 +118,9 @@ public class BlackBoxServlet extends HttpServlet {
         return 1;
     }
 
-    public static int getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
+    public static double getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
         double adTextFactor = getAdTextFactor(DSACampaignEntity);
-        return 1 - (1/(.80*websiteFactor + .20*adTextFactor));
+        return 1 - (1 / (.80*websiteFactor + .20*adTextFactor));
     }
 
     public static double getAdTextFactor(Entity DSACampaignEntity) {
