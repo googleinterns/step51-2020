@@ -80,13 +80,11 @@ public class PresetServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     if (request.getParameter("delete") != null) {
-      System.out.println("Not null");
       String userId = request.getParameter("userId");
       String presetId = request.getParameter("presetId");
       deletePreset(userId, presetId);
       return;
     }
-    System.out.println(request.getParameter("delete"));
     // parse each parameter from the save preset form.
     String keywordCampaignId = request.getParameter("keywordCampaignId");
     String userId = request.getParameter("userId");
