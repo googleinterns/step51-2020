@@ -35,9 +35,8 @@ import java.util.ArrayList;
 public class PresetServlet extends HttpServlet {
 
   /**
-   * doGet handles GET requests to '/preset'. In this context, it returns
-   * JSON data representing user specific preset data to be used by 
-   * '../Create/create.html'.
+   * doGet handles GET requests to '/preset'. In this context, it returns JSON data representing
+   * user specific preset data to be used by '../Create/create.html'.
    *
    * @param request  HttpServletRequest being made containing the request headers and data
    * @param response HttpServletResponse sent back in response to request. 
@@ -72,8 +71,7 @@ public class PresetServlet extends HttpServlet {
   }
 
   /**
-   * doPost handles POST requests to '/preset'. In this context, it posts
-   * preset data to datastore.
+   * doPost handles POST requests to '/preset'. In this context, it posts preset data to datastore.
    *
    * @param request  (HttpServletRequest) request being made containing the request headers and data
    * @param response (HttpServletResponse) variable used to send back a response to request. 
@@ -132,8 +130,8 @@ public class PresetServlet extends HttpServlet {
   }
 
   /**
-   * deletePreset handles preset delete requests. This function deletes the preset
-   * associated with the user id and preset id parameters. 
+   * deletePreset handles preset delete requests. This function deletes the preset associated with
+   * the user id and preset id parameters. 
    *
    * @param userId   userId associated with the preset.
    * @param presetId presetId to be deleted.

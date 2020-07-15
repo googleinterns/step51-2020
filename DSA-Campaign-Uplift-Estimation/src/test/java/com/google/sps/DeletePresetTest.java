@@ -74,10 +74,10 @@ public final class DeletePresetTest {
   }
 
   /**
-   * deleteServletdoPostTest works by first creating a mock HttpServletRequest
-   * object and calling PresetServlet.doPost() to put a preset in datastore.
-   * Following, the method calls PresetServlet.doPost() with the appropriate 
-   * parameters to delete a preset and verifies that the preset has been deleted.
+   * deleteServletdoPostTest works by first creating a mock HttpServletRequest object and calling
+   * PresetServlet.doPost() to put a preset in datastore. Following, the method calls
+   * PresetServlet.doPost() with the appropriate parameters to delete a preset and verifies that
+   * the preset has been deleted.
    */
   @Test
   public void deletePresetDoPostTest() throws IOException, ServletException {
