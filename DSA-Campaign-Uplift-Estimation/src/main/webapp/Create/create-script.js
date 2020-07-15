@@ -255,7 +255,7 @@ function deleteCurrentAppliedPreset() {
 
     xmlhttp.open('POST', '/preset', true);
     xmlhttp.setRequestHeader('Content-type',
-                             'application/x-www-form-urlencoded');
+        'application/x-www-form-urlencoded');
     console.log(queryString);
     xmlhttp.send(queryString);
   }
@@ -364,7 +364,7 @@ function sendFormData() {
 
   xmlhttp.open('POST', '/DSA-campaigns', true);
   xmlhttp.setRequestHeader('Content-type',
-                           'application/x-www-form-urlencoded');
+      'application/x-www-form-urlencoded');
   console.log(queryString);
   if (determineValidity()) {
     xmlhttp.send(queryString);
@@ -381,7 +381,7 @@ function sendFormData() {
 function addFormElements(keyvalPairs) {
   keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' +
                    encodeURIComponent(keywordCampaignId));
-  // get the comment form                 
+  // get the comment form     
   const form = document.getElementById('campaign-form');
   let locationString = '';
   let negLocationString = '';
@@ -487,8 +487,8 @@ function addRegion(negativeRegion, submission) {
       return;
     } else {
       if (chosenValues.includes(regionSelection
-                .options[regionSelection.selectedIndex]
-                .value)) {
+          .options[regionSelection.selectedIndex]
+          .value)) {
         const duplicateMsg = negativeRegion ?
                              'Please remove duplicate negative' +
                              ' regions!' : 'Please remove duplicate regions!';
@@ -496,7 +496,7 @@ function addRegion(negativeRegion, submission) {
         return;
       }
       chosenValues.push(regionSelection.options[regionSelection.selectedIndex]
-                        .value);
+          .value);
     }
     tempCount++;
   }
@@ -513,11 +513,11 @@ function addRegion(negativeRegion, submission) {
 
   // create the location input HTML elements
   const regionSelect = document.getElementById(
-                       `${regionId}${locationCounter - 1}`).cloneNode(true);
+      `${regionId}${locationCounter - 1}`).cloneNode(true);
   regionSelect.id = `${regionId}${locationCounter}`;
 
   const countrySelect = document.getElementById(
-                        `${countryId}${locationCounter - 1}`).cloneNode(true);
+      `${countryId}${locationCounter - 1}`).cloneNode(true);
   countrySelect.id = `${countryId}${locationCounter}`;
 
   const locations = document.getElementById(locationId);
