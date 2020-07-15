@@ -32,32 +32,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
-// runs all the pending DSA campaigns for the logged-in user through the black box and updates estimation results
+// runs all the pending DSA campaigns through the black box and updates estimation results
 @WebServlet("/black-box")
 public class BlackBoxServlet extends HttpServlet {
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
-        UserService userService = UserServiceFactory.getUserService();
-
-        if (userService.isUserLoggedIn()) {
-            String userId = userService.getCurrentUser().getUserId();
-
-            // get the pending DSA campaigns associated with the logged-in user from datastore
-            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId))
-                .setFilter(new Query.FilterPredicate("campaignStatus", Query.FilterOperator.EQUAL, "pending"));
-            PreparedQuery results = datastore.prepare(query);
-            
-            for (Entity DSACampaignEntity : results.asIterable()) {
-                // run the DSA campaign through the black box
-                blackbox(DSACampaignEntity);
-            }
-
-            response.sendRedirect("/Home/home.html");
-        } else {
-            response.sendRedirect("/index.html");
+        // get all the pending DSA campaigns from datastore
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("campaignStatus", Query.FilterOperator.EQUAL, "pending"));
+        PreparedQuery results = datastore.prepare(query);
+        
+        for (Entity DSACampaignEntity : results.asIterable()) {
+            // run the DSA campaign through the black box
+            blackbox(DSACampaignEntity);
         }
+
+        response.sendRedirect("/Home/home.html");
     }
 
     /*
@@ -104,7 +95,7 @@ public class BlackBoxServlet extends HttpServlet {
         double manualCPCFactor = getManualCPCFactor(keywordCampaignEntity, DSACampaignEntity);
         double locationsFactor = getLocationsFactor(keywordCampaignEntity, DSACampaignEntity);
         double upliftFactor = .25*manualCPCFactor + .25*locationsFactor + .50*websiteFactor;
-        return (int) Math.round(upliftFactor * ((int) keywordCampaignEntity.getProperty("impressions")));
+        return (int) Math.round(upliftFactor * ((int) ((long) keywordCampaignEntity.getProperty("impressions"))));
     }
 
     public static double getManualCPCFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
