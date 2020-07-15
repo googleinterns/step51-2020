@@ -106,4 +106,18 @@ public final class KeywordCampaignsServletTest {
         assertEquals(535, (int) ((long) entity.getProperty("clicks")));
         assertEquals(2145.5, (double) entity.getProperty("cost"), .01);
     }
+
+    @Test
+    public void KeywordCampaignsServletGetKeywordCampaignId() throws IOException, ServletException {
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        assertEquals(0, ds.prepare(new Query("numKeywordCampaigns")).countEntities(withLimit(10)));
+
+        String id = KeywordCampaignsServlet.getNewKeywordCampaignId();
+        assertEquals(1, ds.prepare(new Query("numKeywordCampaigns")).countEntities(withLimit(10)));
+        assertEquals("1", id);
+
+        String newId = KeywordCampaignsServlet.getNewKeywordCampaignId();
+        assertEquals(1, ds.prepare(new Query("numKeywordCampaigns")).countEntities(withLimit(10)));
+        assertEquals("2", newId);
+    }
 }
