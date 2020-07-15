@@ -49,7 +49,8 @@ function setTwoNumberDecimal() {
  * @returns user login status
  */
 function verifyLoginStatus() {
-  fetch('/userapi').then(response => response.json()).then(loginStatus => {
+  fetch('/userapi').then(response => response.json())
+                   .then(loginStatus => {
     userId = loginStatus.id;
     if (!loginStatus.isLoggedIn) {
       window.location.replace('../index.html');
@@ -133,7 +134,8 @@ async function submitPresetData() {
   let queryString = keyvalPairs.join('&');
   
   xmlhttp.open('POST', '/preset', true);
-  xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xmlhttp.setRequestHeader('Content-type',
+                           'application/x-www-form-urlencoded');
   console.log(queryString);
   
   if (determineValidity) {
@@ -162,7 +164,7 @@ function updatePresetData() {
         aTag.id = i;
         aTag.setAttribute('onclick', `getPresetData(${i});`);
 
-        // for error handling (cannot create a preset name if it already exists)
+        // for error handling (cannot create preset name if already exists)
         USER_PRESETS.push(presetData[i]);
 
         liElement.appendChild(aTag);
@@ -247,15 +249,19 @@ function deleteCurrentAppliedPreset() {
     let keyvalPairs = [];
 
     // Encode user ID and preset ID into POST URI string.
-    keyvalPairs.push(encodeURIComponent("delete") + '=' + encodeURIComponent(true));
-    keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
-    keyvalPairs.push(encodeURIComponent('presetId') + '=' + encodeURIComponent(presetId));
+    keyvalPairs.push(encodeURIComponent("delete") + '=' +
+                     encodeURIComponent(true));
+    keyvalPairs.push(encodeURIComponent('userId') + '=' +
+                     encodeURIComponent(userId));
+    keyvalPairs.push(encodeURIComponent('presetId') + '=' +
+                     encodeURIComponent(presetId));
 
     // divide each parameter with '&'
     let queryString = keyvalPairs.join('&');
     
     xmlhttp.open('POST', '/preset', true);
-    xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    xmlhttp.setRequestHeader('Content-type', 
+                             'application/x-www-form-urlencoded');
     console.log(queryString);
     
     xmlhttp.send(queryString);
@@ -267,13 +273,16 @@ function deleteCurrentAppliedPreset() {
  * sets location nodes based on preset data.
  *
  * @param locationsArray     the array of locations to be set
- * @param isNegativeLocation boolean representing whether the locations are negative locations
+ * @param isNegativeLocation boolean representing whether the locations are
+                             negative locations
  */
 function fillOutLocations(locationsArray, isNegativeLocation) {
   let regionIndex = 1;
   console.log(locationsArray);
-  for (let locationIndex = 0; locationIndex < locationsArray.length; locationIndex++) {
-    let regionId = isNegativeLocation ? `gds-ncr-${regionIndex}` : `gds-cr-${regionIndex}`;
+  for (let locationIndex = 0; locationIndex < locationsArray.length;
+       locationIndex++) {
+    let regionId = isNegativeLocation ? `gds-ncr-${regionIndex}` :
+                                        `gds-cr-${regionIndex}`;
     regionIndex++;
     let currElement = null;
     if (document.getElementById(regionId) != null) {
@@ -284,8 +293,10 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
       currElement = document.getElementById(regionId);
     }
 
-    for (let stateSelection = 0; stateSelection < currElement.options.length; stateSelection++) {
-      if (currElement.options[stateSelection].value == locationsArray[locationIndex]) {
+    for (let stateSelection = 0; stateSelection < currElement.options.length;
+         stateSelection++) {
+      if (currElement.options[stateSelection].value ==
+          locationsArray[locationIndex]) {
         currElement.options[stateSelection].selected = true;
       }
       else {
@@ -299,7 +310,8 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
  * sendFormData is called on submission button click and creates a query
  * string appending the parameter values from form. Once query string is
  * built, it is sent to '/DSA-campaigns' to be processed and analyzed. If
- * error occurs at any point during creation phase, then the function terminates.
+ * error occurs at any point during creation phase, then the function
+ * terminates.
  */
 function sendFormData() {
   const xmlhttp= window.XMLHttpRequest ?
@@ -323,7 +335,8 @@ function sendFormData() {
     alert('Login before submitting!');
     return;
   }
-  keyvalPairs.push(encodeURIComponent('userId') + '=' + encodeURIComponent(userId));
+  keyvalPairs.push(encodeURIComponent('userId') + '=' +
+                   encodeURIComponent(userId));
 
   // verify that keywordCampaignId is set.
   if (keywordCampaignId == null) {
@@ -332,17 +345,22 @@ function sendFormData() {
   }
 
   // default values for variables (not applicable to creation phase) sent to servlet
-  keyvalPairs.push(encodeURIComponent('DSACampaignId') + '=' + encodeURIComponent('0'));
-  keyvalPairs.push(encodeURIComponent('campaignStatus') + '=' + encodeURIComponent('pending'));
+  keyvalPairs.push(encodeURIComponent('DSACampaignId') + '=' +
+                   encodeURIComponent('0'));
+  keyvalPairs.push(encodeURIComponent('campaignStatus') + '=' +
+                   encodeURIComponent('pending'));
 
   /* temporary random generation for data */
-  let impressions = Math.round(1000 + Math.random()*1000);
-  let clicks = Math.round(250 + Math.random()*250);
-  let cost = Math.round(100 + Math.random()*100);
+  let impressions = Math.round(1000 + Math.random() * 1000);
+  let clicks = Math.round(250 + Math.random() * 250);
+  let cost = Math.round(100 + Math.random() * 100);
 
-  keyvalPairs.push(encodeURIComponent('clicks') + '=' + encodeURIComponent(clicks));
-  keyvalPairs.push(encodeURIComponent('cost') + '=' + encodeURIComponent(cost.toFixed(2)));
-  keyvalPairs.push(encodeURIComponent('impressions') + '=' + encodeURIComponent(impressions));
+  keyvalPairs.push(encodeURIComponent('clicks') + '=' +
+                   encodeURIComponent(clicks));
+  keyvalPairs.push(encodeURIComponent('cost') + '=' +
+                   encodeURIComponent(cost.toFixed(2)));
+  keyvalPairs.push(encodeURIComponent('impressions') + '=' +
+                   encodeURIComponent(impressions));
   keyvalPairs = addFormElements(keyvalPairs);
   if (keyvalPairs == null) {
     return;
@@ -352,7 +370,8 @@ function sendFormData() {
   let queryString = keyvalPairs.join('&');
 
   xmlhttp.open('POST', '/DSA-campaigns', true);
-  xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xmlhttp.setRequestHeader('Content-type',
+                           'application/x-www-form-urlencoded');
   console.log(queryString);
   if (determineValidity()) {
     xmlhttp.send(queryString);
@@ -360,25 +379,28 @@ function sendFormData() {
 }
 
 /**
- * addFormElements parses through the campaign form and returns an encoded key value
- * array to be used for POST requests.
+ * addFormElements parses through the campaign form and returns an encoded key
+ * value array to be used for POST requests.
  *
  * @param keyvalPairs existing array to contain new form data.
  * @returns           updated keyvalPairs array with campaign form data
  */
 function addFormElements(keyvalPairs) {
-  keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' + encodeURIComponent(keywordCampaignId));
+  keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' +
+                   encodeURIComponent(keywordCampaignId));
   let form = document.getElementById('campaign-form'); // get the comment form
   let locationString = '';
   let negLocationString = '';
   for (let i = 0; i < form.elements.length; i++) {
-    // Form contains buttons that are irrelevant to input - need to filter out only input
+    /* Form contains buttons that are irrelevant to input - need to filter out
+       only input */
     if (form.elements[i].nodeName === 'BUTTON') {
       continue;
     }
 
     // stop submission process if parameter is required and incorrect.
-    if ((form.elements[i].required) && ((form.elements[i].value === null) || (form.elements[i].value === ''))) {
+    if ((form.elements[i].required) && ((form.elements[i].value === null) ||
+        (form.elements[i].value === ''))) {
       if (form.elements[i].name.includes('startDate')) {
         alert('Start Date is not valid!');
       }
@@ -402,27 +424,33 @@ function addFormElements(keyvalPairs) {
     }
     
     // push parameter name and value to keyvalPairs.
-    if (!form.elements[i].name.includes('region') && !(form.elements[i].name.includes('country'))) {  
+    if (!form.elements[i].name.includes('region') &&
+        !(form.elements[i].name.includes('country'))) {  
       console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
-      keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' + encodeURIComponent(form.elements[i].value));
+      keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' +
+                       encodeURIComponent(form.elements[i].value));
     }
     else if (form.elements[i].name.includes('nregion')) {
-      negLocationString = negLocationString == '' ? form.elements[i].value : negLocationString + ',' + form.elements[i].value;
+      negLocationString = negLocationString == '' ? form.elements[i].value :
+                          negLocationString + ',' + form.elements[i].value;
     }
     else if (form.elements[i].name.includes('region')) {
-      locationString = locationString == '' ? form.elements[i].value : locationString + ',' + form.elements[i].value;
+      locationString = locationString == '' ? form.elements[i].value :
+                       locationString + ',' + form.elements[i].value;
     }
   }
 
-  keyvalPairs.push(encodeURIComponent('negativeLocations') + '=' + encodeURIComponent(negLocationString));
-  keyvalPairs.push(encodeURIComponent('locations') + '=' + encodeURIComponent(locationString));
+  keyvalPairs.push(encodeURIComponent('negativeLocations') + '=' +
+                   encodeURIComponent(negLocationString));
+  keyvalPairs.push(encodeURIComponent('locations') + '=' +
+                   encodeURIComponent(locationString));
 
   return keyvalPairs;
 }
 
 /**
  * processes each onchange event associated with the keyword-campaigns
- * select element. If element value is 0 (no selected element) then form 
+ * select element. If element value is 0 (no selected element) then form
  * does not show. If not 0 (selected element), then form shows.
  */
 function keywordSelection() {
@@ -451,7 +479,7 @@ function addRegion(negativeRegion, submission) {
   const regionId = negativeRegion ? 'gds-ncr-' : 'gds-cr-';
   const countryId = negativeRegion ? 'ncountry' : 'country';
   const locationId = negativeRegion ? 'negativeLocations' : 'locations';
-  let locationCounter = negativeRegion ? negativeRegion : locationCount;
+  let locationCounter = negativeRegion ? negLocationCount : locationCount;
 
   let tempCount = 1;
   const chosenValues = [];
@@ -460,24 +488,25 @@ function addRegion(negativeRegion, submission) {
   while ((tempCount <= locationCounter) && submission) {
     let regionSelection = document.getElementById(regionId + '' + tempCount);
     if (regionSelection.options[regionSelection.selectedIndex].value == '') {
-      const specifyMsg = negativeRegion ? 'Specify negative region '
-                                       + tempCount + ' first!' :
-                                        'Specify region ' + tempCount
-                                       + ' first!';
+      const specifyMsg = negativeRegion ? 'Specify negative region ' +
+                                          tempCount + ' first!' :
+                                          'Specify region ' + tempCount +
+                                          ' first!';
       alert(specifyMsg);
       return;
     }
     else {
       if (chosenValues.includes(regionSelection
-                                .options[regionSelection.selectedIndex]
-                                .value)) {
-        const duplicateMsg = negativeRegion ? "Please remove duplicate negative"
-                                            + " regions!" :
-                                            'Please remove duplicate regions!';
+                .options[regionSelection.selectedIndex]
+                .value)) {
+        const duplicateMsg = negativeRegion ? 
+                             'Please remove duplicate negative' +
+                             ' regions!' : 'Please remove duplicate regions!';
         alert(duplicateMsg);
         return;
       }
-      chosenValues.push(regionSelection.options[regionSelection.selectedIndex].value);
+      chosenValues.push(regionSelection.options[regionSelection.selectedIndex]
+                                       .value);
     }
     tempCount++;
   }
@@ -494,34 +523,44 @@ function addRegion(negativeRegion, submission) {
   }
 
   // create the location input HTML elements
-  let regionSelect = document.getElementById(`${regionId}${locationCounter - 1}`).cloneNode(true);
+  const regionSelect = document.getElementById(
+                       `${regionId}${locationCounter - 1}`)
+                       .cloneNode(true);
   regionSelect.id = `${regionId}${locationCounter}`;
 
-  let countrySelect = document.getElementById(`${countryId}${locationCounter - 1}`).cloneNode(true);
+  const countrySelect = document.getElementById(
+                        `${countryId}${locationCounter - 1}`
+                        ).cloneNode(true);
   countrySelect.id = `${countryId}${locationCounter}`;
-  
+
   let locations = document.getElementById(locationId);
   
   let locationDiv = document.createElement('div');
   locationDiv.className = 'form-group';
 
   const locationTag = document.createElement('h3');
-  let locationTagString = negativeRegion ? `Negative Location ${locationCounter}` : `Location ${locationCounter}`;
+  const locationTagString = negativeRegion ?
+                            `Negative Location ${locationCounter}` :
+                            `Location ${locationCounter}`;
   locationTag.innerText = locationTagString;
   locationDiv.appendChild(locationTag);
-  
-  let countryLabel = document.createElement('label');
+
+  const countryLabel = document.createElement('label');
   countryLabel.className = 'control-label';
-  countryLabel.innerText = negativeRegion ? `Negative Country ${locationCounter}` : `Country ${locationCounter}`;
+  countryLabel.innerText = negativeRegion ?
+                           `Negative Country ${locationCounter}` :
+                           `Country ${locationCounter}`;
   
   locationDiv.appendChild(countryLabel);
   locationDiv.appendChild(countrySelect);
   locationDiv.appendChild(document.createElement('br'));
 
 
-  let regionLabel = document.createElement('label');
+  const regionLabel = document.createElement('label');
   regionLabel.className = 'control-label';
-  regionLabel.innerText = negativeRegion ? `Negative Region ${locationCounter}` : `Region ${locationCounter}`;
+  regionLabel.innerText = negativeRegion ?
+                          `Negative Region ${locationCounter}` : 
+                          `Region ${locationCounter}`;
   regionLabel.setAttribute('for', `${regionId}${locationCounter}`);
 
   locationDiv.appendChild(regionLabel);
@@ -534,12 +573,12 @@ function addRegion(negativeRegion, submission) {
 /**
  * determineValidity() uses the built in Javascript
  * checkValidity function to determine if function
- * is ready to submit. 
+ * is ready to submit.
  *
  * @returns boolean representing validity of form.
  */
 function determineValidity() {
-  let elements = document.getElementsByTagName('input');
+  const elements = document.getElementsByTagName('input');
   for (let i = 0; i < elements.length; i++) {
     if (!elements[i].checkValidity()) {
       console.log(elements[i].id);
@@ -553,7 +592,7 @@ function determineValidity() {
  * used by reset button on campaign form to reset the entries.
  */
 function resetCampaignForm() {
-  let confirmation = confirm("Are you sure you want to clear the form?");
+  const confirmation = confirm('Are you sure you want to clear the form?');
   if (confirmation) {
     document.getElementById('campaign-form').reset();
   }
