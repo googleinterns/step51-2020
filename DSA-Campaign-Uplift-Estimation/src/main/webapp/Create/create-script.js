@@ -38,8 +38,7 @@ const MAX_PRESETS = 20;
 /**
  * Submission form only requires 2 decimals, this function enforces that rule
  */
-function setTwoNumberDecimal()
-{
+function setTwoNumberDecimal() {
   this.value = parseFloat(this.value).toFixed(2);
 }
 
@@ -49,13 +48,11 @@ function setTwoNumberDecimal()
  *
  * @returns user login status
  */
-function verifyLoginStatus()
-{
+function verifyLoginStatus() {
   fetch('/userapi').then(response => response.json())
                    .then(loginStatus => {
     userId = loginStatus.id;
-    if (!loginStatus.isLoggedIn)
-    {
+    if (!loginStatus.isLoggedIn) {
       window.location.replace('../index.html');
     }
     // update preset data once login verified.
@@ -70,26 +67,21 @@ function verifyLoginStatus()
  * This function allows preset data to be saved while the form is being
  * filled out. Alerts the user of the status of their saved preset.
  */
-async function submitPresetData()
-{
+async function submitPresetData() {
   const xmlhttp= window.XMLHttpRequest ?
     new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
-  if (USER_PRESETS.length === MAX_PRESETS)
-  {
+  if (USER_PRESETS.length === MAX_PRESETS) {
     alert('Preset limit reached, please delete presets.');
     return;
   }
 
-  xmlhttp.onreadystatechange = function()
-  {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-    {
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       alert('Preset saved!');
       updatePresetData();
     }
-    else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400))
-    {
+    else if ((xmlhttp.status < 200) && (xmlhttp.status >= 400)) {
       alert('Error: Preset cannot be saved. Please try again later.');
     }
   };
@@ -100,25 +92,20 @@ async function submitPresetData()
    */
   let presetName;
   presetLoop:
-  while (true)
-  {
+  while (true) {
     presetName = prompt('What would you like to call the preset? ' +
                         ' (Max 20 presets)', '');
 
     // user clicked cancel
-    if (presetName == null)
-    {
+    if (presetName == null) {
       return;
     }
 
     // start error handling.
-    if (presetName != '')
-    {
-      for (let index = 0; index < USER_PRESETS.length; index++)
-      {
+    if (presetName != '') {
+      for (let index = 0; index < USER_PRESETS.length; index++) {
         if (USER_PRESETS[index].presetId
-            .toLowerCase() === presetName.toLowerCase())
-        {
+            .toLowerCase() === presetName.toLowerCase()) {
           alert('Preset name already exists! Please pick a different name.');
           continue presetLoop;
         }
@@ -505,11 +492,9 @@ function addRegion(negativeRegion, submission) {
    * verify that all existing locations specified before creating new input
    * (only if submitting)
    */
-  while ((tempCount <= locationCounter) && submission)
-  {
+  while ((tempCount <= locationCounter) && submission) {
     const regionSelection = document.getElementById(regionId + '' + tempCount);
-    if (regionSelection.options[regionSelection.selectedIndex].value == '')
-    {
+    if (regionSelection.options[regionSelection.selectedIndex].value == '') {
       const specifyMsg = negativeRegion ? 'Specify negative region ' +
                                           tempCount + ' first!' :
                                           'Specify region ' + tempCount +
@@ -517,12 +502,10 @@ function addRegion(negativeRegion, submission) {
       alert(specifyMsg);
       return;
     }
-    else
-    {
+    else {
       if (chosenValues.includes(regionSelection
                 .options[regionSelection.selectedIndex]
-                .value))
-      {
+                .value)) {
         const duplicateMsg = negativeRegion ?
                              'Please remove duplicate negative' +
                              ' regions!' : 'Please remove duplicate regions!';
@@ -537,13 +520,11 @@ function addRegion(negativeRegion, submission) {
 
   ++locationCounter;
 
-  if (negativeRegion)
-  {
+  if (negativeRegion) {
     // reset global variable for negative location count
     negLocationCount = locationCounter;
   }
-  else
-  {
+  else {
     // reset global variable for regular location count
     locationCount = locationCounter;
   }
@@ -601,13 +582,10 @@ function addRegion(negativeRegion, submission) {
  *
  * @returns boolean representing validity of form.
  */
-function determineValidity()
-{
+function determineValidity() {
   const elements = document.getElementsByTagName('input');
-  for (let i = 0; i < elements.length; i++)
-  {
-    if (!elements[i].checkValidity())
-    {
+  for (let i = 0; i < elements.length; i++) {
+    if (!elements[i].checkValidity()) {
       console.log(elements[i].id);
       return false;
     }
@@ -618,11 +596,9 @@ function determineValidity()
 /**
  * used by reset button on campaign form to reset the entries.
  */
-function resetCampaignForm()
-{
+function resetCampaignForm() {
   const confirmation = confirm('Are you sure you want to clear the form?');
-  if (confirmation)
-  {
+  if (confirmation) {
     document.getElementById('campaign-form').reset();
   }
 }
