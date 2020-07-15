@@ -102,7 +102,7 @@ async function submitPresetData() {
 
     // start error handling.
     if (presetName != '') {
-      for (var index = 0; index < USER_PRESETS.length; index++) {
+      for (let index = 0; index < USER_PRESETS.length; index++) {
         if (USER_PRESETS[index].presetId
                               .toLowerCase() === presetName.toLowerCase()) {
           alert('Preset name already exists! Please pick a different name.');
@@ -117,7 +117,7 @@ async function submitPresetData() {
   }
 
   // dynamically build a URI string with form elements
-  var keyvalPairs = [];
+  let keyvalPairs = [];
 
   // Encode email, user ID, and preset ID into POST URI string.
   keyvalPairs.push(encodeURIComponent('presetId') + '=' 
@@ -130,10 +130,10 @@ async function submitPresetData() {
   }
 
   // divide each parameter with '&'
-  var queryString = keyvalPairs.join('&');
+  let queryString = keyvalPairs.join('&');
   
   xmlhttp.open('POST', '/preset', true);
-  xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+  xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
   console.log(queryString);
   
   if (determineValidity) {
@@ -151,11 +151,11 @@ function updatePresetData() {
     fetch('/preset?userId=' + userId).then(response => response.json()).then(presetData => {
       console.log(presetData);
       document.getElementById('preset-container').innerHTML = '';
-      for (var i = 0; i < presetData.length; i++) {
+      for (let i = 0; i < presetData.length; i++) {
         console.log('index: ' + i);
-        var presetContainer = document.getElementById('preset-container');
-        var liElement = document.createElement('li');
-        var aTag = document.createElement('a');
+        let presetContainer = document.getElementById('preset-container');
+        let liElement = document.createElement('li');
+        let aTag = document.createElement('a');
         aTag.innerText = presetData[i].presetId;
         aTag.setAttribute('href', 'javascript:;');
         aTag.id = i;
@@ -182,30 +182,30 @@ function getPresetData(indexSelection) {
                ' All existing values in the form may reset.')) {
     return;
   }
-  var presetSelection = USER_PRESETS[indexSelection].campaignData;
+  let presetSelection = USER_PRESETS[indexSelection].campaignData;
   selectedPreset = indexSelection;
   document.getElementById('preset-delete-btn').style.display = 'inline-block';
-  var keywordSelection = presetSelection.keywordCampaignId;
+  let keywordSelection = presetSelection.keywordCampaignId;
 
   const keywordCampaignElements = document.getElementById('keyword-campaigns')
                                           .options;
-  for (var i = 0; i < keywordCampaignElements.length; i++) {
+  for (let i = 0; i < keywordCampaignElements.length; i++) {
     if (keywordCampaignElements[i].value === keywordSelection) {
       console.log(keywordSelection);
-      var selectedOption = keywordCampaignElements[i];
+      let selectedOption = keywordCampaignElements[i];
 
       // mark keyword campaign
       selectedOption.selected = true;
       break;
     }
     else {
-      var selectedOption = document.getElementById('keyword-campaigns')
+      let selectedOption = document.getElementById('keyword-campaigns')
                                    .options[i];
       selectedOption.selected = false;
     }
   }
 
-  for (var key in presetSelection) {
+  for (let key in presetSelection) {
     if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
         (key != 'userId') && (key != 'cost') && (key != 'impressions') && 
         (key != 'clicks') && (key != 'locations') &&
@@ -243,7 +243,7 @@ function deleteCurrentAppliedPreset() {
       }
 
     // dynamically build a URI string with form elements
-    var keyvalPairs = [];
+    let keyvalPairs = [];
 
     // Encode user ID and preset ID into POST URI string.
     keyvalPairs.push(encodeURIComponent("delete") + '=' + encodeURIComponent(true));
@@ -251,7 +251,7 @@ function deleteCurrentAppliedPreset() {
     keyvalPairs.push(encodeURIComponent('presetId') + '=' + encodeURIComponent(presetId));
 
     // divide each parameter with '&'
-    var queryString = keyvalPairs.join('&');
+    let queryString = keyvalPairs.join('&');
     
     xmlhttp.open('POST', '/preset', true);
     xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
@@ -271,10 +271,10 @@ function deleteCurrentAppliedPreset() {
 function fillOutLocations(locationsArray, isNegativeLocation) {
   let regionIndex = 1;
   console.log(locationsArray);
-  for (var locationIndex = 0; locationIndex < locationsArray.length; locationIndex++) {
+  for (let locationIndex = 0; locationIndex < locationsArray.length; locationIndex++) {
     let regionId = isNegativeLocation ? `gds-ncr-${regionIndex}` : `gds-cr-${regionIndex}`;
     regionIndex++;
-    var currElement = null;
+    let currElement = null;
     if (document.getElementById(regionId) != null) {
       currElement = document.getElementById(regionId);
     }
@@ -283,7 +283,7 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
       currElement = document.getElementById(regionId);
     }
 
-    for (var stateSelection = 0; stateSelection < currElement.options.length; stateSelection++) {
+    for (let stateSelection = 0; stateSelection < currElement.options.length; stateSelection++) {
       if (currElement.options[stateSelection].value == locationsArray[locationIndex]) {
         currElement.options[stateSelection].selected = true;
       }
@@ -315,7 +315,7 @@ function sendFormData() {
   }
 
   // dynamically build a URI string with form elements
-  var keyvalPairs = [];
+  let keyvalPairs = [];
 
   // verify that user is logged in before submission.
   if (userId == 0) {
@@ -348,10 +348,10 @@ function sendFormData() {
   }
 
   // separate each entity in keyvalPairs with '&' for query string
-  var queryString = keyvalPairs.join('&');
+  let queryString = keyvalPairs.join('&');
 
   xmlhttp.open('POST', '/DSA-campaigns', true);
-  xmlhttp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+  xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
   console.log(queryString);
   if (determineValidity()) {
     xmlhttp.send(queryString);
@@ -367,10 +367,10 @@ function sendFormData() {
  */
 function addFormElements(keyvalPairs) {
   keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' + encodeURIComponent(keywordCampaignId));
-  var form = document.getElementById('campaign-form'); // get the comment form
+  let form = document.getElementById('campaign-form'); // get the comment form
   let locationString = '';
   let negLocationString = '';
-  for (var i = 0; i < form.elements.length; i++) {
+  for (let i = 0; i < form.elements.length; i++) {
     // Form contains buttons that are irrelevant to input - need to filter out only input
     if (form.elements[i].nodeName === 'BUTTON') {
       continue;
@@ -425,7 +425,7 @@ function addFormElements(keyvalPairs) {
  * does not show. If not 0 (selected element), then form shows.
  */
 function keywordSelection() {
-  var selectElementValue = document.getElementById('keyword-campaigns').value;
+  let selectElementValue = document.getElementById('keyword-campaigns').value;
   if (selectElementValue == 0) {
     document.getElementById('campaign-form').style.display = 'none';
     document.getElementById('buttons').style.display = 'none';
@@ -443,28 +443,35 @@ function keywordSelection() {
  * where necessary. Terminates if criteria for new region is not met.
  *
  * @param negativeRegion boolean specifying if region is a negative location
- * @param submission     boolean specifying if region is being appended during submission process (for error handling) 
+ * @param submission     boolean specifying if region is being appended during
+ *                       submission process (for error handling)
  */
 function addRegion(negativeRegion, submission) {
-  let regionId = negativeRegion ? 'gds-ncr-' : 'gds-cr-';
-  let countryId = negativeRegion ? 'ncountry' : 'country';
-  let locationId = negativeRegion ? 'negativeLocations' : 'locations';
+  const regionId = negativeRegion ? 'gds-ncr-' : 'gds-cr-';
+  const countryId = negativeRegion ? 'ncountry' : 'country';
+  const locationId = negativeRegion ? 'negativeLocations' : 'locations';
   let locationCounter = negativeRegion ? negativeRegion : locationCount;
 
-  var tempCount = 1;
-  let chosenValues = [];
-  // verify that all existing locations specified before creating new input (only if submitting)
+  let tempCount = 1;
+  const chosenValues = [];
+  /* verify that all existing locations specified before creating new input
+     (only if submitting) */
   while ((tempCount <= locationCounter) && submission) {
-    var regionSelection = document.getElementById(regionId + '' + tempCount);
+    let regionSelection = document.getElementById(regionId + '' + tempCount);
     if (regionSelection.options[regionSelection.selectedIndex].value == '') {
-      let specifyMsg = negativeRegion ? 'Specify negative region ' + tempCount + ' first!' : 
-                                        'Specify region ' + tempCount + ' first!';
+      const specifyMsg = negativeRegion ? 'Specify negative region '
+                                       + tempCount + ' first!' :
+                                        'Specify region ' + tempCount
+                                       + ' first!';
       alert(specifyMsg);
       return;
     }
     else {
-      if (chosenValues.includes(regionSelection.options[regionSelection.selectedIndex].value)) {
-        let duplicateMsg = negativeRegion ? 'Please remove duplicate negative regions!' :
+      if (chosenValues.includes(regionSelection
+                                .options[regionSelection.selectedIndex]
+                                .value)) {
+        const duplicateMsg = negativeRegion ? "Please remove duplicate negative"
+                                            + " regions!" :
                                             'Please remove duplicate regions!';
         alert(duplicateMsg);
         return;
@@ -492,17 +499,17 @@ function addRegion(negativeRegion, submission) {
   let countrySelect = document.getElementById(`${countryId}${locationCounter - 1}`).cloneNode(true);
   countrySelect.id = `${countryId}${locationCounter}`;
   
-  var locations = document.getElementById(locationId);
+  let locations = document.getElementById(locationId);
   
-  var locationDiv = document.createElement('div');
+  let locationDiv = document.createElement('div');
   locationDiv.className = 'form-group';
-  
-  let locationTag = document.createElement('h3');
+
+  const locationTag = document.createElement('h3');
   let locationTagString = negativeRegion ? `Negative Location ${locationCounter}` : `Location ${locationCounter}`;
   locationTag.innerText = locationTagString;
   locationDiv.appendChild(locationTag);
   
-  var countryLabel = document.createElement('label');
+  let countryLabel = document.createElement('label');
   countryLabel.className = 'control-label';
   countryLabel.innerText = negativeRegion ? `Negative Country ${locationCounter}` : `Country ${locationCounter}`;
   
@@ -511,7 +518,7 @@ function addRegion(negativeRegion, submission) {
   locationDiv.appendChild(document.createElement('br'));
 
 
-  var regionLabel = document.createElement('label');
+  let regionLabel = document.createElement('label');
   regionLabel.className = 'control-label';
   regionLabel.innerText = negativeRegion ? `Negative Region ${locationCounter}` : `Region ${locationCounter}`;
   regionLabel.setAttribute('for', `${regionId}${locationCounter}`);
@@ -531,8 +538,8 @@ function addRegion(negativeRegion, submission) {
  * @returns boolean representing validity of form.
  */
 function determineValidity() {
-  var elements = document.getElementsByTagName('input');
-  for (var i = 0; i < elements.length; i++) {
+  let elements = document.getElementsByTagName('input');
+  for (let i = 0; i < elements.length; i++) {
     if (!elements[i].checkValidity()) {
       console.log(elements[i].id);
       return false;
@@ -545,7 +552,7 @@ function determineValidity() {
  * used by reset button on campaign form to reset the entries.
  */
 function resetCampaignForm() {
-  var confirmation = confirm("Are you sure you want to clear the form?");
+  let confirmation = confirm("Are you sure you want to clear the form?");
   if (confirmation) {
     document.getElementById('campaign-form').reset();
   }
