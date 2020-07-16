@@ -538,11 +538,11 @@ function addRegion(negativeRegion, submission) {
 
   // create the location input HTML elements
   const regionSelect = document.getElementById(
-      `${regionId}${locationCounter - 1}`).cloneNode(true);
+      `${regionId}${1}`).cloneNode(true);
   regionSelect.id = `${regionId}${locationCounter}`;
 
   const countrySelect = document.getElementById(
-      `${countryId}${locationCounter - 1}`).cloneNode(true);
+      `${countryId}${1}`).cloneNode(true);
   countrySelect.id = `${countryId}${locationCounter}`;
 
   const locations = document.getElementById(locationId);
@@ -608,6 +608,28 @@ function determineValidity() {
 function resetCampaignForm() {
   const confirmation = confirm('Are you sure you want to clear the form?');
   if (confirmation) {
+    let tempLocationCount = 2;
+
+    // remove extra locations
+    while (true) {
+      let locationFound = false;
+      if (document.getElementById(`location${tempLocationCount}`) != null) {
+        document.getElementById(`location${tempLocationCount}`).remove();
+        locationFound = true;
+      }
+
+      if (document.getElementById(`nlocation${tempLocationCount}`) != null) {
+        document.getElementById(`nlocation${tempLocationCount}`).remove();
+        locationFound = true;
+      }
+
+      if (!locationFound) {
+        break;
+      }
+      tempLocationCount++;
+    }
     document.getElementById('campaign-form').reset();
+    locationCount = 1;
+    negLocationCount = 1;
   }
 }
