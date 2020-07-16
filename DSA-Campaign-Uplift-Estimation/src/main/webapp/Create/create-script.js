@@ -208,7 +208,6 @@ function getPresetData(indexSelection) {
 
   let negLocationExists = false;
   for (const key in presetSelection) {
-    console.log('key: ' + key);
     if (key == 'locations') {
       fillOutLocations(presetSelection[key].split(','), false);
     } else if (key == 'negativeLocations') {
