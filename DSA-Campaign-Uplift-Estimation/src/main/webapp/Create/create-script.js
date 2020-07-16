@@ -553,6 +553,7 @@ function addRegion(negativeRegion, submission) {
   }
 
   // create the location input HTML elements
+  // clone first element (always available)
   const regionSelect = document.getElementById(
       `${regionId}${1}`).cloneNode(true);
   regionSelect.id = `${regionId}${locationCounter}`;
@@ -565,8 +566,8 @@ function addRegion(negativeRegion, submission) {
 
   const locationDiv = document.createElement('div');
   locationDiv.className = 'form-group';
-  locationDiv.id = negativeRegion ? `nlocation${locationCounter}` :
-                                    `location${locationCounter}`;
+  locationDiv.id = negativeRegion ? `${NEG_LOCATION_ID}${locationCounter}` :
+                                    `${LOCATION_ID}${locationCounter}`;
 
   const locationTag = document.createElement('h3');
   const locationTagString = negativeRegion ?
