@@ -206,6 +206,7 @@ function getPresetData(indexSelection) {
     }
   }
 
+  const negLocationExists = false;
   for (const key in presetSelection) {
     if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
         (key != 'userId') && (key != 'cost') && (key != 'impressions') &&
@@ -215,8 +216,14 @@ function getPresetData(indexSelection) {
     } else if (key == 'locations') {
       fillOutLocations(presetSelection[key].split(','), false);
     } else if (key == 'negativeLocations') {
+      negLocationExists = true;
       fillOutLocations(presetSelection[key].split(','), true);
     }
+  }
+
+  // to clean up negative locations if none are in preset
+  if (!negLocationExists) {
+    fillOutLocations([], true);
   }
 }
 
@@ -294,6 +301,27 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
         currElement.options[stateSelection].selected = false;
       }
     }
+  }
+
+  // clean up extra location inputs
+  let cleanUpIndex = locationsArray.length + 1;
+  let elementVariable = isNegativeLocation ? `nlocation${cleanUpIndex}` :
+                                             `location${cleanUpIndex}`;
+  while (document.getElementById(elementVariable) != null) {
+    if (cleanUpIndex == 1) {
+      // don't delete the first location parameter
+      const regionId = isNegativeLocation ? `gds-ncr-${cleanUpIndex}` :
+                                            `gds-cr-${cleanUpIndex}`;
+      document.getElementById(regionId).selectedIndex = 0;
+    } else {
+      // delete extra location parameters
+      const tempVar = elementVariable;
+      document.getElementById(tempVar).remove();
+    }
+
+    cleanUpIndex++;
+    elementVariable = isNegativeLocation ? `nlocation${cleanUpIndex}` :
+                                           `location${cleanUpIndex}`;
   }
 }
 
@@ -524,6 +552,8 @@ function addRegion(negativeRegion, submission) {
 
   const locationDiv = document.createElement('div');
   locationDiv.className = 'form-group';
+  locationDiv.id = negativeRegion ? `nlocation${locationCounter}` :
+                                    `location${locationCounter}`;
 
   const locationTag = document.createElement('h3');
   const locationTagString = negativeRegion ?
