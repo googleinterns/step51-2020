@@ -18,12 +18,10 @@ import com.google.sps.classes.*;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 import com.google.gson.Gson;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -36,13 +34,22 @@ import java.util.ArrayList;
 @WebServlet("/preset")
 public class PresetServlet extends HttpServlet {
 
-  //TODO: write preset data GET and POST request handlers
+  /**
+   * doGet handles GET requests to '/preset'. In this context, it returns JSON data representing
+   * user specific preset data to be used by '../Create/create.html'.
+   *
+   * @param request  HttpServletRequest being made containing the request headers and data
+   * @param response HttpServletResponse sent back in response to request. 
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String userId = request.getParameter("userId");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter propertyFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
-    Query query = new Query("PresetData").setFilter(propertyFilter).addSort("timestamp", SortDirection.ASCENDING);;
+    Query query =
+        new Query("PresetData")
+            .setFilter(propertyFilter)
+            .addSort("timestamp", SortDirection.ASCENDING);
     PreparedQuery results = datastore.prepare(query);
     ArrayList<CampaignPreset> presets = new ArrayList<>();
     
@@ -53,7 +60,6 @@ public class PresetServlet extends HttpServlet {
       
       DSACampaign presetData = new Gson().fromJson(jsonData, DSACampaign.class);
       CampaignPreset campaignPreset = new CampaignPreset(userId, presetId, presetData);
-
       presets.add(campaignPreset);
     }
 
@@ -64,9 +70,20 @@ public class PresetServlet extends HttpServlet {
 		response.getWriter().println(jsonData);
   }
 
+  /**
+   * doPost handles POST requests to '/preset'. In this context, it posts preset data to datastore.
+   *
+   * @param request  (HttpServletRequest) request being made containing the request headers and data
+   * @param response (HttpServletResponse) variable used to send back a response to request. 
+   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
+    if (request.getParameter("delete") != null) {
+      String userId = request.getParameter("userId");
+      String presetId = request.getParameter("presetId");
+      deletePreset(userId, presetId);
+      return;
+    }
     // parse each parameter from the save preset form.
     String keywordCampaignId = request.getParameter("keywordCampaignId");
     String userId = request.getParameter("userId");
@@ -87,11 +104,48 @@ public class PresetServlet extends HttpServlet {
     presetEntity.setProperty("presetId", presetId);
     presetEntity.setProperty("timestamp", System.currentTimeMillis());
 
-    DSACampaign dsaCampaign = new DSACampaign("0", userId, keywordCampaignId, name, "pending", startDate, endDate, manualCPC, dailyBudget, locations, negativeLocations, domain, targets, adText, 0, 0, 0);
+    DSACampaign dsaCampaign = new DSACampaign(
+                                  "0",
+                                  userId,
+                                  keywordCampaignId,
+                                  name,
+                                  "pending",
+                                  startDate,
+                                  endDate,
+                                  manualCPC,
+                                  dailyBudget,
+                                  locations,
+                                  negativeLocations,
+                                  domain,
+                                  targets,
+                                  adText,
+                                  0,
+                                  0,
+                                  0);
     Gson gson = new Gson();
     String dsaCampaignData = gson.toJson(dsaCampaign);
     presetEntity.setProperty("presetData", dsaCampaignData);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(presetEntity);
+  }
+
+  /**
+   * deletePreset handles preset delete requests. This function deletes the preset associated with
+   * the user id and preset id parameters. 
+   *
+   * @param userId   userId associated with the preset.
+   * @param presetId presetId to be deleted.
+   */
+  public void deletePreset(String userId, String presetId) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Filter userIdFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
+    Query query = new Query("PresetData").setFilter(userIdFilter);
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity presetEntity : results.asIterable()) {
+      if (presetEntity.getProperty("presetId").equals(presetId)) {
+        datastore.delete(presetEntity.getKey());
+        return;
+      }
+    }
   }
 }

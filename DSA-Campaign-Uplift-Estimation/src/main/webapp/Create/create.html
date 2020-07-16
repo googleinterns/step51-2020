@@ -44,6 +44,7 @@
       <a href="/Home/home.html">Home</a>
       <a href="/Create/create.html">Create</a>
       <a href="/Compare/compare.html">Compare</a>
+      <a href="#">Contact</a>
       <a id="loginout-link" href="#">Logout</a>
     </div>
     <header>
@@ -65,63 +66,178 @@
           </div>
 
           <!-- settings form -->
-          <form action="/DSA-campaigns" id="campaign-form" style="background-color: white; display: none;">
+          <form id="campaign-form" style="background-color: white; display: none;" onsubmit="return false;">
             <div class="row">
               <!-- Main form -->
               <div class="col-50">
                 <h2>DSA Campaign Configuration</h2>
-                <p>Please input the settings you would like and submit.</p>
-                <label for="name">Campaign Name:</label>
+                <p>Please input the settings you would like and submit. <span style="color:red">&#42;</span> - required</p>
+                <label for="name"><span style="color:red">&#42;</span> Campaign Name:</label>
                 <input type="text" id="name" name="name" placeholder="DSA Campaign Name" required>
                 <div class="row">
                   <div class="col-50">
-                    <label for="startDate">From:</label>
+                    <label for="startDate"><span style="color:red">&#42;</span> From:</label>
                     <input type="date" id="startDate" name="startDate" placeholder="01/01/2000" required>
                   </div>
                   <div class="col-50">
-                    <label for="endDate">To:</label>
+                    <label for="endDate"><span style="color:red">&#42;</span> To:</label>
                     <input type="date" id="endDate" name="endDate" placeholder="01/01/2001" required>
                   </div>
                 </div>
                 <br>
-                <label for="dailyBudget">Daily Budget: $</label>
+                <label for="dailyBudget"><span style="color:red">&#42;</span> Daily Budget: $</label>
                 <input type="number" onchange="setTwoNumberDecimal()" id="dailyBudget" name="dailyBudget" step=".01" placeholder="0.00" required>
                 <br>
-                <!--button class="btn preset-btn" onclick="addRegion();" style="float: right;" type="button">Add another location</button-->
+                <button class="btn preset-btn" onclick="addRegion(false, true);" style="float: right;" type="button">Add another location</button>
                 <br>
                 <div id="locations">
-                  <div class="form-group">
-                    <label class="control-label">Country 1</label>
-                    <select class="form-control gds-cr" country-data-region-id="gds-cr-1" id="country1" data-language="en" name="country1" required></select>
+                  <div class="form-group" id="location1">
+                    <h3>Location 1</h3>
+                    <label id="country1-label" class="control-label"><span style="color:red">&#42;</span> Country 1</label>
+                    <select class="form-control" id="country1" data-language="en" name="country1" required>
+                      <option value="USA">United States of America</option>
+                    </select>
                     <br>
-                    <label for="gds-cr-1" class="control-label">Region 1</label>
-                    <select class="form-control" id="gds-cr-1" name="region1" required></select>
+                    <label id="gds-cr-1-label" for="gds-cr-1" class="control-label"><span style="color:red">&#42;</span> Region 1</label>
+                    <select class="form-control" id="gds-cr-1" name="region1">
+                      <option value="" selected>Select a Region</option>
+                      <option value="AL">Alabama</option>
+                      <option value="AK">Alaska</option>
+                      <option value="AZ">Arizona</option>
+                      <option value="AR">Arkansas</option>
+                      <option value="CA">California</option>
+                      <option value="CO">Colorado</option>
+                      <option value="CT">Connecticut</option>
+                      <option value="DE">Delaware</option>
+                      <option value="DC">District Of Columbia</option>
+                      <option value="FL">Florida</option>
+                      <option value="GA">Georgia</option>
+                      <option value="HI">Hawaii</option>
+                      <option value="ID">Idaho</option>
+                      <option value="IL">Illinois</option>
+                      <option value="IN">Indiana</option>
+                      <option value="IA">Iowa</option>
+                      <option value="KS">Kansas</option>
+                      <option value="KY">Kentucky</option>
+                      <option value="LA">Louisiana</option>
+                      <option value="ME">Maine</option>
+                      <option value="MD">Maryland</option>
+                      <option value="MA">Massachusetts</option>
+                      <option value="MI">Michigan</option>
+                      <option value="MN">Minnesota</option>
+                      <option value="MS">Mississippi</option>
+                      <option value="MO">Missouri</option>
+                      <option value="MT">Montana</option>
+                      <option value="NE">Nebraska</option>
+                      <option value="NV">Nevada</option>
+                      <option value="NH">New Hampshire</option>
+                      <option value="NJ">New Jersey</option>
+                      <option value="NM">New Mexico</option>
+                      <option value="NY">New York</option>
+                      <option value="NC">North Carolina</option>
+                      <option value="ND">North Dakota</option>
+                      <option value="OH">Ohio</option>
+                      <option value="OK">Oklahoma</option>
+                      <option value="OR">Oregon</option>
+                      <option value="PA">Pennsylvania</option>
+                      <option value="RI">Rhode Island</option>
+                      <option value="SC">South Carolina</option>
+                      <option value="SD">South Dakota</option>
+                      <option value="TN">Tennessee</option>
+                      <option value="TX">Texas</option>
+                      <option value="UT">Utah</option>
+                      <option value="VT">Vermont</option>
+                      <option value="VA">Virginia</option>
+                      <option value="WA">Washington</option>
+                      <option value="WV">West Virginia</option>
+                      <option value="WI">Wisconsin</option>
+                      <option value="WY">Wyoming</option>
+                    </select>
                   </div>
                   <br>
                 </div>
+                <br>
+                <button class="btn preset-btn" onclick="addRegion(true, true);" style="float: right;" type="button">Add another negative location</button>
+                <br>
                 <div id="negativeLocations">
-                  <div class="form-group">
+                  <div class="form-group" id='nlocation1'>
+                    <h3>Negative Location 1</h3>
                     <label class="control-label">Negative Country 1</label>
-                    <select class="form-control gds-cr" country-data-region-id="gds-ncr-1" id="ncountry1" data-language="en" name="country1" required></select>
+                    <select class="form-control" id="ncountry1" data-language="en" name="country1">
+                      <option value="USA" selected>United States of America</option>
+                    </select>
                     <br>
                     <label for="gds-ncr-1" class="control-label">Negative Region 1</label>
-                    <select class="form-control" id="gds-ncr-1" name="nregion1" required></select>
+                    <select class="form-control" id="gds-ncr-1" name="nregion1">
+                      <option value="" selected>Select a Region</option>
+                      <option value="AL">Alabama</option>
+                      <option value="AK">Alaska</option>
+                      <option value="AZ">Arizona</option>
+                      <option value="AR">Arkansas</option>
+                      <option value="CA">California</option>
+                      <option value="CO">Colorado</option>
+                      <option value="CT">Connecticut</option>
+                      <option value="DE">Delaware</option>
+                      <option value="DC">District Of Columbia</option>
+                      <option value="FL">Florida</option>
+                      <option value="GA">Georgia</option>
+                      <option value="HI">Hawaii</option>
+                      <option value="ID">Idaho</option>
+                      <option value="IL">Illinois</option>
+                      <option value="IN">Indiana</option>
+                      <option value="IA">Iowa</option>
+                      <option value="KS">Kansas</option>
+                      <option value="KY">Kentucky</option>
+                      <option value="LA">Louisiana</option>
+                      <option value="ME">Maine</option>
+                      <option value="MD">Maryland</option>
+                      <option value="MA">Massachusetts</option>
+                      <option value="MI">Michigan</option>
+                      <option value="MN">Minnesota</option>
+                      <option value="MS">Mississippi</option>
+                      <option value="MO">Missouri</option>
+                      <option value="MT">Montana</option>
+                      <option value="NE">Nebraska</option>
+                      <option value="NV">Nevada</option>
+                      <option value="NH">New Hampshire</option>
+                      <option value="NJ">New Jersey</option>
+                      <option value="NM">New Mexico</option>
+                      <option value="NY">New York</option>
+                      <option value="NC">North Carolina</option>
+                      <option value="ND">North Dakota</option>
+                      <option value="OH">Ohio</option>
+                      <option value="OK">Oklahoma</option>
+                      <option value="OR">Oregon</option>
+                      <option value="PA">Pennsylvania</option>
+                      <option value="RI">Rhode Island</option>
+                      <option value="SC">South Carolina</option>
+                      <option value="SD">South Dakota</option>
+                      <option value="TN">Tennessee</option>
+                      <option value="TX">Texas</option>
+                      <option value="UT">Utah</option>
+                      <option value="VT">Vermont</option>
+                      <option value="VA">Virginia</option>
+                      <option value="WA">Washington</option>
+                      <option value="WV">West Virginia</option>
+                      <option value="WI">Wisconsin</option>
+                      <option value="WY">Wyoming</option>
+                    </select>
                   </div>
                   <br>
                 </div>
-                <label for="domain">Domain:</label>
+                <label for="domain"><span style="color:red">&#42;</span> Domain:</label>
                 <input type="url" id="domain" name="domain" placeholder="http://google.com" required>
                 <br>
                 <br>
-                <label for="targets">Target Page:</label>
+                <label for="targets"><span style="color:red">&#42;</span> Target Page:</label>
                 <input type="url" id="targets" name="targets" placeholder="http://google.com/page1" required>
                 <br>
                 <br>
-                <label for="adText">Ad Text:</label>
+                <label for="adText"><span style="color:red">&#42;</span> Ad Text:</label>
                 <input type="text" id="adText" name="adText" placeholder="Some ad text." required>
-                <label for="manualCPC">Max CPC: $</label>
+                <label for="manualCPC"><span style="color:red">&#42;</span> Max CPC: $</label>
                 <input type="number" onchange="setTwoNumberDecimal()" id="manualCPC" name="manualCPC" step=".01" placeholder="0.00" required>
-              </div>
+              </div> 
 
               <!-- Preset Data -->
               <div class="col-50">
@@ -131,15 +247,18 @@
                 <ol id="preset-container">
                   
                 </ol>
+                <button class="btn reset-btn" onclick="deleteCurrentAppliedPreset();" style="float: left; display: none;" id="preset-delete-btn" type="button">Delete preset currently applied.</button> 
+             
                 <button class="btn preset-btn" onclick="submitPresetData();" style="float: right;" type="button">Save Configuration as Preset</button> 
-              </div>
-            </div>   
+              </div> 
+            </div>  
+            <!-- Page buttons -->
+            <div class="col-50" id="buttons" style="display: none;">
+              <button class="btn submit-btn" style="float: left;" onclick="sendFormData();">Estimate your Campaign</button>
+              <button class="btn settings-btn" style="float: center;" type="button">Show Advanced Settings</button> 
+              <button class="btn reset-btn" style="float: right;" type="button" onclick="resetCampaignForm();">Reset Form</button> 
+            </div>  
           </form>
-          <!-- Page buttons -->
-          <div class="col-50" id="buttons" style="display: none;">
-            <button class="btn submit-btn" style="float: left;" onclick="sendFormData();">Estimate your Campaign</button>
-            <button class="btn settings-btn" style="float: center;">Show Advanced Settings</button> 
-          </div>
         </div>
       </div>
     </div>

@@ -23,6 +23,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions;
 import java.io.IOException;
 import com.google.gson.Gson;
 import javax.servlet.annotation.WebServlet;
@@ -61,7 +62,6 @@ public class DSACampaignsServlet extends HttpServlet {
 
         if (userService.isUserLoggedIn()) {
             String userId = userService.getCurrentUser().getUserId();
-
             DSACampaign DSACampaignObject = new DSACampaign(KeywordCampaignsServlet.getNewCampaignId(false), userId, request.getParameter("keywordCampaignId"),
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
@@ -103,8 +103,8 @@ public class DSACampaignsServlet extends HttpServlet {
 
     public static Entity createEntityFromDSACampaign(DSACampaign DSACampaignObject) {
         Entity DSACampaignEntity = new Entity("DSACampaign");
-
         DSACampaignEntity.setProperty("DSACampaignId", DSACampaignObject.DSACampaignId);
+
         DSACampaignEntity.setProperty("userId", DSACampaignObject.userId);
         DSACampaignEntity.setProperty("keywordCampaignId", DSACampaignObject.keywordCampaignId);
 
