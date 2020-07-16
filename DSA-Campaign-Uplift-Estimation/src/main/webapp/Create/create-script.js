@@ -206,7 +206,7 @@ function getPresetData(indexSelection) {
     }
   }
 
-  const negLocationExists = false;
+  let negLocationExists = false;
   for (const key in presetSelection) {
     console.log('key: ' + key);
     if (key == 'locations') {
@@ -217,8 +217,7 @@ function getPresetData(indexSelection) {
       fillOutLocations(presetSelection[key].split(','), true);
     } else if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
         (key != 'userId') && (key != 'cost') && (key != 'impressions') &&
-        (key != 'clicks') && (key != 'locations') &&
-        (key != 'campaignStatus')) {
+        (key != 'clicks') && (key != 'campaignStatus')) {
       document.getElementById(key).value = presetSelection[key];
     }
   }
