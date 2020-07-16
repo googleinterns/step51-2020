@@ -221,7 +221,7 @@ function getPresetData(indexSelection) {
     }
   }
 
-  // to clean up negative locations if none are in preset
+  // clean up negative locations if none are in preset
   if (!negLocationExists) {
     fillOutLocations([], true);
   }
@@ -277,13 +277,11 @@ function deleteCurrentAppliedPreset() {
                              negative locations
  */
 function fillOutLocations(locationsArray, isNegativeLocation) {
-  let regionIndex = 1;
   console.log(locationsArray);
   for (let locationIndex = 0; locationIndex < locationsArray.length;
     locationIndex++) {
-    const regionId = isNegativeLocation ? `gds-ncr-${regionIndex}` :
-                                          `gds-cr-${regionIndex}`;
-    regionIndex++;
+    const regionId = isNegativeLocation ? `gds-ncr-${locationIndex + 1}` :
+                                          `gds-cr-${locationIndex + 1}`;
     let currElement = null;
     if (document.getElementById(regionId) != null) {
       currElement = document.getElementById(regionId);
