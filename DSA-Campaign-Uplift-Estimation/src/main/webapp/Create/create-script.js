@@ -293,8 +293,8 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
   console.log(locationsArray);
   for (let locationIndex = 0; locationIndex < locationsArray.length;
     locationIndex++) {
-    const regionId = isNegativeLocation ? `${NEG_REGION_ID}${locationIndex + 1}` :
-                                          `${REGION_ID}${locationIndex + 1}`;
+    const regionId = isNegativeLocation ? NEG_REGION_ID + (locationIndex + 1) :
+                                          REGION_ID + (locationIndex + 1);
     let currElement = null;
     if (document.getElementById(regionId) != null) {
       currElement = document.getElementById(regionId);
@@ -316,13 +316,13 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
 
   // clean up extra location inputs
   let cleanUpIndex = locationsArray.length + 1;
-  let elementVariable = isNegativeLocation ? `${NEG_LOCATION_ID}${cleanUpIndex}` :
-                                             `${LOCATION_ID}${cleanUpIndex}`;
+  let elementVariable = isNegativeLocation ? NEG_LOCATION_ID + cleanUpIndex :
+                                             LOCATION_ID + cleanUpIndex;
   while (document.getElementById(elementVariable) != null) {
     if (cleanUpIndex == 1) {
       // don't delete the first location parameter
-      const regionId = isNegativeLocation ? `${NEG_REGION_ID}${cleanUpIndex}` :
-                                            `${REGION_ID}${cleanUpIndex}`;
+      const regionId = isNegativeLocation ? NEG_REGION_ID + cleanUpIndex :
+                                            REGION_ID + cleanUpIndex;
       document.getElementById(regionId).selectedIndex = 0;
     } else {
       // delete extra location parameters
@@ -330,8 +330,8 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
     }
 
     cleanUpIndex++;
-    elementVariable = isNegativeLocation ? `${NEG_LOCATION_ID}${cleanUpIndex}` :
-                                           `${LOCATION_ID}${cleanUpIndex}`;
+    elementVariable = isNegativeLocation ? NEG_LOCATION_ID + cleanUpIndex :
+                                           LOCATION_ID + cleanUpIndex;
   }
 }
 
@@ -458,7 +458,6 @@ function addFormElements(keyvalPairs) {
     const formCountry = 'country';
     if (!form.elements[i].name.includes(formRegion) &&
         !(form.elements[i].name.includes(formCountry))) {
-      console.log(`value ${form.elements[i].name} ${form.elements[i].value}`);
       keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' +
                        encodeURIComponent(form.elements[i].value));
     } else if (form.elements[i].name.includes('n' + formRegion)) {
@@ -554,20 +553,21 @@ function addRegion(negativeRegion, submission) {
 
   // create the location input HTML elements
   // clone first element (always available)
+  const first_element_idx = 1;
   const regionSelect = document.getElementById(
-      `${regionId}${1}`).cloneNode(true);
-  regionSelect.id = `${regionId}${locationCounter}`;
+      regionId + first_element_idx).cloneNode(true);
+  regionSelect.id = regionId + locationCounter;
 
   const countrySelect = document.getElementById(
-      `${countryId}${1}`).cloneNode(true);
-  countrySelect.id = `${countryId}${locationCounter}`;
+      countryId + first_element_idx).cloneNode(true);
+  countrySelect.id = countryId + locationCounter;
 
   const locations = document.getElementById(locationId);
 
   const locationDiv = document.createElement('div');
   locationDiv.className = 'form-group';
-  locationDiv.id = negativeRegion ? `${NEG_LOCATION_ID}${locationCounter}` :
-                                    `${LOCATION_ID}${locationCounter}`;
+  locationDiv.id = negativeRegion ? NEG_LOCATION_ID + locationCounter :
+                                    LOCATION_ID + locationCounter;
 
   const locationTag = document.createElement('h3');
   const locationTagString = negativeRegion ?
@@ -592,7 +592,7 @@ function addRegion(negativeRegion, submission) {
   regionLabel.innerText = negativeRegion ?
                           `Negative Region ${locationCounter}` :
                           `Region ${locationCounter}`;
-  regionLabel.setAttribute('for', `${regionId}${locationCounter}`);
+  regionLabel.setAttribute('for', regionId + locationCounter);
 
   locationDiv.appendChild(regionLabel);
   locationDiv.appendChild(regionSelect);
@@ -630,13 +630,13 @@ function resetCampaignForm() {
     // remove extra locations
     while (true) {
       let locationFound = false;
-      if (document.getElementById(`${LOCATION_ID}${tempLocationCount}`) != null) {
-        document.getElementById(`${LOCATION_ID}${tempLocationCount}`).remove();
+      if (document.getElementById(LOCATION_ID + tempLocationCount) != null) {
+        document.getElementById(LOCATION_ID + tempLocationCount).remove();
         locationFound = true;
       }
 
-      if (document.getElementById(`${NEG_LOCATION_ID}${tempLocationCount}`) != null) {
-        document.getElementById(`${NEG_LOCATION_ID}${tempLocationCount}`).remove();
+      if (document.getElementById(NEG_LOCATION_ID + tempLocationCount) != null) {
+        document.getElementById(NEG_LOCATION_ID + tempLocationCount).remove();
         locationFound = true;
       }
 
