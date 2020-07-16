@@ -206,18 +206,18 @@ function getPresetData(indexSelection) {
     }
   }
 
-  const negLocationExists = false;
+  let negLocationExists = false;
   for (const key in presetSelection) {
-    if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
-        (key != 'userId') && (key != 'cost') && (key != 'impressions') &&
-        (key != 'clicks') && (key != 'locations') &&
-        (key != 'campaignStatus')) {
-      document.getElementById(key).value = presetSelection[key];
-    } else if (key == 'locations') {
+    if (key == 'locations') {
       fillOutLocations(presetSelection[key].split(','), false);
     } else if (key == 'negativeLocations') {
       negLocationExists = true;
+      console.log(presetSelection[key].split(','));
       fillOutLocations(presetSelection[key].split(','), true);
+    } else if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
+        (key != 'userId') && (key != 'cost') && (key != 'impressions') &&
+        (key != 'clicks') && (key != 'campaignStatus')) {
+      document.getElementById(key).value = presetSelection[key];
     }
   }
 
@@ -313,8 +313,7 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
       document.getElementById(regionId).selectedIndex = 0;
     } else {
       // delete extra location parameters
-      const tempVar = elementVariable;
-      document.getElementById(tempVar).remove();
+      document.getElementById(elementVariable).remove();
     }
 
     cleanUpIndex++;
