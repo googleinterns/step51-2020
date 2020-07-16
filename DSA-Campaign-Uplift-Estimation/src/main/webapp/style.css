@@ -2,9 +2,15 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background-image: url("/Resources/images/login_img.png");
-  background-size: cover;
   background-color: #cccccc;
+}
+
+html { 
+  background: url("/Resources/images/login_img.png") no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 .topnav {
