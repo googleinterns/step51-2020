@@ -282,7 +282,7 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
   for (let locationIndex = 0; locationIndex < locationsArray.length;
     locationIndex++) {
     const regionId = isNegativeLocation ? `gds-ncr-${regionIndex}` :
-                                        `gds-cr-${regionIndex}`;
+                                          `gds-cr-${regionIndex}`;
     regionIndex++;
     let currElement = null;
     if (document.getElementById(regionId) != null) {
@@ -409,7 +409,7 @@ function sendFormData() {
 function addFormElements(keyvalPairs) {
   keyvalPairs.push(encodeURIComponent('keywordCampaignId') + '=' +
                    encodeURIComponent(keywordCampaignId));
-  // get the comment form     
+  // get the comment form  
   const form = document.getElementById('campaign-form');
   let locationString = '';
   let negLocationString = '';
