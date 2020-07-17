@@ -17,9 +17,3 @@ indexes:
     direction: asc
   - name: "DSACampaignId"
     direction: asc
-- kind: "PresetData"
-  properties:
-    - name: "userId"
-      direction: asc
-    - name: "timestamp"
-      direction: asc

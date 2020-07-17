@@ -63,11 +63,8 @@ public class DSACampaignDataServlet extends HttpServlet {
         Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, (String) DSACampaignEntity.getProperty("keywordCampaignId")));
     	Entity keywordCampaignEntity = datastore.prepare(query).asSingleEntity();
 
-        // get the website factor
-        WebCrawler webCrawler = new WebCrawler();
-        double websiteFactor = webCrawler.getWebsiteFactor(keywordCampaignEntity, DSACampaignEntity);
-
         // calculate the estimation results
+        double websiteFactor = WebCrawler.getWebsiteFactor(keywordCampaignEntity, DSACampaignEntity);
         double impressionsToClicksFactor = getImpressionsToClicksFactor(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int clicks = (int) Math.round(impressions * impressionsToClicksFactor);;
