@@ -15,7 +15,7 @@
 
 # This file specifies your Python application's runtime configuration.
 # See https://cloud.google.com/appengine/docs/managed-vms/python/runtime
-#
+
 
 runtime: python37
 # Use specific service account instead of default from environemnt.
@@ -23,3 +23,4 @@ runtime: python37
 # credentials from the metadata API.
 env_variables:
   GOOGLE_APPLICATION_CREDENTIALS: dsa-uplift-estimation-2020-34584f60c282.json
+    
