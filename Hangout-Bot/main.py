@@ -34,15 +34,15 @@ chat = build('chat', 'v1', credentials=credentials)
 
 # phase number (key) : [phase name, phase specific help message]
 phase_map = {
-        1 : ["name", "The name that will be associated with your dynamic search ad campaign estimate."],
-        2 : ["startDate", "The date that your campaign simulation starts. Must be in the form mm-dd-yyyy"],
-        3 : ["endDate", "The date that your campaign simulation ends. Must be in the form mm-dd-yyyy"],
-        4 : ["dailyBudget", "Amount you are willing to spend each day the ad is displayed."],
-        5 : ["locations", "The locations that your ad will target. Ex: CA, USA (Must follow this form!)"],
-        6 : ["negativeLocations", "The locations that your ad will not target. Ex: CA, USA (Must follow this form!)"],
-        7 : ["domain", "The domain of your webpage being advertised. (Ex: http://google.com)"],
-        8 : ["targets", "Target pages of your domain that you would like to specifically advertise. (Ex: http://google.com/shoes)",
-        9 : ["manualCPC", "Maximum amount being spent on each click. (Cost per click)"]
+            1 : ['name', 'The name that will be associated with your dynamic search ad campaign estimate.'],
+            2 : ['startDate', 'The date that your campaign simulation starts. Must be in the form mm-dd-yyyy.'],
+            3 : ['endDate', 'The date that your campaign simulation ends. Must be in the form mm-dd-yyyy.'],
+            4 : ['dailyBudget', 'Amount you are willing to spend each day the ad is displayed.'],
+            5 : ['locations', 'The locations that your ad will target. Ex: CA, USA (Must follow this form!)'],
+            6 : ['negativeLocations', 'The locations that your ad will not target. Ex: CA, USA (Must follow this format!)'],
+            7 : ['domain', 'The domain of your webpage being advertised. (Ex: http://google.com)'],
+            8 : ['targets', 'Target pages of your domain that you would like to specifically advertise. (Ex: http://google.com/somepage)'],
+            9 : ['manualCPC', 'Maximum amount being spent on each click. (Cost per click)']
 }
 
 @app.route('/', methods=['POST'])
@@ -82,13 +82,14 @@ def send_async_response(response, space_name):
     body=response).execute()
 
 # [END async-response]
+test = False
 
 def format_response(event):
   """Determine what response to provide based upon event data.
   Args:
     event: A dictionary with the event data.
   """
-
+  global test
   event_type = event['type']
 
   text = ""
@@ -101,19 +102,24 @@ def format_response(event):
   # Case 2: The bot was added to a DM
   elif event_type == 'ADDED_TO_SPACE' and event['space']['type'] == 'DM':
     text = 'Thanks for adding me to a DM, {}! To start creating a campaign, type \'start\''.format(sender_name)
-
+    test = True
   elif event_type == 'MESSAGE':
-    if (event['message']['text'] == 'start') {
-      client_key = datastore_client.key('User', sender_name)
-      task = datastore.Entity(key=client_key)
-      task['phase-num'] = 0
-    }
     datastore_client = datastore.Client()
+    if (event['message']['text'] == 'start'):
+      """event['user']['name'] always follows the form users/###############,
+          need the id after users/ """
+      userId = event['user']['name'][len('users/'):]
+
+      client_key = datastore_client.key('User', userId)
+      userEntity = datastore.Entity(key=client_key)
+      userEntity['phase-num'] = 0
 
     # The kind for the new entity
     kind = 'TestMessage'
+
     # The name/ID for the new entity
-    name = 'msg1'
+    name = event['user']['name'][len('users/'):]
+
     # The Cloud Datastore key for the new entity
     task_key = datastore_client.key(kind, name)
 
@@ -123,8 +129,7 @@ def format_response(event):
 
     # Saves the entity
     datastore_client.put(task)
-
-    text = 'Your message, {}: "{}"'.format(sender_name, event['message']['text'])
+    text = 'Your message, {}: "{}" and {}'.format(sender_name, event['message']['text'], test)
 
   response = {'text': text}
 
@@ -153,8 +158,7 @@ if __name__ == '__main__':
   # application on Google App Engine. See entrypoint in app.yaml.
   app.run(host='127.0.0.1', port=8080, debug=True)
 
-def handle_message(user_name, message) {
-  if (message == 'start') {
-    # TODO
-  }
-}
+def handle_message(user_name, message):
+  if (message == 'start'):
+    # TODO: fix start element
+    print('start process')
