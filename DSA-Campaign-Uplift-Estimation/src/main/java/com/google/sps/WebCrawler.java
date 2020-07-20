@@ -22,18 +22,38 @@ import com.google.appengine.api.datastore.Entity;
 import java.io.IOException;
 import java.util.HashSet;
 
-// Crawls all pages from the domain to a depth of 1 to create the recommended list of pages.
+// Implements all functions that require the use of jsoup.
 public class WebCrawler {
 
     public static double getWebsiteFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
-        // TODO
-        return 1;
+        HashSet<String> recommendedLinks = getRecommendedLinks((String) DSACampaignEntity.getProperty("domain"));
+
+        // add the target pages to the recommended links
+        String[] targetPages = ((String) DSACampaignEntity.getProperty("targets")).split(",");
+        for (String targetPage : targetPages) {
+            targetPage = targetPage.trim();
+
+            // avoid duplicate entries
+            if (!recommendedLinks.contains(targetPage)) {
+                recommendedLinks.add(targetPage);
+            }
+        }
+
+        double sumOfPageFactors = 0;
+        for (String url : recommendedLinks) {
+            sumOfPageFactors += getPageFactor(url);
+        }   
+
+        // final website factor calculations
+        int numPagesCrawled = recommendedLinks.size();
+        double avgPageFactor = sumOfPageFactors/numPagesCrawled;
+        return (Math.log(numPagesCrawled) + 1) * avgPageFactor;
     }
 
-    // Builds and returns the recommended list of pages for the given domain.
+    // Crawls all pages from the domain to a depth of 1 to create the recommended list of pages.
     public static HashSet<String> getRecommendedLinks(String domain) {
         // use a hash set to easily deal with duplicate entries
-        HashSet<String> recommendedLinks= new HashSet<String>();
+        HashSet<String> recommendedLinks = new HashSet<String>();
 
         // begin with the domain
         recommendedLinks.add(domain);
@@ -48,7 +68,7 @@ public class WebCrawler {
             for (Element page : pageLinks) {
                 String url = page.attr("abs:href");
                 
-                // make sure we haven't already added the url
+                // avoid duplicate entries
                 if (!recommendedLinks.contains(url)) {
                     recommendedLinks.add(url);
                 }
@@ -58,5 +78,10 @@ public class WebCrawler {
         }
 
         return recommendedLinks;
+    }
+
+    public static double getPageFactor(String url) {
+        // TODO
+        return 1;
     }
 }
