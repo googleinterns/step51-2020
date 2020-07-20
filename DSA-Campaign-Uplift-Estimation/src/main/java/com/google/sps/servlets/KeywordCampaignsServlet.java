@@ -43,7 +43,8 @@ public class KeywordCampaignsServlet extends HttpServlet {
 
         ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
         if (userService.isUserLoggedIn()) {
-            String userId = userService.getCurrentUser().getUserId();
+            // user ID represents user email
+            String userId = userService.getCurrentUser().getEmail();
 
             // get the keyword campaigns associated with the logged in user from datastore
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

@@ -19,7 +19,7 @@ public class DSACampaign {
 
     // unique identifier for the DSA campaign
 	public String DSACampaignId;
-    // id of the user who created the DSA campaign
+    // id of the user who created the DSA campaign (represents email of user)
     public String userId;
     // id of the keyword campaign this DSA campaign was run on
     public String keywordCampaignId;

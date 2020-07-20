@@ -53,7 +53,7 @@ public class KeywordCampaign {
 
     public KeywordCampaign(String keywordCampaignId, String userId, String name, double manualCPC, String locations, String negativeLocations, int impressions, int clicks, double cost) {
         this.keywordCampaignId = keywordCampaignId;
-        this.userId = userId;
+        this.userId = userId; // email of user associated with keyword campaign
 
         this.name = name;
         this.manualCPC = manualCPC;

@@ -64,7 +64,7 @@ function setTwoNumberDecimal() {
 function verifyLoginStatus() {
   fetch('/userapi').then(response => response.json())
                    .then(loginStatus => {
-    userId = loginStatus.id;
+    userId = loginStatus.Email;
     if (!loginStatus.isLoggedIn) {
       window.location.replace('../index.html');
     }
