@@ -19,7 +19,7 @@ public class KeywordCampaign {
 
     // unique identifier for the keyword campaign
     public String keywordCampaignId;
-    // id of the user who created the keyword campaign
+    // id of the user who created the keyword campaign (user email)
     public String userId;
 
     // campaign settings
@@ -53,7 +53,7 @@ public class KeywordCampaign {
 
     public KeywordCampaign(String keywordCampaignId, String userId, String name, double manualCPC, String locations, String negativeLocations, int impressions, int clicks, double cost) {
         this.keywordCampaignId = keywordCampaignId;
-        this.userId = userId; // email of user associated with keyword campaign
+        this.userId = userId;
 
         this.name = name;
         this.manualCPC = manualCPC;
