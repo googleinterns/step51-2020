@@ -76,26 +76,34 @@ public class WebCrawler {
         HashSet<String> keywords = new HashSet<String>();
 
         // add the significant keywords of the url to the hash set
-        // split the url by [/ - . (blank space) _ :]
-        String[] urlElements = url.split("/|\\-|\\.|\\s|\\_|\\:");
-        for (String urlElement : urlElements) {
-            // add all keywords resembling the element to the hash set
-            ArrayList<String> relatedKeywords = getRelatedKeywords(urlElement);
-            for (String keyword : relatedKeywords) {
-                keywords.add(keyword);
-            }
-        }
+        extractKeywords(url, keywords)''
 
         try {
             // get the page HTML
             Document document = Jsoup.connect(url).get();
 
-            Elements pageLinks = document.select("title");
+            Elements titles = document.select("title");
+            for (Element title : titles) {
+                // add the significant keywords of the title to the hash set
+                extractKeywords(title.text(), keywords);
+            }
 
             // TODO
             
         } catch (IOException e) {
             System.err.println(e.getMessage());
+        }
+    }
+
+    // Splits the string element by common delimiters and extracts from the string significant/related keywords.
+    public static void extractKeywords(String element, HashSet<String> keywords) {
+        String[] elements = element.split("/|\\-|\\.|\\s|\\_|\\:");
+        for (String element : elements) {
+            // add all keywords resembling the element to the hash set
+            ArrayList<String> relatedKeywords = getRelatedKeywords(element);
+            for (String keyword : relatedKeywords) {
+                keywords.add(keyword);
+            }
         }
     }
 
