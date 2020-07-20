@@ -73,10 +73,24 @@ public class WebCrawler {
     }
 
     public static double getPageFactor(String url) {
+        // get the keywords from the url and title that we will use to analyze the page description and headers
+        HashSet<String> keywords = getKeywordsFromURLAndTitle(url);
+
+        // TODO next commit
+        // go through all of the keywords in the description and headers
+        // if a keyword in the description/headers is found in the keywords hash set, increment counter
+        // it's found if a common variation of the word is found in the hash set
+        // return fraction
+
+        return 1;
+    }
+
+    // Returns in a hashset all of the significant keywords from the url and title.
+    public static HashSet<String> getKeywordsFromURLAndTitle(String url) {
         HashSet<String> keywords = new HashSet<String>();
 
         // add the significant keywords of the url to the hash set
-        extractKeywords(url, keywords)''
+        extractKeywords(url, keywords);
 
         try {
             // get the page HTML
@@ -87,43 +101,23 @@ public class WebCrawler {
                 // add the significant keywords of the title to the hash set
                 extractKeywords(title.text(), keywords);
             }
-
-            // TODO
-            
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
+
+        return keywords;
     }
 
-    // Splits the string element by common delimiters and extracts from the string significant/related keywords.
+    // Splits the string element by common delimiters and extracts from the string significant keywords.
     public static void extractKeywords(String element, HashSet<String> keywords) {
-        String[] elements = element.split("/|\\-|\\.|\\s|\\_|\\:");
-        for (String element : elements) {
-            // add all keywords resembling the element to the hash set
-            ArrayList<String> relatedKeywords = getRelatedKeywords(element);
-            for (String keyword : relatedKeywords) {
-                keywords.add(keyword);
+        String[] elementArr = element.split("/|\\-|\\.|\\s|\\_|\\:");
+        for (String word : elementArr) {
+            word = word.trim().toLowerCase();
+
+            if (isSignificant(word)) {
+                keywords.add(word);
             }
         }
-    }
-
-    // Ensures that the keyword is significant, converts to lower case, and returns both the sigular and plural cases. 
-    public static ArrayList<String> getRelatedKeywords(String word) {
-        ArrayList<String> relatedKeywords = new ArrayList<String>();
-        word = word.trim().toLowerCase();
-
-        if (isSignificant(word)) {
-            relatedKeywords.add(word);
-
-            // add both the singular and plural forms
-            if (word.charAt(word.length()-1) == 's') {
-                relatedKeywords.add(word.substring(0, word.length()-1));
-            } else {
-                relatedKeywords.add(word += 's');
-            }
-        }
-        
-        return relatedKeywords;
     }
 
     // Checks if the word has meaningful content.

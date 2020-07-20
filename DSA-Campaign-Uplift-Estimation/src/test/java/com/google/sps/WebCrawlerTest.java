@@ -46,4 +46,23 @@ public final class WebCrawlerTest {
 
         assertEquals(expectedRecommendedLinks, recommendedLinks);
     }
+
+    @Test
+    public void WebCrawlerGetKeywordsFromURLAndTitle() throws IOException {
+        // obtain the significant keywords of the url and title of the GitHub repo
+        HashSet<String> keywords = WebCrawler.getKeywordsFromURLAndTitle("https://github.com/googleinterns/step51-2020");
+
+        // these are links on the home page
+        HashSet<String> expectedKeywords = new HashSet<String>();
+        expectedKeywords.add("github");
+        expectedKeywords.add("googleinterns");
+        expectedKeywords.add("step51");
+        expectedKeywords.add("2020");
+        expectedKeywords.add("google");
+        expectedKeywords.add("step");
+        expectedKeywords.add("capstone");
+        expectedKeywords.add("project");
+
+        assertEquals(expectedKeywords, keywords);
+    }
 }
