@@ -27,24 +27,31 @@ import java.util.ArrayList;
 public class WebCrawler {
 
     public static double getWebsiteFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
-        // use a hashset to avoid duplicate entries
-        HashSet<String> recommendedLinks = getRecommendedLinks((String) DSACampaignEntity.getProperty("domain"));
+        try {
+            // use a hashset to avoid duplicate entries
+            HashSet<String> recommendedLinks = getRecommendedLinks((String) DSACampaignEntity.getProperty("domain"));
 
-        // add the target pages to the recommended links
-        String[] targetPages = ((String) DSACampaignEntity.getProperty("targets")).split(",");
-        for (String targetPage : targetPages) {
-            recommendedLinks.add(targetPage.trim());
+            // add the target pages to the recommended links
+            String[] targetPages = ((String) DSACampaignEntity.getProperty("targets")).split(",");
+            for (String targetPage : targetPages) {
+                recommendedLinks.add(targetPage.trim());
+            }
+
+            double sumOfPageFactors = 0;
+            for (String url : recommendedLinks) {
+                sumOfPageFactors += getPageFactor(url);
+            }   
+
+            // final website factor calculations
+            int numPagesCrawled = recommendedLinks.size();
+            double avgPageFactor = sumOfPageFactors/numPagesCrawled;
+            return (Math.log(numPagesCrawled) + 1) * avgPageFactor;
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
         }
 
-        double sumOfPageFactors = 0;
-        for (String url : recommendedLinks) {
-            sumOfPageFactors += getPageFactor(url);
-        }   
-
-        // final website factor calculations
-        int numPagesCrawled = recommendedLinks.size();
-        double avgPageFactor = sumOfPageFactors/numPagesCrawled;
-        return (Math.log(numPagesCrawled) + 1) * avgPageFactor;
+        // failed to obtain the website factor
+        return 1;
     }
 
     // Crawls all pages from the domain to a depth of 1 to create the recommended list of pages.
@@ -55,62 +62,82 @@ public class WebCrawler {
         // begin with the domain
         recommendedLinks.add(domain);
 
-        // add all the other links on the domain page
-        try {
-            // get the page HTML
-            Document document = Jsoup.connect(domain).get();
+        // get the page HTML
+        Document document = Jsoup.connect(domain).get();
 
-            // parse the HTML to get the links to other URLs and add them to the hash set
-            Elements pageLinks = document.select("a[href]");
-            for (Element page : pageLinks) {
-                recommendedLinks.add(page.attr("abs:href"));
-            }
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
+        // parse the HTML to get the links to other URLs and add them to the hash set
+        Elements pageLinks = document.select("a[href]");
+        for (Element page : pageLinks) {
+            recommendedLinks.add(page.attr("abs:href"));
         }
 
         return recommendedLinks;
     }
 
     public static double getPageFactor(String url) {
-        // get the keywords from the url and title that we will use to analyze the page description and headers
-        HashSet<String> keywords = getKeywordsFromURLAndTitle(url);
+        // get the page HTML
+        Document document = Jsoup.connect(url).get();
 
-        // TODO next commit
-        // go through all of the keywords in the description and headers
-        // if a keyword in the description/headers is found in the keywords hash set, increment counter
-        // it's found if a common variation of the word is found in the hash set
-        // return fraction
+        // get the significant keywords from the url and title
+        HashSet<String> keywordsURLTitle = getKeywordsFromURLAndTitle(url, document);
+        
+        // get the significant keywords from the meta description and headers
+        HashSet<String> keywordsDescriptionHeaders = getKeywordsFromDescriptionAndHeaders(document);
+
+        /*
+         * Go through every word in the description meta tag and see if it is significant.
+         * If it is, check if the word or a close variation of it (difference of one character) is found in keywords.
+         * If so, increment count and remove the word from keywords.
+         */
+        int count = 0;
+
+        // TODO
 
         return 1;
     }
 
     // Returns in a hashset all of the significant keywords from the url and title.
-    public static HashSet<String> getKeywordsFromURLAndTitle(String url) {
+    public static HashSet<String> getKeywordsFromURLAndTitle(String url, Document document) {
         HashSet<String> keywords = new HashSet<String>();
 
         // add the significant keywords of the url to the hash set
         extractKeywords(url, keywords);
 
-        try {
-            // get the page HTML
-            Document document = Jsoup.connect(url).get();
-
-            Elements titles = document.select("title");
-            for (Element title : titles) {
-                // add the significant keywords of the title to the hash set
-                extractKeywords(title.text(), keywords);
-            }
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+        // add the significant keywords of the title to the hash set
+        getKeywordsFromPageElements(document, "title", keywords);
 
         return keywords;
     }
 
+    // Returns in a hashset all of the significant keywords from the meta description and headers.
+    public static HashSet<String> getKeywordsFromDescriptionAndHeaders(Document document) {
+        HashSet<String> keywords = new HashSet<String>();
+
+        // add the significant keywords of the description to the hash set
+        Elements descriptions = document.select("meta[name=description]");
+        for (Element description : descriptions) {
+            extractKeywords(description.content(), keywords);
+        }
+
+        // add the significant keywords of the h1, h2, and h3 headers to the hash set
+        getKeywordsFromPageElements(document, "h1", keywords);
+        getKeywordsFromPageElements(document, "h2", keywords);
+        getKeywordsFromPageElements(document, "h3", keywords);
+
+        return keywords;
+    }
+
+    // Extracts the keywords from all of the elements on the page with the specified tag.
+    public static void getKeywordsFromPageElements(Document document, String tagName, HashSet<String> keywords) {
+        Elements elements = document.select(tagName);
+        for (Element element : elements) {
+            extractKeywords(element.text(), keywords);
+        }
+    }
+
     // Splits the string element by common delimiters and extracts from the string significant keywords.
     public static void extractKeywords(String element, HashSet<String> keywords) {
-        String[] elementArr = element.split("/|\\-|\\.|\\s|\\_|\\:");
+        String[] elementArr = element.split("/|\\-|\\.|\\s|\\_|\\:|\\,|\\?|\\!|\\;");
         for (String word : elementArr) {
             word = word.trim().toLowerCase();
 
