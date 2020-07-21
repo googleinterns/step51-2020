@@ -44,8 +44,8 @@ public class WebCrawler {
 
             // final website factor calculations
             int numPagesCrawled = recommendedLinks.size();
-            double avgPageFactor = sumOfPageFactors/numPagesCrawled;
-            double logBase100 = Math.log10(numPagesCrawled)/2;
+            double avgPageFactor = sumOfPageFactors / numPagesCrawled;
+            double logBase100 = Math.log10(numPagesCrawled) / 2;
             return (logBase100 + 1) * avgPageFactor;
         } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -99,7 +99,7 @@ public class WebCrawler {
             }
         }
 
-        return (((double) sharedKeywords.size())/((double) keywordsURLTitle.size())) + 1;
+        return (((double) sharedKeywords.size()) / ((double) keywordsURLTitle.size())) + 1;
     }
 
     // Returns true if there is less than 1 character difference between strings str1 and str2.
