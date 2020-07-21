@@ -71,11 +71,11 @@ public final class DSACampaignDataServletTest {
 
         assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
 
-        DSACampaign DSACampaignObjectPending = new DSACampaign("1", "1", "1", "Test DC Pending", "pending", "1/1/1", "2/2/2", .8, 150, "United States",
+        DSACampaign DSACampaignObjectPending = new DSACampaign("1", "1", "1", "Test DC Pending", "pending", "1/1/1", "2/2/2", .8, 500, "United States",
             "California, Texas", "https://www.google.com/", "https://www.google.com/", "sample ad text 2", 0, 0, 0);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectPending));
 
-        DSACampaign DSACampaignObjectComplete = new DSACampaign("2", "1", "1", "Test DC Complete", "complete", "1/1/1", "2/2/2", .8, 150, "United States",
+        DSACampaign DSACampaignObjectComplete = new DSACampaign("2", "1", "1", "Test DC Complete", "complete", "1/1/1", "2/2/2", .8, 500, "United States",
             "California, Texas", "https://www.google.com/", "https://www.google.com/", "sample ad text 2", 0, 0, 0);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectComplete));
 
@@ -89,9 +89,9 @@ public final class DSACampaignDataServletTest {
 
         // The pending DSA campaign entity should be changed to complete and the estimation results should be updated.
         assertEquals("complete", (String) pendingDSACampaignEntity.getProperty("campaignStatus"));
-        assertEquals(238, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
-        assertEquals(188, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
-        assertEquals(150, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
+        assertEquals(2671, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
+        assertEquals(480, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
+        assertEquals(384, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
         Query secondQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "2"));
         Entity completeDSACampaignEntity = ds.prepare(secondQuery).asSingleEntity();

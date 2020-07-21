@@ -91,6 +91,7 @@ public class DSACampaignDataServlet extends HttpServlet {
         double manualCPCFactor = getManualCPCFactor(keywordCampaignEntity, DSACampaignEntity);
         double locationsFactor = getLocationsFactor(keywordCampaignEntity, DSACampaignEntity);
         double upliftFactor = .25*manualCPCFactor + .25*locationsFactor + .50*websiteFactor;
+
         return (int) Math.round(upliftFactor * ((int) ((long) keywordCampaignEntity.getProperty("impressions"))));
     }
 
@@ -107,7 +108,7 @@ public class DSACampaignDataServlet extends HttpServlet {
 
     public static double getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
         double adTextFactor = getAdTextFactor(DSACampaignEntity);
-        return 1 - (1 / (.80*websiteFactor + .20*adTextFactor));
+        return 1 - (1.75 / (.80*websiteFactor + .20*adTextFactor));
     }
 
     public static double getAdTextFactor(Entity DSACampaignEntity) {
