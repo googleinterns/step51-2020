@@ -64,7 +64,7 @@ public final class DSACampaignDataServletTest {
     }
 
     @Test
-    public void DSACampaignDataServletdoPost() throws IOException, ServletException {
+    public void DSACampaignDataServletdoPostWithinBudget() throws IOException, ServletException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "1", "Test KC", .4, "United States", "Texas, California", 1500, 300, 75.12);
         ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
@@ -92,6 +92,47 @@ public final class DSACampaignDataServletTest {
         assertEquals(2671, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
         assertEquals(480, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
         assertEquals(384, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
+
+        Query secondQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "2"));
+        Entity completeDSACampaignEntity = ds.prepare(secondQuery).asSingleEntity();
+
+        // The complete DSA campaign entity should remain unchanged.
+        assertEquals("complete", (String) completeDSACampaignEntity.getProperty("campaignStatus"));
+        assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("impressions")));
+        assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("clicks")));
+        assertEquals(0, (double) completeDSACampaignEntity.getProperty("cost"), .01);
+    }
+
+    @Test
+    public void DSACampaignDataServletdoPostExceedBudget() throws IOException, ServletException {
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "1", "Test KC", .4, "United States", "Texas, California", 1500, 300, 75.12);
+        ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
+
+        assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
+
+        DSACampaign DSACampaignObjectPending = new DSACampaign("1", "1", "1", "Test DC Pending", "pending", "1/1/1", "2/2/2", .8, 300, "United States",
+            "California, Texas", "https://www.google.com/", "https://www.google.com/", "sample ad text 2", 0, 0, 0);
+        ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectPending));
+
+        DSACampaign DSACampaignObjectComplete = new DSACampaign("2", "1", "1", "Test DC Complete", "complete", "1/1/1", "2/2/2", .8, 500, "United States",
+            "California, Texas", "https://www.google.com/", "https://www.google.com/", "sample ad text 2", 0, 0, 0);
+        ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectComplete));
+
+        assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
+
+        DSACampaignDataServlet servlet = new DSACampaignDataServlet();
+        servlet.doPost(request, response);
+
+        Query firstQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "1"));
+        Entity pendingDSACampaignEntity = ds.prepare(firstQuery).asSingleEntity();
+
+        // The pending DSA campaign entity should be changed to complete and the estimation results should be updated.
+        // The estimation results should have hit the daily budget cap.
+        assertEquals("complete", (String) pendingDSACampaignEntity.getProperty("campaignStatus"));
+        assertEquals(2088, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
+        assertEquals(375, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
+        assertEquals(300, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
         Query secondQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "2"));
         Entity completeDSACampaignEntity = ds.prepare(secondQuery).asSingleEntity();
