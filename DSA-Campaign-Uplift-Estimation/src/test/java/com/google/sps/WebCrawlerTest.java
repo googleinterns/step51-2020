@@ -114,6 +114,10 @@ public final class WebCrawlerTest {
         assertFalse(WebCrawler.resembles("bcdefg", "abcdef"));
 
         // real world cases
+
+        // plural vs single
         assertTrue(WebCrawler.resembles("flower", "flowers"));
+        // typo
+        assertTrue(WebCrawler.resembles("flower", "flowur"));
     }
 }
