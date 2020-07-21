@@ -35,7 +35,6 @@ import java.util.HashSet;
 @RunWith(JUnit4.class)
 public final class WebCrawlerTest {
 
-    /*
     @Test
     public void WebCrawlerGetRecommendedLinks() throws IOException {
         // crawl the home page of the deployed website
@@ -51,7 +50,6 @@ public final class WebCrawlerTest {
 
         assertEquals(expectedRecommendedLinks, recommendedLinks);
     }
-    */
 
     @Test
     public void WebCrawlerGetKeywordsFromURLAndTitle() throws IOException {

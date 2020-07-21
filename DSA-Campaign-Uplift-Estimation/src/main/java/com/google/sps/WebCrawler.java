@@ -80,27 +80,25 @@ public class WebCrawler {
 
         // get the significant keywords from the url and title
         HashSet<String> keywordsURLTitle = getKeywordsFromURLAndTitle(url, document);
-        int keywordsURLTitleSize = keywordsURLTitle.size();
         
         // get the significant keywords from the meta description and headers
         HashSet<String> keywordsDescriptionHeaders = getKeywordsFromDescriptionAndHeaders(document);
 
         /*
          * Go through every element of keywordsDescriptionHeaders and check if the word or a close variation of it (difference of one character) is found in keywordsURLTitle.
-         * If so, increment count and remove the word from keywordsURLTitle.
+         * If so, add the word to sharedKeywords.
          */
-        double count = 0;
+        HashSet<String> sharedKeywords = new HashSet<String>();
         for (String keyword : keywordsDescriptionHeaders) {
             for (String matchingKeyword : keywordsURLTitle) {
-                if (resembles(keyword, matchingKeyword)) {
-                    count++;
-                    keywordsDescriptionHeaders.remove(matchingKeyword);
+                if (!sharedKeywords.contains(matchingKeyword) && resembles(keyword, matchingKeyword)) {
+                    sharedKeywords.add(matchingKeyword);
                     break;
                 }
             }
         }
 
-        return (count/keywordsURLTitleSize) + 1;
+        return (((double) sharedKeywords.size())/((double) keywordsURLTitle.size())) + 1;
     }
 
     // Returns true if there is less than 1 character difference between strings str1 and str2.

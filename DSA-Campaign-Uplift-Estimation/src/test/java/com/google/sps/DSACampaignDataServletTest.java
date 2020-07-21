@@ -89,7 +89,7 @@ public final class DSACampaignDataServletTest {
 
         // The pending DSA campaign entity should be changed to complete and the estimation results should be updated.
         assertEquals("complete", (String) pendingDSACampaignEntity.getProperty("campaignStatus"));
-        assertEquals(266, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
+        assertEquals(238, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
         assertEquals(188, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
         assertEquals(150, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
