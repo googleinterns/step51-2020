@@ -14,6 +14,8 @@
 
 package com.google.sps;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.Assert;
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +23,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
 import org.mockito.Mock;
@@ -31,6 +35,7 @@ import java.util.HashSet;
 @RunWith(JUnit4.class)
 public final class WebCrawlerTest {
 
+    /*
     @Test
     public void WebCrawlerGetRecommendedLinks() throws IOException {
         // crawl the home page of the deployed website
@@ -46,11 +51,14 @@ public final class WebCrawlerTest {
 
         assertEquals(expectedRecommendedLinks, recommendedLinks);
     }
+    */
 
     @Test
     public void WebCrawlerGetKeywordsFromURLAndTitle() throws IOException {
         // obtain the significant keywords of the url and title of the GitHub repo
-        HashSet<String> keywords = WebCrawler.getKeywordsFromURLAndTitle("https://github.com/googleinterns/step51-2020");
+        String url = "https://github.com/googleinterns/step51-2020";
+        Document document = Jsoup.connect(url).get();
+        HashSet<String> keywords = WebCrawler.getKeywordsFromURLAndTitle(url, document);
 
         // these are links on the home page
         HashSet<String> expectedKeywords = new HashSet<String>();
@@ -64,5 +72,50 @@ public final class WebCrawlerTest {
         expectedKeywords.add("project");
 
         assertEquals(expectedKeywords, keywords);
+    }
+
+    @Test
+    public void WebCrawlerResembles() throws IOException {
+        // true cases
+
+        assertTrue(WebCrawler.resembles("abcdefg", "abcdefg"));
+
+        // cases described in the comments of the function
+        assertTrue(WebCrawler.resembles("abcdefg", "abcefg"));
+        assertTrue(WebCrawler.resembles("abcdefg", "abchefg"));
+        assertTrue(WebCrawler.resembles("abcdefg", "abchdefg"));
+
+        // ending cases
+        assertTrue(WebCrawler.resembles("abcdefg", "abcdef"));
+        assertTrue(WebCrawler.resembles("abcdefg", "abcdefgh"));
+        assertTrue(WebCrawler.resembles("abcdefg", "abcdefh"));
+
+        // starting cases
+        assertTrue(WebCrawler.resembles("abcdefg", "bcdefg"));
+        assertTrue(WebCrawler.resembles("abcdefg", "hbcdefg"));
+        assertTrue(WebCrawler.resembles("abcdefg", "habcdefg"));
+
+        // edge cases
+        assertTrue(WebCrawler.resembles("", ""));
+        assertTrue(WebCrawler.resembles("", "a"));
+        assertTrue(WebCrawler.resembles("a", ""));
+        assertTrue(WebCrawler.resembles("a", "b"));
+
+        // false cases
+
+        assertFalse(WebCrawler.resembles("abcdefg", "hfhjkja"));
+
+        // invalid lengths
+        assertFalse(WebCrawler.resembles("abcdefg", "abcdefghi"));
+        assertFalse(WebCrawler.resembles("abcdefghi", "abcdefg"));
+
+        // >1 differences
+        assertFalse(WebCrawler.resembles("abcdefg", "ahcdegg"));
+        assertFalse(WebCrawler.resembles("acdefg", "abciefg"));
+        assertFalse(WebCrawler.resembles("abcefg", "abcdef"));
+        assertFalse(WebCrawler.resembles("bcdefg", "abcdef"));
+
+        // real world cases
+        assertTrue(WebCrawler.resembles("flower", "flowers"));
     }
 }
