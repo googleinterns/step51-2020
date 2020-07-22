@@ -17,6 +17,7 @@ package com.google.sps.servlets;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.classes.KeywordCampaign;
+import com.google.sps.WebCrawler;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -63,7 +64,7 @@ public class DSACampaignDataServlet extends HttpServlet {
     	Entity keywordCampaignEntity = datastore.prepare(query).asSingleEntity();
 
         // calculate the estimation results
-        double websiteFactor = getWebsiteFactor(keywordCampaignEntity, DSACampaignEntity);
+        double websiteFactor = WebCrawler.getWebsiteFactor(keywordCampaignEntity, DSACampaignEntity);
         double impressionsToClicksFactor = getImpressionsToClicksFactor(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int clicks = (int) Math.round(impressions * impressionsToClicksFactor);;
@@ -86,15 +87,11 @@ public class DSACampaignDataServlet extends HttpServlet {
         // TODO: SQR
     }
 
-    public static double getWebsiteFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
-        // TODO
-        return 1;
-    }
-
-     public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
+    public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
         double manualCPCFactor = getManualCPCFactor(keywordCampaignEntity, DSACampaignEntity);
         double locationsFactor = getLocationsFactor(keywordCampaignEntity, DSACampaignEntity);
         double upliftFactor = .25*manualCPCFactor + .25*locationsFactor + .50*websiteFactor;
+
         return (int) Math.round(upliftFactor * ((int) ((long) keywordCampaignEntity.getProperty("impressions"))));
     }
 
@@ -111,7 +108,7 @@ public class DSACampaignDataServlet extends HttpServlet {
 
     public static double getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
         double adTextFactor = getAdTextFactor(DSACampaignEntity);
-        return 1 - (1 / (.80*websiteFactor + .20*adTextFactor));
+        return (1 - (1 / (.80*websiteFactor + .20*adTextFactor))) / 2;
     }
 
     public static double getAdTextFactor(Entity DSACampaignEntity) {
