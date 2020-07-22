@@ -117,9 +117,10 @@ public class WebCrawler {
         /*
          * We will go from left to right through str1 and str2, comparing the characters of the two strings.
          * posStr1 and posStr2 represent the character positions we are analyzing in str1 and str2, respectively.
-         * foundDifference will be false if, when going left to right, we haven't found a difference between the two strings yet, and true if we have found a difference.
+         * If we find a difference between the 2 strings, we will analyze what's left of the two strings to compare.
+         * - If the remaining substrings fall into one of the three cases explained in the code (swap, insertion, or deletion),
+         * - we return true; otherwise, we return false.
          */
-        boolean foundDifference = false;
         int posStr1 = 0;
         int posStr2 = 0;
         while ((posStr1 < str1.length()) && (posStr2 < str2.length())) {
@@ -127,36 +128,24 @@ public class WebCrawler {
                 // found no difference, keep progressing through the strings
                 posStr1++;
                 posStr2++;
-            } else if (!foundDifference) {
-                // found a difference between the two strings
-                foundDifference = true;
-                
-                if ((posStr1 == str1.length()-1) || (posStr2 == str2.length()-1)) {
-                    // Case 1: We have finished traversing through either str1 or str2. This case is handled outside of the while loop, which is why we simply increment
-                    // posStr1 and posStr2 to break out of the while loop on the next iteration.
-                    posStr1++;
-                    posStr2++;
-                } else if (str1.charAt(posStr1+1) == str2.charAt(posStr2)) {
-                    // Case 2 (deletion): Ex: str1 = abc'd'efg and str2 = abc'e'fg. The two strings get back in line if we only increment posStr1 (what's left in both strings is "efg").
-                    posStr1++;
-                } else if (str1.charAt(posStr1+1) == str2.charAt(posStr2+1)) {
-                    // Case 3 (swap): Ex: str1 = abc'd'efg and str2 = abc'h'efg. The two strings get back in line if we increment both posStr1 and posStr2 (what's left in both strings is "efg").
-                    posStr1++;
-                    posStr2++;
-                } else if (str1.charAt(posStr1) == str2.charAt(posStr2+1)) {
-                    // Case 4 (insertion): Ex: str1 = abc'd'efg and str2 = abc'h'defg. The two strings get back in line if we only increment posStr2 (what's left in both strings is "defg").
-                    posStr2++;
-                }
             } else {
-                // found 2 differences in the strings
-                return false;
-            }
-        }
+                // obtain what's left to compare (e.g. ab'c'def => def)
+                String remainingPortionStr1 = str1.substring(posStr1+1);
+                String remainingPortionStr2 = str2.substring(posStr2+1);
 
-        // Case where we have traversed through at least one of the strings, while having found 1 difference. Then if we haven't traversed completely through both strings,
-        // then there is additional character left in one of the strings, meaning there's a second difference.
-        if (foundDifference && !((posStr1 == str1.length()) && (posStr2 == str2.length()))) {
-            return false;
+                if (remainingPortionStr1.equals(remainingPortionStr2)) {
+                    // Case 1 (swap): Ex: str1 = abc'd'efg and str2 = abc'h'efg
+                    return true;
+                } else if ((str1.charAt(posStr1) + remainingPortionStr1).equals(remainingPortionStr2)) {
+                    // Case 2 (insertion): Ex: str1 = abc'd'efg and str2 = abc'h'defg
+                    return true;
+                } else if (remainingPortionStr1.equals(str2.charAt(posStr2) + remainingPortionStr2)) {
+                    // Case 3 (deletion): Ex: str1 = abc'd'efg and str2 = abc'e'fg
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
 
         // successfully traversed through the strings having found <2 differences
