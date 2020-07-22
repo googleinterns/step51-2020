@@ -137,14 +137,14 @@ public class WebCrawler {
                     posStr1++;
                     posStr2++;
                 } else if (str1.charAt(posStr1+1) == str2.charAt(posStr2)) {
-                    // Case 2: Ex: str1 = abc'd'efg and str2 = abc'e'fg. The two strings get back in line if we only increment posStr1 (what's left in both strings is "efg").
+                    // Case 2 (deletion): Ex: str1 = abc'd'efg and str2 = abc'e'fg. The two strings get back in line if we only increment posStr1 (what's left in both strings is "efg").
                     posStr1++;
                 } else if (str1.charAt(posStr1+1) == str2.charAt(posStr2+1)) {
-                    // Case 3: Ex: str1 = abc'd'efg and str2 = abc'h'efg. The two strings get back in line if we increment both posStr1 and posStr2 (what's left in both strings is "efg").
+                    // Case 3 (swap): Ex: str1 = abc'd'efg and str2 = abc'h'efg. The two strings get back in line if we increment both posStr1 and posStr2 (what's left in both strings is "efg").
                     posStr1++;
                     posStr2++;
                 } else if (str1.charAt(posStr1) == str2.charAt(posStr2+1)) {
-                    // Case 4: Ex: str1 = abc'd'efg and str2 = abc'h'defg. The two strings get back in line if we only increment posStr2 (what's left in both strings is "defg").
+                    // Case 4 (insertion): Ex: str1 = abc'd'efg and str2 = abc'h'defg. The two strings get back in line if we only increment posStr2 (what's left in both strings is "defg").
                     posStr2++;
                 }
             } else {
