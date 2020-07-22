@@ -32,6 +32,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashMap;
 
 // obtains estimation results for all the pending DSA campaigns
 @WebServlet("/data")
@@ -57,7 +60,7 @@ public class DSACampaignDataServlet extends HttpServlet {
      * Updates the DSA campaign entity with the estimation results and changes the campaign status from pending to complete.
      * Implementation explanations are in the design doc.
      */
-    public static void estimationResults(Entity DSACampaignEntity) {
+    public static void estimationResults(Entity DSACampaignEntity) throws IOException {
         // retrieve the DSA campaign's corresponding keyword campaign from datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, (String) DSACampaignEntity.getProperty("keywordCampaignId")));
@@ -87,7 +90,7 @@ public class DSACampaignDataServlet extends HttpServlet {
         // TODO: SQR
     }
 
-    public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
+    public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) throws IOException {
         double manualCPCFactor = getManualCPCFactor(keywordCampaignEntity, DSACampaignEntity);
         double locationsFactor = getLocationsFactor(keywordCampaignEntity, DSACampaignEntity);
         double upliftFactor = .25*manualCPCFactor + .25*locationsFactor + .50*websiteFactor;
@@ -101,8 +104,21 @@ public class DSACampaignDataServlet extends HttpServlet {
         return Math.min(ratio, 3);
     }
 
-    public static double getLocationsFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
-        // TODO
+    public static double getLocationsFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) throws IOException {
+        // read in the US Census data
+        BufferedReader file = new BufferedReader(new FileReader("US_Census_Data_State_Populations.txt"));
+        HashMap<String, Long> statePopulations = new HashMap<String, Long>();
+
+        // ignore the first line containing column headers
+        file.readLine();
+        for (int i=0; i<56; i++) {
+            String[] lineElements = file.readLine().split(",");
+            String location = lineElements[4];
+            long population = Long.parseLong(lineElements[16]);
+            System.out.println("Location: " + location + ", Population: " + population);
+            statePopulations.put(location, population);
+        }
+        file.close();
         return 1;
     }
 
