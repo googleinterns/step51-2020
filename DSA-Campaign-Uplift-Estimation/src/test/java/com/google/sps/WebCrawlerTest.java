@@ -34,7 +34,7 @@ import java.util.HashSet;
 // Tests the getRecommendedLinks() function in WebCrawler.java.
 @RunWith(JUnit4.class)
 public final class WebCrawlerTest {
-    
+
     @Test
     public void WebCrawlerGetRecommendedLinks() throws IOException {
         // crawl the home page of the deployed website
