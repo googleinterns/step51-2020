@@ -110,7 +110,7 @@ public class WebCrawler {
         }
 
         // initial check to ensure that the lengths of the two strings are within 1 of each other
-        if ((str1.length() < str2.length()-1) || (str1.length() > str2.length()+1)) {
+        if ((str1.length() < str2.length() - 1) || (str1.length() > str2.length() + 1)) {
             return false;
         }
 
