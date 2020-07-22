@@ -107,6 +107,8 @@ public class DSACampaignDataServlet extends HttpServlet {
     public static double getLocationsFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) throws IOException {
         // read in the US Census data
         BufferedReader file = new BufferedReader(new FileReader("US_Census_Data_State_Populations.txt"));
+
+        // populate the census data into the hash map
         HashMap<String, Long> statePopulations = new HashMap<String, Long>();
 
         // ignore the first line containing column headers
@@ -115,10 +117,12 @@ public class DSACampaignDataServlet extends HttpServlet {
             String[] lineElements = file.readLine().split(",");
             String location = lineElements[4];
             long population = Long.parseLong(lineElements[16]);
-            System.out.println("Location: " + location + ", Population: " + population);
+            // System.out.println("Location: " + location + ", Population: " + population);
             statePopulations.put(location, population);
         }
         file.close();
+
+
         return 1;
     }
 
