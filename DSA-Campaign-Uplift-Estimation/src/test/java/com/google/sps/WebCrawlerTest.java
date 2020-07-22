@@ -42,7 +42,6 @@ public final class WebCrawlerTest {
 
         // these are links on the home page
         HashSet<String> expectedRecommendedLinks = new HashSet<String>();
-        expectedRecommendedLinks.add("");
         expectedRecommendedLinks.add("http://dsa-uplift-estimation-2020.uc.r.appspot.com/Compare/compare.html");
         expectedRecommendedLinks.add("http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html");
         expectedRecommendedLinks.add("http://dsa-uplift-estimation-2020.uc.r.appspot.com/Create/create.html");
@@ -78,10 +77,10 @@ public final class WebCrawlerTest {
 
         assertTrue(WebCrawler.resembles("abcdefg", "abcdefg"));
 
-        // cases described in the comments of the function
+        // cases testing insertion, deletion, and swap
         assertTrue(WebCrawler.resembles("abcdefg", "abcefg"));
         assertTrue(WebCrawler.resembles("abcdefg", "abchefg"));
-        assertTrue(WebCrawler.resembles("abcdefg", "abchdefg"));
+        assertTrue(WebCrawler.resembles("abcdefg", "abchdefg"));        
 
         // ending cases
         assertTrue(WebCrawler.resembles("abcdefg", "abcdef"));
@@ -112,6 +111,14 @@ public final class WebCrawlerTest {
         assertFalse(WebCrawler.resembles("acdefg", "abciefg"));
         assertFalse(WebCrawler.resembles("abcefg", "abcdef"));
         assertFalse(WebCrawler.resembles("bcdefg", "abcdef"));
+
+        // other tests
+        assertTrue(WebCrawler.resembles("abcd", "acbcd"));
+        assertTrue(WebCrawler.resembles("aaaaa", "aaaa"));
+        assertTrue(WebCrawler.resembles("aaaa", "aaaaa"));
+        assertTrue(WebCrawler.resembles("aaaaa", "aacaa"));
+        assertTrue(WebCrawler.resembles("aaaaa", "aacaaa"));
+        assertFalse(WebCrawler.resembles("aaaaa", "aaca"));
 
         // real world cases
 

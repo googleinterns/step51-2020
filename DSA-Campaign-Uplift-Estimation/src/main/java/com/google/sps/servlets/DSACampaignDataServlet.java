@@ -128,7 +128,7 @@ public class DSACampaignDataServlet extends HttpServlet {
 
     public static double getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
         double adTextFactor = getAdTextFactor(DSACampaignEntity);
-        return 1 - (1.75 / (.80*websiteFactor + .20*adTextFactor));
+        return (1 - (1 / (.80*websiteFactor + .20*adTextFactor))) / 2;
     }
 
     public static double getAdTextFactor(Entity DSACampaignEntity) {
