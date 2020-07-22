@@ -34,7 +34,10 @@ public class WebCrawler {
             // add the target pages to the recommended links
             String[] targetPages = ((String) DSACampaignEntity.getProperty("targets")).split(",");
             for (String targetPage : targetPages) {
-                recommendedLinks.add(targetPage.trim());
+                String refinedURL = targetPage.trim();
+                if (!refinedURL.equals("")) {
+                    recommendedLinks.add(refinedURL);
+                }
             }
 
             double sumOfPageFactors = 0;
@@ -60,16 +63,22 @@ public class WebCrawler {
         // use a hash set to avoid duplicate entries
         HashSet<String> recommendedLinks = new HashSet<String>();
 
-        // begin with the domain
-        recommendedLinks.add(domain);
+        // check that the domain isn't empty
+        if (!domain.trim().equals("")) {
+            // begin with the domain
+            recommendedLinks.add(domain);
 
-        // get the page HTML
-        Document document = Jsoup.connect(domain).get();
+            // get the page HTML
+            Document document = Jsoup.connect(domain).get();
 
-        // parse the HTML to get the links to other URLs and add them to the hash set
-        Elements pageLinks = document.select("a[href]");
-        for (Element page : pageLinks) {
-            recommendedLinks.add(page.attr("abs:href"));
+            // parse the HTML to get the links to other URLs and add them to the hash set
+            Elements pageLinks = document.select("a[href]");
+            for (Element page : pageLinks) {
+                String pageLink = page.attr("abs:href").trim();
+                if (!pageLink.equals("")){
+                    recommendedLinks.add(pageLink);
+                }
+            }
         }
 
         return recommendedLinks;

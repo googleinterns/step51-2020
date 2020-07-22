@@ -72,11 +72,11 @@ public final class DSACampaignDataServletTest {
         assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
 
         DSACampaign DSACampaignObjectPending = new DSACampaign("1", "1", "1", "Test DC Pending", "pending", "1/1/1", "2/2/2", .8, 500, "United States",
-            "California, Texas", "https://www.google.com/", "https://www.google.com/", "sample ad text 2", 0, 0, 0);
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectPending));
 
         DSACampaign DSACampaignObjectComplete = new DSACampaign("2", "1", "1", "Test DC Complete", "complete", "1/1/1", "2/2/2", .8, 500, "United States",
-            "California, Texas", "https://www.google.com/", "https://www.google.com/", "sample ad text 2", 0, 0, 0);
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectComplete));
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
@@ -89,7 +89,7 @@ public final class DSACampaignDataServletTest {
 
         // The pending DSA campaign entity should be changed to complete and the estimation results should be updated.
         assertEquals("complete", (String) pendingDSACampaignEntity.getProperty("campaignStatus"));
-        assertEquals(2671, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
+        assertEquals(1957, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
         assertEquals(480, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
         assertEquals(384, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
@@ -112,11 +112,11 @@ public final class DSACampaignDataServletTest {
         assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
 
         DSACampaign DSACampaignObjectPending = new DSACampaign("1", "1", "1", "Test DC Pending", "pending", "1/1/1", "2/2/2", .8, 300, "United States",
-            "California, Texas", "https://www.google.com/", "https://www.google.com/", "sample ad text 2", 0, 0, 0);
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectPending));
 
         DSACampaign DSACampaignObjectComplete = new DSACampaign("2", "1", "1", "Test DC Complete", "complete", "1/1/1", "2/2/2", .8, 500, "United States",
-            "California, Texas", "https://www.google.com/", "https://www.google.com/", "sample ad text 2", 0, 0, 0);
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectComplete));
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
@@ -130,7 +130,7 @@ public final class DSACampaignDataServletTest {
         // The pending DSA campaign entity should be changed to complete and the estimation results should be updated.
         // The estimation results should have hit the daily budget cap.
         assertEquals("complete", (String) pendingDSACampaignEntity.getProperty("campaignStatus"));
-        assertEquals(2088, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
+        assertEquals(1957, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
         assertEquals(375, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
         assertEquals(300, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
