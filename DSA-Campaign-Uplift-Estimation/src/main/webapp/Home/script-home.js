@@ -22,7 +22,7 @@ google.charts.load('current', {'packages': ['bar', 'table']});
 function getKeywordCampaigns() {
   const keywordCampaignList = document.getElementById('keyword-campaigns');
   keywordCampaignList.innerHTML = '<option value=0>Select a keyword' +
-    'campaign</option>';
+    ' campaign</option>';
 
   fetch('/keyword-campaigns').then((response) =>
     response.json()).then((keywordCampaigns) => {
@@ -35,7 +35,7 @@ function getKeywordCampaigns() {
     if (keywordCampaigns.length == 0) {
       const dsaCampaignsList = document.getElementById('DSA-campaigns');
       dsaCampaignsList.innerHTML = '<p>There are no keyword campaigns.' +
-        'Please create one.</p>';
+        ' Please create one.</p>';
     }
   });
 }
