@@ -47,7 +47,7 @@ function drawDsaCampaignCharts() {
   const numChartsPerPage = 2;
   const dsaCampaignsList = document.getElementById('DSA-campaigns');
   dsaCampaignsList.innerHTML = '<p>First select a keyword campaign.</p>';
-  const keywordCampaignId = document.getElementById("keyword-campaigns").value;
+  const keywordCampaignId = document.getElementById('keyword-campaigns').value;
 
   if (keywordCampaignId != 0) {
     dsaCampaignsList.innerHTML = '';
@@ -55,47 +55,47 @@ function drawDsaCampaignCharts() {
     fetch('/DSA-campaigns?keywordCampaignId=' +
       keywordCampaignId).then(response =>
       response.json()).then(DSACampaigns => {
-        const isNumberOfChartsOdd = (DSACampaigns.length % numChartsPerPage);
+      const isNumberOfChartsOdd = (DSACampaigns.length % numChartsPerPage);
 
-        // chartsToShow checks what the active page and give a starting
-        // point to display the next two charts.
-        let chartsToShow = currentPage * numChartsPerPage;
+      // chartsToShow checks what the active page and give a starting
+      // point to display the next two charts.
+      let chartsToShow = currentPage * numChartsPerPage;
 
-        // chartCounter keeps track of which number each chart displayed is
-        // (useful for drawing the graph) and is used as a flag to check if
-        // two charts have been processed.
-        let chartCounter = 1;
+      // chartCounter keeps track of which number each chart displayed is
+      // (useful for drawing the graph) and is used as a flag to check if
+      // two charts have been processed.
+      let chartCounter = 1;
 
-        if(DSACampaigns.length == 0) {
-          dsaCampaignsList.innerHTML = '<p>There are no DSA campaigns. ' +
-            'Please create one.</p>';
-          dsaCampaignsList.innerHTML += '<a href=\"../Create/create.html\" ' +
+      if (DSACampaigns.length == 0) {
+        dsaCampaignsList.innerHTML = '<p>There are no DSA campaigns. ' +
+          'Please create one.</p>';
+        dsaCampaignsList.innerHTML += '<a href=\"../Create/create.html\" ' +
             'style=\"text-decoration: none;\">Here</a>';
+      }
+      else {
+        while (chartCounter <= numChartsPerPage) {
+          drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
+          hideDiv(isNumberOfChartsOdd, DSACampaigns.length, chartsToShow);
+          chartsToShow++;
+          chartCounter++;
         }
-        else {
-          while (chartCounter <= numChartsPerPage) {
-            drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
-            hideDiv(isNumberOfChartsOdd, DSACampaigns.length, chartsToShow);
-            chartsToShow++;
-            chartCounter++;
-          }
-          makePagination((DSACampaigns.length / numChartsPerPage) +
-            (DSACampaigns.length % numChartsPerPage), (currentPage));
-        }        
+        makePagination((DSACampaigns.length / numChartsPerPage) +
+          (DSACampaigns.length % numChartsPerPage), (currentPage));
+      }      
     });
   }
 }
 
 // Hides the second chart if the last pair of charts only contains one
 // chart left to display.
-function hideDiv(isNumberOfChartsOdd , numberOfCharts, currentChart) {
+function hideDiv(isNumberOfChartsOdd, numberOfCharts, currentChart) {
   const firstBarChart = document.getElementById('Chart1');
   const secondBarChart = document.getElementById('Chart2');
 
   if (isNumberOfChartsOdd == 1 && currentChart == numberOfCharts - 1 ||
     numberOfCharts == 0) {
-      secondBarChart.style.visibility = 'hidden';
-    }
+    secondBarChart.style.visibility = 'hidden';
+  }
   else {
     secondBarChart.style.visibility = 'visible';
   }
@@ -124,7 +124,7 @@ function nextPage(numberOfPages) {
 
   // The if statement checks if the user clicks nextpage but there is
   // no more charts to look at using numberOfPages.
-  if(increasePage + 1 <= numberOfPages){
+  if (increasePage + 1 <= numberOfPages) {
     increasePage++;
     currentPage++;
     drawDsaCampaignCharts();
@@ -133,7 +133,7 @@ function nextPage(numberOfPages) {
 }
 
 // Decreases the page backward by decreasing the active page by one and letting
-// the display charts decrease to the previous two and rerunning 
+// the display charts decrease to the previous two and rerunning
 // getDSACampaigns to retrieve the charts.
 function previousPage() {
   const activePage = document.getElementById('activePageNumber');
@@ -141,7 +141,7 @@ function previousPage() {
 
   // The if statement checks if the user clicks previousPage but there is
   // no more charts to look at using 0 because there are no negative pages.
-  if(decreasePage - 1 > 0){
+  if (decreasePage - 1 > 0) {
     decreasePage--;
     currentPage--;
     drawDsaCampaignCharts();
@@ -150,7 +150,7 @@ function previousPage() {
 }
 
 function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
-  let data = new google.visualization.DataTable();
+  const data = new google.visualization.DataTable();
   data.addColumn('string', 'DSA Campaign');
   data.addColumn('number', 'Impressions');
   data.addColumn('number', 'Clicks');
@@ -159,25 +159,25 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
   data.addRow([DSACampaign.name, DSACampaign.impressions,
     DSACampaign.clicks, DSACampaign.cost]);
 
-  let options = {
+  const options = {
     chart: {
       title: DSACampaign.name + ' ' + 'DSA Campaign Metrics',
       subtitle: 'Impressions, Clicks, and Cost',
     },
-    bars: 'horizontal' // Required for Material Bar Charts.
+    bars: 'horizontal', // Required for Material Bar Charts.
   };
 
-  let chart = new google.charts.Bar(document.getElementById('bar-chart' +
+  const chart = new google.charts.Bar(document.getElementById('bar-chart' +
     chartNumber));
   chart.draw(data, google.charts.Bar.convertOptions(options));
-  console.log("Drew bar graph.");
+  console.log('Drew bar graph.');
 
   drawDSACampaignTable(DSACampaign, chartNumber);
 }
 
 function drawDSACampaignTable(DSACampaign, chartNumber) {
-  var data = new google.visualization.DataTable();
-  var data2 = new google.visualization.DataTable();
+  const data = new google.visualization.DataTable();
+  const data2 = new google.visualization.DataTable();
   data.addColumn('string', 'DSA Campaign');
   data.addColumn('string', 'Start Date');
   data.addColumn('string', 'End Date');
@@ -192,31 +192,31 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   data2.addColumn('number', 'Impressions');
   data2.addColumn('number', 'Clicks');
   data2.addColumn('number', 'Cost (USD)');
-  
+
   data.addRow([DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate,
     DSACampaign.manualCPC, DSACampaign.dailyBudget, DSACampaign.locations,
     DSACampaign.domain]);
-    
+  
   data2.addRow([DSACampaign.targets, DSACampaign.adText,
-    DSACampaign.impressions,DSACampaign.clicks, DSACampaign.cost]);
+    DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
 
-  let table = new google.visualization.Table(document.getElementById('table' +
+  const table = new google.visualization.Table(document.getElementById('table' +
     chartNumber));
 
   table.draw(data, {showRowNumber: false, width: '100%', height: '50%'});
 
-  let table2 = new google.visualization.Table(document.getElementById(
-    'secondtable' + chartNumber));
+  const table2 = new google.visualization.Table(document.getElementById(
+      'secondtable' + chartNumber));
 
   table2.draw(data2, {showRowNumber: false, width: '100%', height: '100%'});
 
   createThirdRow(DSACampaign, chartNumber);
 
-  console.log("Drew table.");
+  console.log('Drew table.');
 }
 
 function createThirdRow(DSACampaign, chartNumber) {
-  var data = new google.visualization.DataTable();
+  const data = new google.visualization.DataTable();
 
   data.addColumn('string', 'Status');
   data.addColumn('string', 'SQR');
@@ -227,21 +227,20 @@ function createThirdRow(DSACampaign, chartNumber) {
     '<button onclick=\"deleteDSACampaign(' + DSACampaign.DSACampaignId +
     ')\" class=\"deleteCampaign\"> Delete </button>']);
 
-  var table = new google.visualization.Table(document.getElementById(
-    'deletebutton' + chartNumber));
+  const table = new google.visualization.Table(document.getElementById(
+      'deletebutton' + chartNumber));
   table.draw(data, {allowHtml: true, showRowNumber: false, width: '100%',
     height: '50%'});
 }
 
 function deleteDSACampaign(id) {
-    
   console.log('Start Deleting DSA');
 
   const params = new URLSearchParams();
   params.append('id', id);
   fetch('/delete-DSACampaign', {method: 'POST', body: params});
  
-  if (currentPage == 0){
+  if (currentPage == 0) {
     location.reload();
   }
 
