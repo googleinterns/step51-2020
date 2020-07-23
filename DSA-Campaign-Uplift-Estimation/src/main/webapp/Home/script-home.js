@@ -72,6 +72,7 @@ function drawDsaCampaignCharts() {
         dsaCampaignsList.innerHTML += '<a href=\"../Create/create.html\" ' +
           'style=\"text-decoration: none;\">Here</a>';
       }
+
       else {
         while (chartCounter <= numChartsPerPage) {
           drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
@@ -92,9 +93,10 @@ function hideDiv(isNumberOfChartsOdd, numberOfCharts, currentChart) {
   const secondBarChart = document.getElementById('Chart2');
 
   if (isNumberOfChartsOdd == 1 && currentChart == numberOfCharts - 1 ||
-    numberOfCharts == 0){
+    numberOfCharts == 0) {
     secondBarChart.style.visibility = 'hidden';
   }
+
   else {
     secondBarChart.style.visibility = 'visible';
   }
