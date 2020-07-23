@@ -19,6 +19,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.HashMap;
@@ -69,6 +70,24 @@ public class WebCrawler {
 
         // failed to obtain the website factor
         return 1;
+    }
+
+    /*
+     * Converts the SQR data from a hash map to an embedded entity (entity will be embedded in the associated DSA campaign entity).
+     * The SQR should have first been populated by calling getWebsiteFactor(); otherwise, the SQR will be empty.
+     */
+    public EmbeddedEntity getSQR() {
+        EmbeddedEntity SQREmbeddedEntity = new EmbeddedEntity();
+        SQREmbeddedEntity.setProperty("numLines", SQR.size());
+
+        int lineNum = 1;
+        for (String query : SQR.keySet()) {
+            String propertyName = "Line " + lineNum;
+            SQREmbeddedEntity.setProperty(propertyName + " Query", query);
+            SQREmbeddedEntity.setProperty(propertyName + " URL", SQR.get(query));
+        }
+
+        return SQREmbeddedEntity;
     }
 
     // Crawls all pages from the domain to a depth of 1 to create the recommended list of pages.
