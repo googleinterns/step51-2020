@@ -21,6 +21,7 @@ import org.jsoup.select.Elements;
 import com.google.appengine.api.datastore.Entity;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.ArrayList;
 
 // Implements all of the functions that require the use of jsoup.
@@ -29,13 +30,13 @@ public class WebCrawler {
     public Entity keywordCampaignEntity;
     public Entity DSACampaignEntity;
 
-    // used in the generation of the SQR
-    public HashSet<String> sharedKeywords;
+    // key = query, value = associated url
+    public HashMap<String, String> SQR;
     
     public WebCrawler(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
         this.keywordCampaignEntity = keywordCampaignEntity;
         this.DSACampaignEntity = DSACampaignEntity;
-        sharedKeywords = new HashSet<String>();
+        SQR = new HashMap<String, String>();
     }
 
     public double getWebsiteFactor() {
@@ -108,18 +109,18 @@ public class WebCrawler {
 
         /*
          * Go through every element of keywordsDescriptionHeaders and check if the word or a close variation of it (difference of one character) is found in keywordsURLTitle.
-         * If so, add the word to sharedKeywords.
+         * If so, add the word to the SQR (this word has the strongest chance of becoming a query).
          */
         for (String keyword : keywordsDescriptionHeaders) {
             for (String matchingKeyword : keywordsURLTitle) {
-                if (!sharedKeywords.contains(matchingKeyword) && resembles(keyword, matchingKeyword)) {
-                    sharedKeywords.add(matchingKeyword);
+                if (!SQR.containsKey(matchingKeyword) && resembles(keyword, matchingKeyword)) {
+                    SQR.put(matchingKeyword, url);
                     break;
                 }
             }
         }
 
-        return (((double) sharedKeywords.size()) / ((double) keywordsURLTitle.size())) + 1;
+        return (((double) SQR.size()) / ((double) keywordsURLTitle.size())) + 1;
     }
 
     // Returns true if there is less than 1 character difference between strings str1 and str2.
