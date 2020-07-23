@@ -207,26 +207,22 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
 
   table2.draw(data2, {showRowNumber: false, width: '100%', height: '100%'});
 
-  createThirdRow(DSACampaign, chartNumber);
+  //createThirdRow(DSACampaign, chartNumber);
 
-  console.log('Drew table.');
-}
+  const data3 = new google.visualization.DataTable();
 
-function createThirdRow(DSACampaign, chartNumber) {
-  const data = new google.visualization.DataTable();
+  data3.addColumn('string', 'Status');
+  data3.addColumn('string', 'SQR');
+  data3.addColumn('string', 'Delete');
 
-  data.addColumn('string', 'Status');
-  data.addColumn('string', 'SQR');
-  data.addColumn('string', 'Delete');
-
-  data.addRow([DSACampaign.campaignStatus, '<a href=\"#SQR\" ' +
+  data3.addRow([DSACampaign.campaignStatus, '<a href=\"#SQR\" ' +
     'style=\"text-align: center;\"> SQR </a>',
   '<button onclick=\"deleteDSACampaign(' + DSACampaign.DSACampaignId +
   ')\" class=\"deleteCampaign\"> Delete </button>']);
 
-  const table = new google.visualization.Table(document.getElementById(
+  const table3 = new google.visualization.Table(document.getElementById(
       'deletebutton' + chartNumber));
-  table.draw(data, {allowHtml: true, showRowNumber: false, width: '100%',
+  table3.draw(data3, {allowHtml: true, showRowNumber: false, width: '100%',
     height: '50%'});
 }
 
