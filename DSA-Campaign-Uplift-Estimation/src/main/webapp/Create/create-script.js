@@ -363,8 +363,6 @@ function sendFormData() {
     alert('Login before submitting!');
     return;
   }
-  keyvalPairs.push(encodeURIComponent('userId') + '=' +
-                   encodeURIComponent(userId));
 
   // verify that keywordCampaignId is set.
   if (keywordCampaignId == null) {
@@ -372,26 +370,6 @@ function sendFormData() {
     return;
   }
 
-  /*
-   * default values for variables (not applicable to creation phase)
-   * sent to servlet
-   */
-  keyvalPairs.push(encodeURIComponent('DSACampaignId') + '=' +
-                   encodeURIComponent('0'));
-  keyvalPairs.push(encodeURIComponent('campaignStatus') + '=' +
-                   encodeURIComponent('pending'));
-
-  // temporary random generation for data
-  const impressions = Math.round(1000 + Math.random() * 1000);
-  const clicks = Math.round(250 + Math.random() * 250);
-  const cost = Math.round(100 + Math.random() * 100);
-
-  keyvalPairs.push(encodeURIComponent('clicks') + '=' +
-                   encodeURIComponent(clicks));
-  keyvalPairs.push(encodeURIComponent('cost') + '=' +
-                   encodeURIComponent(cost.toFixed(2)));
-  keyvalPairs.push(encodeURIComponent('impressions') + '=' +
-                   encodeURIComponent(impressions));
   keyvalPairs = addFormElements(keyvalPairs);
   if (keyvalPairs == null) {
     return;

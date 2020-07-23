@@ -68,7 +68,7 @@ public class DSACampaignsServlet extends HttpServlet {
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
                 request.getParameter("negativeLocations"), request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), 
-                Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")), null);
+                0, 0, 0, null);
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             datastore.put(createEntityFromDSACampaign(DSACampaignObject));
