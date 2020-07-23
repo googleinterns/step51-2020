@@ -71,9 +71,7 @@ function drawDsaCampaignCharts() {
           'Please create one.</p>';
         dsaCampaignsList.innerHTML += '<a href=\"../Create/create.html\" ' +
           'style=\"text-decoration: none;\">Here</a>';
-      }
-
-      else {
+      } else {
         while (chartCounter <= numChartsPerPage) {
           drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
           hideDiv(isNumberOfChartsOdd, DSACampaigns.length, chartsToShow);
@@ -95,9 +93,7 @@ function hideDiv(isNumberOfChartsOdd, numberOfCharts, currentChart) {
   if (isNumberOfChartsOdd == 1 && currentChart == numberOfCharts - 1 ||
     numberOfCharts == 0) {
     secondBarChart.style.visibility = 'hidden';
-  }
-
-  else {
+  } else {
     secondBarChart.style.visibility = 'visible';
   }
 }
