@@ -113,6 +113,8 @@ public class CampaignResultsAlgorithmServlet extends HttpServlet {
 
         // ignore the first line containing column headers
         file.readLine();
+        
+        // read the remaining 56 lines - 4th element contains the location name, 16th element contains the population number
         for (int i=0; i<56; i++) {
             String[] lineElements = file.readLine().split(",");
             String location = lineElements[4].toLowerCase();
