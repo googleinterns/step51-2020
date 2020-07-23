@@ -37,8 +37,8 @@ import java.io.FileReader;
 import java.util.HashMap;
 
 // obtains estimation results for all the pending DSA campaigns
-@WebServlet("/data")
-public class DSACampaignDataServlet extends HttpServlet {
+@WebServlet("/estimation-results")
+public class CampaignResultsAlgorithmServlet extends HttpServlet {
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
