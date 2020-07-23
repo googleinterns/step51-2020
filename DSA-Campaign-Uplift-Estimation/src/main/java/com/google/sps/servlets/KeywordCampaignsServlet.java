@@ -67,7 +67,7 @@ public class KeywordCampaignsServlet extends HttpServlet {
         UserService userService = UserServiceFactory.getUserService();
 
         if (userService.isUserLoggedIn()) {
-            String userId = userService.getCurrentUser().getUserId();
+            String userId = userService.getCurrentUser().getEmail();
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             KeywordCampaign keywordCampaignObject = new KeywordCampaign(getNewCampaignId(true), userId, request.getParameter("name"), 
