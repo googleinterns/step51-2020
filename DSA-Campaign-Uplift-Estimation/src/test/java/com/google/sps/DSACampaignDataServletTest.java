@@ -19,6 +19,7 @@ import com.google.sps.classes.DSACampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Query;
 import org.junit.Assert;
 import org.junit.After;
@@ -62,10 +63,7 @@ public final class DSACampaignDataServletTest {
     public void tearDown() {
         helper.tearDown();
     }
-
-    // TODO: Fix these tests in the next PR.
     
-    /*
     @Test
     public void DSACampaignDataServletdoPostWithinBudget() throws IOException, ServletException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
@@ -96,6 +94,11 @@ public final class DSACampaignDataServletTest {
         assertEquals(265, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
         assertEquals(212, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
+        String[][] SQR = DSACampaignsServlet.createSQRFromEntity((EmbeddedEntity) pendingDSACampaignEntity.getProperty("SQR")); 
+        String[][] expectedSQR = new String[5][2];
+        assertEquals(expectedSQR, SQR);
+
+
         Query secondQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "2"));
         Entity completeDSACampaignEntity = ds.prepare(secondQuery).asSingleEntity();
 
@@ -104,6 +107,7 @@ public final class DSACampaignDataServletTest {
         assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("impressions")));
         assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("clicks")));
         assertEquals(0, (double) completeDSACampaignEntity.getProperty("cost"), .01);
+        assertEquals(null, completeDSACampaignEntity.getProperty("SQR"), .01);
     }
 
     @Test
@@ -146,7 +150,6 @@ public final class DSACampaignDataServletTest {
         assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("clicks")));
         assertEquals(0, (double) completeDSACampaignEntity.getProperty("cost"), .01);
     }
-    */
 
     @Test
     public void DSACampaignDataServletGetLocationsFactor() throws IOException, ServletException {
