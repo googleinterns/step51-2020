@@ -26,7 +26,19 @@ import java.util.ArrayList;
 // Implements all of the functions that require the use of jsoup.
 public class WebCrawler {
 
-    public static double getWebsiteFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
+    public Entity keywordCampaignEntity;
+    public Entity DSACampaignEntity;
+
+    // used in the generation of the SQR
+    public HashSet<String> sharedKeywords;
+    
+    public WebCrawler(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
+        this.keywordCampaignEntity = keywordCampaignEntity;
+        this.DSACampaignEntity = DSACampaignEntity;
+        sharedKeywords = new HashSet<String>();
+    }
+
+    public double getWebsiteFactor() {
         try {
             // use a hashset to avoid duplicate entries
             HashSet<String> recommendedLinks = getRecommendedLinks((String) DSACampaignEntity.getProperty("domain"));
@@ -84,7 +96,7 @@ public class WebCrawler {
         return recommendedLinks;
     }
 
-    public static double getPageFactor(String url) throws IOException {
+    public double getPageFactor(String url) throws IOException {
         // get the page HTML
         Document document = Jsoup.connect(url).get();
 
@@ -98,7 +110,6 @@ public class WebCrawler {
          * Go through every element of keywordsDescriptionHeaders and check if the word or a close variation of it (difference of one character) is found in keywordsURLTitle.
          * If so, add the word to sharedKeywords.
          */
-        HashSet<String> sharedKeywords = new HashSet<String>();
         for (String keyword : keywordsDescriptionHeaders) {
             for (String matchingKeyword : keywordsURLTitle) {
                 if (!sharedKeywords.contains(matchingKeyword) && resembles(keyword, matchingKeyword)) {
