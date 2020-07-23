@@ -92,8 +92,6 @@ public class DSACampaignDataServlet extends HttpServlet {
         DSACampaignEntity.setProperty("SQR", SQR);
         DSACampaignEntity.setProperty("campaignStatus", "complete");
         datastore.put(DSACampaignEntity);
-
-        // TODO: SQR
     }
 
     public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) throws IOException {

@@ -75,11 +75,11 @@ public final class DSACampaignDataServletTest {
         assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
 
         DSACampaign DSACampaignObjectPending = new DSACampaign("1", "1", "1", "Test DC Pending", "pending", "1/1/1", "2/2/2", .8, 500, "United States",
-            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0, null);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectPending));
 
         DSACampaign DSACampaignObjectComplete = new DSACampaign("2", "1", "1", "Test DC Complete", "complete", "1/1/1", "2/2/2", .8, 500, "United States",
-            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0, null);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectComplete));
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
@@ -115,11 +115,11 @@ public final class DSACampaignDataServletTest {
         assertEquals(1, ds.prepare(new Query("keywordCampaign")).countEntities(withLimit(10)));
 
         DSACampaign DSACampaignObjectPending = new DSACampaign("1", "1", "1", "Test DC Pending", "pending", "1/1/1", "2/2/2", .8, 100, "United States",
-            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0, null);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectPending));
 
         DSACampaign DSACampaignObjectComplete = new DSACampaign("2", "1", "1", "Test DC Complete", "complete", "1/1/1", "2/2/2", .8, 500, "United States",
-            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0, null);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObjectComplete));
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
@@ -155,7 +155,7 @@ public final class DSACampaignDataServletTest {
         Entity keywordCampaignEntity = KeywordCampaignsServlet.createEntityFromKeywordCampaign(KeywordCampaignObject);
 
         DSACampaign DSACampaignObject= new DSACampaign("2", "1", "1", "Test DC", "pending", "1/1/1", "2/2/2", .8, 500, "United States",
-            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0, null);
         Entity DSACampaignEntity = DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject);
 
         assertEquals(1.81904, DSACampaignDataServlet.getLocationsFactor(keywordCampaignEntity, DSACampaignEntity), .01);
