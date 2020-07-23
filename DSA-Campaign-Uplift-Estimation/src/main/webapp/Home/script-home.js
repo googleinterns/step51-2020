@@ -93,11 +93,11 @@ function hideDiv(isNumberOfChartsOdd, numberOfCharts, currentChart) {
 
   if (isNumberOfChartsOdd == 1 && currentChart == numberOfCharts - 1 ||
     numberOfCharts == 0) {
-      secondBarChart.style.visibility = 'hidden';
-    }
+    secondBarChart.style.visibility = 'hidden';
+  }
   else {
-      secondBarChart.style.visibility = 'visible';
-    }
+    secondBarChart.style.visibility = 'visible';
+  }
 }
 
 // Creates pagination html for the user to see other charts by taking the
