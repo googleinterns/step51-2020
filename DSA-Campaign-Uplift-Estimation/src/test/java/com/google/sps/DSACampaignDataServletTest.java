@@ -143,4 +143,17 @@ public final class DSACampaignDataServletTest {
         assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("clicks")));
         assertEquals(0, (double) completeDSACampaignEntity.getProperty("cost"), .01);
     }
+
+    @Test
+    public void DSACampaignDataServletGetLocationsFactor() throws IOException, ServletException {
+        KeywordCampaign KeywordCampaignObject = new KeywordCampaign("1", "1", "Test KC", .8, "Texas, California, Michigan",
+            "", 0, 0, 0);
+        Entity keywordCampaignEntity = KeywordCampaignsServlet.createEntityFromKeywordCampaign(KeywordCampaignObject);
+
+        DSACampaign DSACampaignObject= new DSACampaign("2", "1", "1", "Test DC", "pending", "1/1/1", "2/2/2", .8, 500, "United States",
+            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0);
+        Entity DSACampaignEntity = DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject);
+
+        assertEquals(1.81904, DSACampaignDataServlet.getLocationsFactor(keywordCampaignEntity, DSACampaignEntity), .01);
+    }
 }

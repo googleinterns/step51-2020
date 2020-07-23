@@ -115,15 +115,49 @@ public class DSACampaignDataServlet extends HttpServlet {
         file.readLine();
         for (int i=0; i<56; i++) {
             String[] lineElements = file.readLine().split(",");
-            String location = lineElements[4];
+            String location = lineElements[4].toLowerCase();
             long population = Long.parseLong(lineElements[16]);
             statePopulations.put(location, population);
         }
         file.close();
 
-        // TODO
+        double targetPopulationSizeKeywordCampaign = getTargetPopulationSize((String) keywordCampaignEntity.getProperty("locations"), (String) keywordCampaignEntity.getProperty("negativeLocations"), statePopulations);
+        double targetPopulationSizeDSACampaign = getTargetPopulationSize((String) DSACampaignEntity.getProperty("locations"), (String) DSACampaignEntity.getProperty("negativeLocations"), statePopulations);
 
-        return 1;
+        return Math.sqrt(targetPopulationSizeDSACampaign / targetPopulationSizeKeywordCampaign);
+    }
+
+    // Returns the amount of people living in the specified locations, subtracting the amount of people living in the negative locations.
+    public static double getTargetPopulationSize(String locations, String negativeLocations, HashMap<String, Long> statePopulations) {
+        String refinedLocations = locations.trim().toLowerCase();
+        String refinedNegativeLocations = negativeLocations.trim().toLowerCase();
+
+        // ensure that we don't subtract for negative locations if our initial target isn't the entire US
+        if (!refinedLocations.equals("united states")) {
+            refinedNegativeLocations = "";
+        }
+
+        /*
+         * In the front end, we ensure that
+         * 1) All of the locations are either US states or the US itself.
+         * 2) There is no overlap between locations and negative locations.
+         * 3) If the US is a location, no other states are given as locations as well.
+         * 4) At least one location is given.
+         */
+        double targetPopulationSize = 0;
+        String[] locationsArr = refinedLocations.split(",");
+        for (String location : locationsArr) {
+            targetPopulationSize += statePopulations.get(location.trim());
+        }
+
+        if (!refinedNegativeLocations.equals("")) {
+            String[] negativeLocationsArr = refinedNegativeLocations.split(",");
+            for (String negativeLocation : negativeLocationsArr) {
+                targetPopulationSize -= statePopulations.get(negativeLocation.trim());
+            }
+        }
+
+        return targetPopulationSize;
     }
 
     public static double getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
