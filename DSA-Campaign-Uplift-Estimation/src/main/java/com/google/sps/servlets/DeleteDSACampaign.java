@@ -28,12 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/delete-DSACampaign")
 public class DeleteDSACampaign extends HttpServlet {
-    
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String id = request.getParameter("id");
-    
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Query query =
@@ -45,7 +43,6 @@ public class DeleteDSACampaign extends HttpServlet {
 
     System.err.println("Deleting this ID:" + entityId);
     Key taskEntityKey = KeyFactory.createKey("DSACampaign", entityId);
-    
     datastore.delete(taskEntityKey);
   }
 }
