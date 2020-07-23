@@ -41,6 +41,7 @@ import org.mockito.MockitoAnnotations;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import java.util.ArrayList;
+import com.google.gson.Gson;
 
 /*
  * Tests the doGet() and doPost() functions in KeywordCampaignsServlet.java.
@@ -70,18 +71,28 @@ public final class KeywordCampaignsServletTest {
     @Test
     public void keywordCampaignsServletDoGet() throws IOException, ServletException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        KeywordCampaign keywordCampaignObject = new KeywordCampaign("1", "2", "entity 1", 123, "United States of America", "California, Texas", 432, 123, 42.51);
-        ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject));
+        KeywordCampaign keywordCampaignObject1 = new KeywordCampaign("1", "2", "entity 1", 123, "United States of America", "California, Texas", 432, 123, 42.51);
+        ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject1));
 
-        Query query = new Query("keywordCampaign").addSort("keywordCampaignId", SortDirection.ASCENDING);
-        PreparedQuery results = ds.prepare(query);
+        KeywordCampaign keywordCampaignObject2 = new KeywordCampaign("1", "2", "entity 2", 123, "United States of America", "California, Texas", 432, 123, 42.51);
+        ds.put(KeywordCampaignsServlet.createEntityFromKeywordCampaign(keywordCampaignObject2));
 
-        ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
-        for (Entity entity : results.asIterable()) {
-            keywordCampaigns.add(KeywordCampaignsServlet.createKeywordCampaignFromEntity(entity));
-        }
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        when(response.getWriter()).thenReturn(pw);
 
-        assertEquals("no error in building", "no error in building");
+        KeywordCampaignsServlet servlet = new KeywordCampaignsServlet();
+        servlet.doGet(request, response);
+        String result = sw.getBuffer().toString().trim();
+
+        ArrayList<KeywordCampaign> expectedKeywordCampaigns = new ArrayList<KeywordCampaign>();
+        expectedKeywordCampaigns.add(keywordCampaignObject1);
+        expectedKeywordCampaigns.add(keywordCampaignObject2);
+
+        Gson gson = new Gson();
+        String expectedJson = gson.toJson(keywordCampaigns);
+
+        assertEquals(expectedJson, result);
     }
  
     @Test
