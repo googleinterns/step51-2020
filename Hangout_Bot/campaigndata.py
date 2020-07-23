@@ -1,16 +1,4 @@
 class CampaignData:
-    def __init__(self):
-      self.owner = ''
-      self.name = ''
-      self.start_date = ''
-      self.end_data = ''
-      self.daily_budget = 0.0
-      self.manual_CPC = 0.0
-      self.locations = ''
-      self.neg_locations = ''
-      self.domain = ''
-      self.targets = ''
-
     def __init__(self, owner):
       self.owner = owner
       self.name = ''
@@ -22,18 +10,7 @@ class CampaignData:
       self.neg_locations = ''
       self.domain = ''
       self.targets = ''
-
-    def __init__(self, name, start_date, end_date, daily_budget, manual_CPC, locations, neg_locations, domain, targets):
-        self.owner = ''
-        self.name = name
-        self.start_date = start_date
-        self.end_data = end_date
-        self.daily_budget = daily_budget
-        self.manual_CPC = manual_CPC
-        self.locations = locations
-        self.neg_locations = neg_locations
-        self.domain = domain
-        self.targets = targets
+      self.ad_text = ''
 
     def set_owner(self, owner):
         self.owner = owner
@@ -72,3 +49,6 @@ class CampaignData:
 
     def set_targets(self, targets):
         self.targets = targets
+    
+    def set_ad_text(self, ad_text):
+        self.ad_text = ad_text
