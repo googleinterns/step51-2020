@@ -90,14 +90,16 @@ public final class DSACampaignDataServletTest {
 
         // The pending DSA campaign entity should be changed to complete and the estimation results should be updated.
         assertEquals("complete", (String) pendingDSACampaignEntity.getProperty("campaignStatus"));
-        assertEquals(1957, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
-        assertEquals(265, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
-        assertEquals(212, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
+        assertEquals(2033, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
+        assertEquals(317, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
+        assertEquals(253.6, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
         String[][] SQR = DSACampaignsServlet.createSQRFromEntity((EmbeddedEntity) pendingDSACampaignEntity.getProperty("SQR")); 
-        String[][] expectedSQR = new String[5][2];
-        assertEquals(expectedSQR, SQR);
+        String[][] expectedSQR = new String[2][2];
+        expectedSQR[0][0] = "dsa";
+        expectedSQR[0][1] = "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Compare/compare.html";
 
+        assertEquals(expectedSQR, SQR);
 
         Query secondQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "2"));
         Entity completeDSACampaignEntity = ds.prepare(secondQuery).asSingleEntity();
@@ -107,7 +109,7 @@ public final class DSACampaignDataServletTest {
         assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("impressions")));
         assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("clicks")));
         assertEquals(0, (double) completeDSACampaignEntity.getProperty("cost"), .01);
-        assertEquals(null, completeDSACampaignEntity.getProperty("SQR"), .01);
+        assertEquals(null, completeDSACampaignEntity.getProperty("SQR"));
     }
 
     @Test
@@ -137,7 +139,7 @@ public final class DSACampaignDataServletTest {
         // The pending DSA campaign entity should be changed to complete and the estimation results should be updated.
         // The estimation results should have hit the daily budget cap.
         assertEquals("complete", (String) pendingDSACampaignEntity.getProperty("campaignStatus"));
-        assertEquals(922, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
+        assertEquals(802, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
         assertEquals(125, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
         assertEquals(100, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
