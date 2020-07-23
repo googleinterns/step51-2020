@@ -16,9 +16,9 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/delete-DSACampaign")
-public class DeleteDSACampaign extends HttpServlet{
+public class DeleteDSACampaign extends HttpServlet {
     
 
   @Override
@@ -38,7 +38,9 @@ public class DeleteDSACampaign extends HttpServlet{
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, id));
+    Query query =
+        new Query("DSACampaign")
+            .setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, id));
     Entity entity = datastore.prepare(query).asSingleEntity();
 
     long entityId = entity.getKey().getId();
