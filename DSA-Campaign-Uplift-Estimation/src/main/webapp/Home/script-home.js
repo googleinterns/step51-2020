@@ -21,26 +21,28 @@ google.charts.load('current', {'packages': ['bar', 'table']});
 // used in dropdown menu.
 function getKeywordCampaigns() {
   const keywordCampaignList = document.getElementById('keyword-campaigns');
-  keywordCampaignList.innerHTML = '<option value=0>Select a keyword' + 
+  keywordCampaignList.innerHTML = '<option value=0>Select a keyword' +
     'campaign</option>';
 
   fetch('/keyword-campaigns').then(response =>
     response.json()).then(keywordCampaigns => {
-      keywordCampaigns.forEach(keywordCampaign => {
-        keywordCampaignList.innerHTML += '<option value=' + 
-          keywordCampaign.keywordCampaignId + '>' + keywordCampaign.name  + '</option>';
-      });
-
-      if(keywordCampaigns.length == 0) {
-        const dsaCampaignsList = document.getElementById('DSA-campaigns');
-        dsaCampaignsList.innerHTML = '<p>There are no keyword campaigns.' + 
-        'Please create one.</p>';
-      }
+    keywordCampaigns.forEach(keywordCampaign => {
+      keywordCampaignList.innerHTML += '<option value=' +
+        keywordCampaign.keywordCampaignId + '>' + keywordCampaign.name  +
+        '</option>';
     });
+
+    if (keywordCampaigns.length == 0) {
+      const dsaCampaignsList = document.getElementById('DSA-campaigns');
+      dsaCampaignsList.innerHTML = '<p>There are no keyword campaigns.' +
+        'Please create one.</p>';
+    }
+  });
 }
 
-// Checks if user has selected a keyword campaign. If the user has selected a keyword
-// then the for loop draws 2 graphs and creates pagination to explore other charts.
+// Checks if user has selected a keyword campaign. If the user has selected a
+// keyword then the for loop draws 2 graphs and creates pagination to explore
+// other charts.
 function drawDsaCampaignCharts() {
   const numChartsPerPage = 2;
   const dsaCampaignsList = document.getElementById('DSA-campaigns');
@@ -50,9 +52,9 @@ function drawDsaCampaignCharts() {
   if (keywordCampaignId != 0) {
     dsaCampaignsList.innerHTML = '';
 
-    fetch('/DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response =>
+    fetch('/DSA-campaigns?keywordCampaignId=' +
+      keywordCampaignId).then(response =>
       response.json()).then(DSACampaigns => {
-
         const isNumberOfChartsOdd = (DSACampaigns.length % numChartsPerPage);
 
         // chartsToShow checks what the active page and give a starting
@@ -60,23 +62,25 @@ function drawDsaCampaignCharts() {
         let chartsToShow = currentPage * numChartsPerPage;
 
         // chartCounter keeps track of which number each chart displayed is
-        // (useful for drawing the graph) and is used as a flag to check if 
+        // (useful for drawing the graph) and is used as a flag to check if
         // two charts have been processed.
         let chartCounter = 1;
 
         if(DSACampaigns.length == 0) {
-          dsaCampaignsList.innerHTML = '<p>There are no DSA campaigns. Please create one.</p>';
-          dsaCampaignsList.innerHTML += '<a href=\"../Create/create.html\" style=\"text-decoration: none;\">Here</a>';
+          dsaCampaignsList.innerHTML = '<p>There are no DSA campaigns. ' +
+            'Please create one.</p>';
+          dsaCampaignsList.innerHTML += '<a href=\"../Create/create.html\" ' +
+            'style=\"text-decoration: none;\">Here</a>';
         }
         else {
-
           while (chartCounter <= numChartsPerPage) {
             drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
             hideDiv(isNumberOfChartsOdd, DSACampaigns.length, chartsToShow);
             chartsToShow++;
             chartCounter++;
           }
-          makePagination((DSACampaigns.length / numChartsPerPage) + (DSACampaigns.length % numChartsPerPage), (currentPage));
+          makePagination((DSACampaigns.length / numChartsPerPage) +
+            (DSACampaigns.length % numChartsPerPage), (currentPage));
         }        
     });
   }
@@ -88,7 +92,7 @@ function hideDiv(isNumberOfChartsOdd , numberOfCharts, currentChart) {
   const firstBarChart = document.getElementById('Chart1');
   const secondBarChart = document.getElementById('Chart2');
 
-  if (isNumberOfChartsOdd == 1 && currentChart == numberOfCharts - 1 || 
+  if (isNumberOfChartsOdd == 1 && currentChart == numberOfCharts - 1 ||
     numberOfCharts == 0) {
       secondBarChart.style.visibility = 'hidden';
     }
@@ -97,35 +101,40 @@ function hideDiv(isNumberOfChartsOdd , numberOfCharts, currentChart) {
   }
 }
 
-// Creates pagination html for the user to see other charts by taking the existing number of pages
-// and the active page the user is on.
+// Creates pagination html for the user to see other charts by taking the
+// existing number of pages and the active page the user is on.
 function makePagination(numberOfPages, activePageNumber) {
   const pagination = document.getElementById('pagination');
   let paginationString = '';
-  paginationString += '<div class=\"pageCenter\"><input type=\"button\" id=\"previous\" onclick=\"previousPage()\" value=\"previous\" />';
-  paginationString += '<a id=\"activePageNumber\">  ' + (activePageNumber + 1)  +'  </a>'; 
-  paginationString += '<input type=\"button\" id=\"next\" onclick=\"nextPage(' + numberOfPages + ')\" value=\"next\" /></div>';
+  paginationString += '<div class=\"pageCenter\"><input type=\"button\" ' +
+    'id=\"previous\" onclick=\"previousPage()\" value=\"previous\" />';
+  paginationString += '<a id=\"activePageNumber\">  ' + (activePageNumber +
+    1)  +'  </a>';
+  paginationString += '<input type=\"button\" id=\"next\" ' +
+    'onclick=\"nextPage(' + numberOfPages + ')\" value=\"next\" /></div>';
   pagination.innerHTML = paginationString;
 }
 
-// Increases the page forward by increasing the active page by one and letting the display
-// charts increase to the next two and rerunning getDSACampaigns to retrieve the charts.
+// Increases the page forward by increasing the active page by one and letting
+// the display charts increase to the next two and rerunning getDSACampaigns to
+// retrieve the charts.
 function nextPage(numberOfPages) {
   const activePage = document.getElementById('activePageNumber');
   let increasePage = parseInt(activePage.innerText);
-    
+
   // The if statement checks if the user clicks nextpage but there is
   // no more charts to look at using numberOfPages.
   if(increasePage + 1 <= numberOfPages){
-    increasePage++;  
+    increasePage++;
     currentPage++;
     drawDsaCampaignCharts();
   }
   activePage.innerText = increasePage;
 }
 
-// Decreases the page backward by decreasing the active page by one and letting the display
-// charts decrease to the previous two and rerunning getDSACampaigns to retrieve the charts.
+// Decreases the page backward by decreasing the active page by one and letting
+// the display charts decrease to the previous two and rerunning 
+// getDSACampaigns to retrieve the charts.
 function previousPage() {
   const activePage = document.getElementById('activePageNumber');
   let decreasePage = parseInt(activePage.innerText);
@@ -133,22 +142,22 @@ function previousPage() {
   // The if statement checks if the user clicks previousPage but there is
   // no more charts to look at using 0 because there are no negative pages.
   if(decreasePage - 1 > 0){
-    decreasePage--; 
-    currentPage--; 
-    drawDsaCampaignCharts(); 
+    decreasePage--;
+    currentPage--;
+    drawDsaCampaignCharts();
   }
   activePage.innerText = decreasePage;
 }
 
 function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
-
   let data = new google.visualization.DataTable();
   data.addColumn('string', 'DSA Campaign');
   data.addColumn('number', 'Impressions');
   data.addColumn('number', 'Clicks');
   data.addColumn('number', 'Cost (USD)');
 
-  data.addRow([DSACampaign.name, DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
+  data.addRow([DSACampaign.name, DSACampaign.impressions,
+    DSACampaign.clicks, DSACampaign.cost]);
 
   let options = {
     chart: {
@@ -158,7 +167,8 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
     bars: 'horizontal' // Required for Material Bar Charts.
   };
 
-  let chart = new google.charts.Bar(document.getElementById('bar-chart' + chartNumber));
+  let chart = new google.charts.Bar(document.getElementById('bar-chart' +
+    chartNumber));
   chart.draw(data, google.charts.Bar.convertOptions(options));
   console.log("Drew bar graph.");
 
@@ -166,7 +176,6 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
 }
 
 function drawDSACampaignTable(DSACampaign, chartNumber) {
-
   var data = new google.visualization.DataTable();
   var data2 = new google.visualization.DataTable();
   data.addColumn('string', 'DSA Campaign');
@@ -184,15 +193,22 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   data2.addColumn('number', 'Clicks');
   data2.addColumn('number', 'Cost (USD)');
   
-  data.addRow([DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget, DSACampaign.locations,
+  data.addRow([DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate,
+    DSACampaign.manualCPC, DSACampaign.dailyBudget, DSACampaign.locations,
     DSACampaign.domain]);
     
-  data2.addRow([DSACampaign.targets, DSACampaign.adText, DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
-  let table = new google.visualization.Table(document.getElementById('table' + chartNumber));
+  data2.addRow([DSACampaign.targets, DSACampaign.adText,
+    DSACampaign.impressions,DSACampaign.clicks, DSACampaign.cost]);
+
+  let table = new google.visualization.Table(document.getElementById('table' +
+    chartNumber));
+
   table.draw(data, {showRowNumber: false, width: '100%', height: '50%'});
 
-  let table2 = new google.visualization.Table(document.getElementById('secondtable' + chartNumber));
-    table2.draw(data2, {showRowNumber: false, width: '100%', height: '100%'});
+  let table2 = new google.visualization.Table(document.getElementById(
+    'secondtable' + chartNumber));
+
+  table2.draw(data2, {showRowNumber: false, width: '100%', height: '100%'});
 
   createThirdRow(DSACampaign, chartNumber);
 
@@ -206,17 +222,21 @@ function createThirdRow(DSACampaign, chartNumber) {
   data.addColumn('string', 'SQR');
   data.addColumn('string', 'Delete');
 
-  data.addRow([DSACampaign.campaignStatus, '<a href=\"#SQR\" style=\"text-align: center;\"> SQR </a>',
-    '<button onclick=\"deleteDSACampaign(' + DSACampaign.DSACampaignId + ')\" class=\"deleteCampaign\"> Delete </button>']);
+  data.addRow([DSACampaign.campaignStatus, '<a href=\"#SQR\" ' +
+    'style=\"text-align: center;\"> SQR </a>',
+    '<button onclick=\"deleteDSACampaign(' + DSACampaign.DSACampaignId +
+    ')\" class=\"deleteCampaign\"> Delete </button>']);
 
-  var table = new google.visualization.Table(document.getElementById('deletebutton' + chartNumber));
-  table.draw(data, {allowHtml: true, showRowNumber: false, width: '100%', height: '50%'});
+  var table = new google.visualization.Table(document.getElementById(
+    'deletebutton' + chartNumber));
+  table.draw(data, {allowHtml: true, showRowNumber: false, width: '100%',
+    height: '50%'});
 }
 
 function deleteDSACampaign(id) {
     
   console.log('Start Deleting DSA');
-    
+
   const params = new URLSearchParams();
   params.append('id', id);
   fetch('/delete-DSACampaign', {method: 'POST', body: params});
