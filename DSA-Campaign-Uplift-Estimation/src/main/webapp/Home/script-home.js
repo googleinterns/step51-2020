@@ -207,8 +207,6 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
 
   table2.draw(data2, {showRowNumber: false, width: '100%', height: '100%'});
 
-  //createThirdRow(DSACampaign, chartNumber);
-
   const data3 = new google.visualization.DataTable();
 
   data3.addColumn('string', 'Status');
