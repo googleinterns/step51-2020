@@ -121,7 +121,8 @@ public class PresetServlet extends HttpServlet {
                                   adText,
                                   0,
                                   0,
-                                  0);
+                                  0,
+                                  null);
     Gson gson = new Gson();
     String dsaCampaignData = gson.toJson(dsaCampaign);
     presetEntity.setProperty("presetData", dsaCampaignData);
