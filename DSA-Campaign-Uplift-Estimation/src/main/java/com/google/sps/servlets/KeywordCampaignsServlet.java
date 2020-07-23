@@ -42,18 +42,14 @@ public class KeywordCampaignsServlet extends HttpServlet {
         UserService userService = UserServiceFactory.getUserService();
 
         ArrayList<KeywordCampaign> keywordCampaigns = new ArrayList<KeywordCampaign>();
-        if (userService.isUserLoggedIn()) {
-            // user ID represents user email
-            String userId = userService.getCurrentUser().getEmail();
 
-            // get the keyword campaigns associated with the logged in user from datastore
-            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId)).addSort("keywordCampaignId", SortDirection.ASCENDING);
-            PreparedQuery results = datastore.prepare(query);
+        // get the keyword campaigns
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("keywordCampaign").addSort("keywordCampaignId", SortDirection.ASCENDING);
+        PreparedQuery results = datastore.prepare(query);
 
-            for (Entity entity : results.asIterable()) {
-                keywordCampaigns.add(createKeywordCampaignFromEntity(entity));
-            }
+        for (Entity entity : results.asIterable()) {
+            keywordCampaigns.add(createKeywordCampaignFromEntity(entity));
         }
         
         Gson gson = new Gson();
