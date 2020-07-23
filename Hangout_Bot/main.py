@@ -48,7 +48,7 @@ def format_response(event):
 
     # Case: The bot was added to a DM
     if event_type == 'ADDED_TO_SPACE' and event['space']['type'] == 'DM':
-        responseText = create_join_message(event)
+        responseText = handle_join(event)
     elif event_type == 'MESSAGE':
         #responseText = handle_message(event)
         responseText = {"text": "test"}

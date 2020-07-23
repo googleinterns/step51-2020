@@ -1,6 +1,11 @@
 from messages import *
 from datastore import *
 
+def handle_join(event):
+    # TODO: Backend stuff when a user joins 
+
+    return create_join_message(event)
+
 def handle_message(event):
     """Determine what logic to execute based upon message event data.
     Args:
