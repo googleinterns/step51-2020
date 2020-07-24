@@ -90,7 +90,7 @@ public final class KeywordCampaignsServletTest {
         expectedKeywordCampaigns.add(keywordCampaignObject2);
 
         Gson gson = new Gson();
-        String expectedJson = gson.toJson(keywordCampaigns);
+        String expectedJson = gson.toJson(expectedKeywordCampaigns);
 
         assertEquals(expectedJson, result);
     }
