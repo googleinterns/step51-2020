@@ -38,8 +38,11 @@ import java.io.FileReader;
 import java.util.HashMap;
 
 // obtains estimation results for all the pending DSA campaigns
-@WebServlet("/data")
-public class DSACampaignDataServlet extends HttpServlet {
+@WebServlet("/estimation-results")
+public class CampaignEstimationResultsServlet extends HttpServlet {
+
+    static final int LOCATION_INDEX = 4;
+    static final int POPULATION_INDEX = 16;
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
@@ -117,11 +120,16 @@ public class DSACampaignDataServlet extends HttpServlet {
 
         // ignore the first line containing column headers
         file.readLine();
-        for (int i=0; i<56; i++) {
-            String[] lineElements = file.readLine().split(",");
-            String location = lineElements[4].toLowerCase();
-            long population = Long.parseLong(lineElements[16]);
+        
+        // read the remaining lines
+        String line = file.readLine();
+        while (line != null) {
+            String[] lineElements = line.split(",");
+            String location = lineElements[LOCATION_INDEX].toLowerCase();
+            long population = Long.parseLong(lineElements[POPULATION_INDEX]);
             statePopulations.put(location, population);
+
+            line = file.readLine();
         }
         file.close();
 

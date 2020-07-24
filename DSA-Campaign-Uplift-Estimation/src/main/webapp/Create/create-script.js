@@ -227,9 +227,7 @@ function getPresetData(indexSelection) {
       negLocationExists = true;
       console.log(presetSelection[key].split(','));
       fillOutLocations(presetSelection[key].split(','), true);
-    } else if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
-        (key != 'userId') && (key != 'cost') && (key != 'impressions') &&
-        (key != 'clicks') && (key != 'campaignStatus')) {
+    } else if (document.getElementById(key) != null) {
       document.getElementById(key).value = presetSelection[key];
     }
   }

@@ -40,10 +40,10 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 /*
- * Tests the doPost() function in DSACampaignDataServlet.java.
+ * Tests the doPost() function in CampaignEstimationResultsServlet.java.
  */
 @RunWith(JUnit4.class)
-public final class DSACampaignDataServletTest {
+public final class CampaignEstimationResultsServletTest {
     
     @Mock
     HttpServletRequest request;
@@ -82,7 +82,7 @@ public final class DSACampaignDataServletTest {
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
-        DSACampaignDataServlet servlet = new DSACampaignDataServlet();
+        CampaignEstimationResultsServlet servlet = new CampaignEstimationResultsServlet();
         servlet.doPost(request, response);
 
         Query firstQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "1"));
@@ -90,14 +90,16 @@ public final class DSACampaignDataServletTest {
 
         // The pending DSA campaign entity should be changed to complete and the estimation results should be updated.
         assertEquals("complete", (String) pendingDSACampaignEntity.getProperty("campaignStatus"));
-        assertEquals(1957, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
-        assertEquals(265, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
-        assertEquals(212, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
+        assertEquals(2012, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
+        assertEquals(303, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
+        assertEquals(242.4, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
         String[][] SQR = DSACampaignsServlet.createSQRFromEntity((EmbeddedEntity) pendingDSACampaignEntity.getProperty("SQR")); 
-        String[][] expectedSQR = new String[5][2];
-        assertEquals(expectedSQR, SQR);
+        String[][] expectedSQR = new String[1][2];
+        expectedSQR[0][0] = "dsa";
+        expectedSQR[0][1] = "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Compare/compare.html";
 
+        assertEquals(expectedSQR, SQR);
 
         Query secondQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "2"));
         Entity completeDSACampaignEntity = ds.prepare(secondQuery).asSingleEntity();
@@ -107,7 +109,7 @@ public final class DSACampaignDataServletTest {
         assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("impressions")));
         assertEquals(0, (int) ((long) completeDSACampaignEntity.getProperty("clicks")));
         assertEquals(0, (double) completeDSACampaignEntity.getProperty("cost"), .01);
-        assertEquals(null, completeDSACampaignEntity.getProperty("SQR"), .01);
+        assertEquals(null, completeDSACampaignEntity.getProperty("SQR"));
     }
 
     @Test
@@ -128,7 +130,7 @@ public final class DSACampaignDataServletTest {
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
-        DSACampaignDataServlet servlet = new DSACampaignDataServlet();
+        CampaignEstimationResultsServlet servlet = new CampaignEstimationResultsServlet();
         servlet.doPost(request, response);
 
         Query firstQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "1"));
@@ -137,7 +139,7 @@ public final class DSACampaignDataServletTest {
         // The pending DSA campaign entity should be changed to complete and the estimation results should be updated.
         // The estimation results should have hit the daily budget cap.
         assertEquals("complete", (String) pendingDSACampaignEntity.getProperty("campaignStatus"));
-        assertEquals(922, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
+        assertEquals(831, (int) ((long) pendingDSACampaignEntity.getProperty("impressions")));
         assertEquals(125, (int) ((long) pendingDSACampaignEntity.getProperty("clicks")));
         assertEquals(100, (double) pendingDSACampaignEntity.getProperty("cost"), .01);
 
@@ -161,6 +163,6 @@ public final class DSACampaignDataServletTest {
             "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0, null);
         Entity DSACampaignEntity = DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject);
 
-        assertEquals(1.81904, DSACampaignDataServlet.getLocationsFactor(keywordCampaignEntity, DSACampaignEntity), .01);
+        assertEquals(1.81904, CampaignEstimationResultsServlet.getLocationsFactor(keywordCampaignEntity, DSACampaignEntity), .01);
     }
 }

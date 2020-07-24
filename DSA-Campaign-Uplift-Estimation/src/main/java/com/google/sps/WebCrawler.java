@@ -85,6 +85,7 @@ public class WebCrawler {
             String propertyName = "Line " + lineNum;
             SQREmbeddedEntity.setProperty(propertyName + " Query", query);
             SQREmbeddedEntity.setProperty(propertyName + " URL", SQR.get(query));
+            lineNum++;
         }
 
         return SQREmbeddedEntity;
@@ -245,11 +246,12 @@ public class WebCrawler {
 
     // Checks if the word has meaningful content.
     public static boolean isSignificant(String word) {
-        if (word.length() == 0) {
+        // ignore empty and 1-letter strings
+        if (word.length() <= 1) {
             return false;
         }
         // common url elements
-        if (word.equals("https") || word.equals("www") || word.equals("com") || word.equals("org") || word.equals("html") || word.equals("php")) {
+        if (word.equals("https") || word.equals("http") || word.equals("www") || word.equals("com") || word.equals("org") || word.equals("html") || word.equals("php")) {
             return false;
         }
         // articles
