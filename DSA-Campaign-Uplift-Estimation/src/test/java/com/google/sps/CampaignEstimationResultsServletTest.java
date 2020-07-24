@@ -40,10 +40,10 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 /*
- * Tests the doPost() function in DSACampaignDataServlet.java.
+ * Tests the doPost() function in CampaignEstimationResultsServlet.java.
  */
 @RunWith(JUnit4.class)
-public final class DSACampaignDataServletTest {
+public final class CampaignEstimationResultsServletTest {
     
     @Mock
     HttpServletRequest request;
@@ -82,7 +82,7 @@ public final class DSACampaignDataServletTest {
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
-        DSACampaignDataServlet servlet = new DSACampaignDataServlet();
+        CampaignEstimationResultsServlet servlet = new CampaignEstimationResultsServlet();
         servlet.doPost(request, response);
 
         Query firstQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "1"));
@@ -130,7 +130,7 @@ public final class DSACampaignDataServletTest {
 
         assertEquals(2, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
-        DSACampaignDataServlet servlet = new DSACampaignDataServlet();
+        CampaignEstimationResultsServlet servlet = new CampaignEstimationResultsServlet();
         servlet.doPost(request, response);
 
         Query firstQuery = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, "1"));
@@ -163,6 +163,6 @@ public final class DSACampaignDataServletTest {
             "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0, null);
         Entity DSACampaignEntity = DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject);
 
-        assertEquals(1.81904, DSACampaignDataServlet.getLocationsFactor(keywordCampaignEntity, DSACampaignEntity), .01);
+        assertEquals(1.81904, CampaignEstimationResultsServlet.getLocationsFactor(keywordCampaignEntity, DSACampaignEntity), .01);
     }
 }
