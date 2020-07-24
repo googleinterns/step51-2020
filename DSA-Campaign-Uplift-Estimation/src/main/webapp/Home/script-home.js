@@ -229,7 +229,8 @@ function deleteDSACampaign(id) {
 
   const params = new URLSearchParams();
   params.append('id', id);
-  fetch('/delete-DSACampaign', {method: 'POST', body: params});
+  params.append('delete', true);
+  fetch('/DSA-campaigns', {method: 'POST', body: params});
 
   if (currentPage == 0) {
     location.reload();
