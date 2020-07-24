@@ -20,6 +20,8 @@ import com.google.sps.classes.DSACampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -60,7 +62,12 @@ public class DSACampaignsServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
 
-        if (userService.isUserLoggedIn()) {
+        if (request.getParameter("delete") != null) {
+            System.err.println("Inside If Parameter");
+            String campaignId = request.getParameter("id");
+            deleteDSACampaign(campaignId);
+            return;
+        } else if (userService.isUserLoggedIn()) {
             // user ID represents user email
             String userId = userService.getCurrentUser().getEmail();
             DSACampaign DSACampaignObject = new DSACampaign(KeywordCampaignsServlet.getNewCampaignId(false), userId, request.getParameter("keywordCampaignId"),
@@ -126,5 +133,20 @@ public class DSACampaignsServlet extends HttpServlet {
         DSACampaignEntity.setProperty("cost", DSACampaignObject.cost);
 
         return DSACampaignEntity;
+    }
+
+    public void deleteDSACampaign(String campaignId) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        Query query =
+            new Query("DSACampaign")
+                .setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, campaignId));
+        Entity entity = datastore.prepare(query).asSingleEntity();
+
+        long entityId = entity.getKey().getId();
+
+        System.err.println("Deleting this ID:" + entityId);
+        Key taskEntityKey = KeyFactory.createKey("DSACampaign", entityId);
+        datastore.delete(taskEntityKey);
     }
 }
