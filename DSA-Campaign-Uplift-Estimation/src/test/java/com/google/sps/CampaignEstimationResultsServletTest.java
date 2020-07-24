@@ -96,8 +96,10 @@ public final class CampaignEstimationResultsServletTest {
 
         String[][] SQR = DSACampaignsServlet.createSQRFromEntity((EmbeddedEntity) pendingDSACampaignEntity.getProperty("SQR")); 
         String[][] expectedSQR = new String[2][2];
-        expectedSQR[0][0] = "dsa";
-        expectedSQR[0][1] = "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Compare/compare.html";
+        expectedSQR[0][0] = "r";
+        expectedSQR[0][1] = "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Create/create.html";
+        expectedSQR[1][0] = "dsa";
+        expectedSQR[1][1] = "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Compare/compare.html";
 
         assertEquals(expectedSQR, SQR);
 

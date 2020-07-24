@@ -85,6 +85,7 @@ public class WebCrawler {
             String propertyName = "Line " + lineNum;
             SQREmbeddedEntity.setProperty(propertyName + " Query", query);
             SQREmbeddedEntity.setProperty(propertyName + " URL", SQR.get(query));
+            lineNum++;
         }
 
         return SQREmbeddedEntity;
