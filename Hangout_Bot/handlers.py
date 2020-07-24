@@ -2,8 +2,8 @@ from messages import *
 from datastore import *
 
 def handle_join(event):
-    # TODO: Backend stuff when a user joins 
-
+    # Register user as active
+    add_user(event)
     return create_join_message(event)
 
 def handle_message(event):
@@ -14,17 +14,16 @@ def handle_message(event):
       error dictionary message if event message is invalid
       confirmation dictionary message if event message is valid
     """
-    user_id = event['user']['email']
-
-    # if active_users.get(user_id) == None or active_users.get(user_id)[EXPECT_TEXT_INPUT] == False:
-      #  return error_message('Unexpected input, please respond according to the prompts!', -1)
+    user_data = convert_entity_to_user(get_user_data(obtain_user_key(event['user']['email'])))
     
-    # error_msg = error_handler(event['message']['text'], active_users.get(user_id)[PHASE_NUM_INDEX])
+    if user_data.phase_num == -1 or user_data.accepting_input != True:
+        return error_message('Unexpected input, please respond according to the prompts!', user_data.phase_num)
 
-    if (error_msg != True):
-        return error_message(error_msg, 0) # active_users.get(user_id)[PHASE_NAME_INDEX])
+    error_msg = error_handler(event['message']['text'], user_data.phase_num)
+    if error_msg != True:
+        return error_message(error_msg, user_data.phase_num)
 
-    return create_confirmation_message(event, 0)# active_users.get(user_id)[PHASE_NUM_INDEX])
+    return create_confirmation_message(event, user_data.phase_num)
 
 
 def handle_button_click(event):
@@ -38,9 +37,9 @@ def handle_button_click(event):
     user_id = event['user']['email']
 
     if event_action == 'start_campaign':
-        add_user(event['user']['email'], '', )
+        # TODO: set user phase_num to 0
+
         return start_user_campaign(event)
-    # TODO: REMOVE curr_phase_num = active_users.get(event['user']['email'])[PHASE_NUM_INDEX]
     if event_action == 'edit_campaign':
         # return edit_user_campaign(event)
         print('editing')
@@ -48,15 +47,6 @@ def handle_button_click(event):
         print('cancelling')
     elif event_action == 'yes_action':
         # TODO: replace active_users with datastore integration
-        if int(event['action']['parameters'][0]) != active_users.get(user_id)[PHASE_NUM_INDEX]:
-            return error_message('You clicked a card that is no longer active!', -1)
-        # yes_action button click indicates that user is ready to move on
-        active_users.get(event['user']['email'])[EXPECT_TEXT_INPUT] = True
-        active_users.get(event['user']['email'])[PHASE_NUM_INDEX] = curr_phase_num + 1
-        return create_configure_message(curr_phase_num + 1)
+        print('yes button clicked')
     elif event_action == 'no_action':
-        if int(event['action']['parameters'][0]) != active_users.get(user_id)[PHASE_NUM_INDEX]:
-            return error_message('You clicked a card that is no longer active!', -1)
-        # no_action button click indicates that the user is not ready to move on
-        active_users.get(event['user']['email'])[EXPECT_TEXT_INPUT] = True
-        return create_configure_message(curr_phase_num)
+        print('no button clicked')

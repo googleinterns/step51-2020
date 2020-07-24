@@ -1,13 +1,14 @@
 from google.cloud import datastore
 from campaigndata import CampaignData
+from userdata import *
 
 # [Datastore Interaction Functions]
-def obtain_user_key(event):
+def obtain_user_key(user_id):
     """Determine what key to provide based upon event data.
     Args:
       event: A dictionary with the event data.
     """
-    return datastore.Client().key('UserData', event['user']['email'])
+    return datastore.Client().key('UserData', user_id)
 
 
 def get_campaign_key(event, campaign_name):
@@ -42,38 +43,19 @@ def update_campaign_data(campaign_key, campaign_data):
     campaign_entity.update({'campaign_data': campaign_data})
     datastore_client.put(campaign_entity)
 
-def update_user_campaign(user_key, phase_num, campaign_name):
-    datastore_client = datastore.Client()
-    user_entity = datastore_client.get(user_key)
-    user_entity['campaign_key'] = 
-    datastore_client.put(user_entity)
-
-def update_user_phase_num(user_key, phase_num):
-    datastore_client = datastore.Client()
-    user_entity = datastore_client.get(user_key)
-    user_entity.update({'phase_num': = phase_num})
-    datastore_client.put(user_entity)
-
-def update_user_text_status(user_key, accepting_input):
-    datastore_client = datastore.Client()
-    user_entity = datastore_client.get(user_key)
-    user_entity.update({'accepting_text': accepting_input})
-    datastore_client.put(user_entity)
-
 def add_user(event):
-    if datastore.Client().obtain_user_key(event) != None:
-        return False
-    user_key = obtain_user_key(event)
-    entity = datastore.Client().Entity(user_key)
+    user_key = obtain_user_key(event['user']['email'])
+    entity = datastore.Entity(user_key)
     entity.update({
       'user': event['user']['email'],
-      'phase_num': 0,
+      'phase_num': -1,
       'accepting_text': True,
       'campaign_name': ''
     })
     datastore.Client().put(entity)
 
 def get_user_data(user_key):
+
     user_entity = datastore.Client().get(user_key)
     return user_entity
 
@@ -105,7 +87,7 @@ def convert_campaign_to_entity(campaign):
     entity_key = datastore.Client().key('CampaignData', '{}{}'.format(event['user']['email'], campaign_name))
 
     # Create the entity
-    entity = datastore.Client().Entity(entity_key)
+    entity = datastore.Entity(entity_key)
 
     # Populate the entity parameters with campaign values
     entity['owner'] = campaign.owner
@@ -121,4 +103,29 @@ def convert_campaign_to_entity(campaign):
     entity['ad_text'] = campaign.ad_text
 
     # Returns the created entity
+    return entity
+
+def convert_entity_to_user(entity):
+    user_data = UserData(entity['user'])
+
+    if (entity['accepting_text'] == 'true'):
+        user_data.set_accepting_text(True)
+    else:
+        user_data.set_accepting_text(False)
+    
+    user_data.set_campaign_name(entity['campaign_name'])
+    user_data.set_phase_num(entity['phase_num'])
+
+    return user_data
+
+def convert_user_to_entity(user_data):
+    entity_key = obtain_user_key(user_data.user_id)
+
+    entity = datastore.Entity(entity_key)
+
+    entity['user'] = user_data.user_id
+    entity['phase_num'] = user_data.phase_num
+    entity['accepting_text'] = user_data.accepting_text
+    entity['campaign_name'] = user_data.campaign_name
+
     return entity

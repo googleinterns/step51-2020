@@ -50,11 +50,9 @@ def format_response(event):
     if event_type == 'ADDED_TO_SPACE' and event['space']['type'] == 'DM':
         responseText = handle_join(event)
     elif event_type == 'MESSAGE':
-        #responseText = handle_message(event)
-        responseText = {"text": "test"}
+        responseText = handle_message(event)
     elif event_type == 'CARD_CLICKED':
-        responseText = {"text": "test"}
-        #responseText = handle_button_click(event)
+        responseText = handle_button_click(event)
     elif event_type == "REMOVED_FROM_SPACE":
         # TODO: add user progress to datastore
         # user is no longer active, remove from active users

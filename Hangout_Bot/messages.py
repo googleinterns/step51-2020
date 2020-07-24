@@ -6,11 +6,11 @@ phase_dictionary = {
       'Please input the name that will be associated with your dynamic search ad campaign' +
       ' estimate.'],
   1: ['start date',
-      'Please input the date that your campaign estimate starts. Must be in the form ' +
-      'mm-dd-yyyy.'],
+      'Please input the date that your campaign estimate starts. <b>Must be in the form ' +
+      'mm-dd-yyyy.</b>'],
   2: ['end date',
-      'Please input the date that your campaign estimate will end. Must be in the form ' +
-      'mm-dd-yyyy.'],
+      'Please input the date that your campaign estimate will end. <b>Must be in the form ' +
+      'mm-dd-yyyy.</b>'],
   3: ['daily budget', 'Please input the amount you are willing to on the campaign spend each day.'],
   4: ['locations', 'Please enter a comma separated list of state codes that ' +
       'your ad will target. Must be in the form of a valid US State ' +
@@ -166,7 +166,7 @@ def create_confirmation_message(event, phase_num):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "You picked \'{}\' for your campaign {}, is this correct?".format(event['message']['text'], phase_dictionary.get(phase_num)[PHASE_NAME_INDEX])
+                            "text": "You picked <b>\'{}\'</b> for your campaign {}, is this correct?".format(event['message']['text'], phase_dictionary.get(phase_num)[PHASE_NAME_INDEX])
                           }
                         }
                       ]
@@ -286,9 +286,15 @@ def create_configure_message(phase_num):
     Args:
       setting: the name of the setting to be input.
       campaignName: the name of the campaign being configured
+    Returns:
+      dictionary containing configuration prompt message for
+      specified phase number
     """
 
     return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE"
+              },
               "cards": [
                 {
                   "header": {
