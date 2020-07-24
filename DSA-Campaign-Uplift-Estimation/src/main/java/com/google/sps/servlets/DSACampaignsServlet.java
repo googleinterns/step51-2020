@@ -68,7 +68,8 @@ public class DSACampaignsServlet extends HttpServlet {
             deleteDSACampaign(campaignId);
             return;
         } else if (userService.isUserLoggedIn()) {
-            String userId = userService.getCurrentUser().getUserId();
+            // user ID represents user email
+            String userId = userService.getCurrentUser().getEmail();
             DSACampaign DSACampaignObject = new DSACampaign(KeywordCampaignsServlet.getNewCampaignId(false), userId, request.getParameter("keywordCampaignId"),
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
@@ -133,6 +134,7 @@ public class DSACampaignsServlet extends HttpServlet {
 
         return DSACampaignEntity;
     }
+
     public void deleteDSACampaign(String campaignId) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 

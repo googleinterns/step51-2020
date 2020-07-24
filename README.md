@@ -1,27 +1,14 @@
 # DSA Campaign Uplift Estimation
 
-The website is deployed here: dsa-uplift-estimation-2020.uc.r.appspot.com
+### Creators 
+Neel Bagora, Erik Garcia, Nevin George
 
+### Project URL 
+dsa-uplift-estimation-2020.uc.r.appspot.com
 
-## Source Code Headers
+### Project Description 
+This is our capstone project for the 2020 Google STEP Intern Program. The purpose of the web app is to simplify the Dynamic Search Ads process and decrease some of the complexity and confusion associated with DSA. The web app allows users to create different test DSA campaigns with their own desired settings, and with these input settings the web app estimates the results of the DSA campaign and the expected uplift the DSA campaign could bring to the user's existing keyword campaigns. Users can easily experiment with and compare different DSA campaigns, and all of the settings/results come with explanations for added clarity.
 
-Every file containing source code must include copyright and license
-information. This includes any JS/CSS files that you might be serving out to
-browsers. (This is to help well-intentioned people avoid accidental copying that
-doesn't comply with the license.)
-
-Apache header:
-
-    Copyright 2020 Google LLC
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+### References
+We used 2019 US Census Population Estimates in our calculations.
+Link: https://www.census.gov/data/tables/time-series/demo/popest/2010s-state-total.html#par_textimage_1574439295

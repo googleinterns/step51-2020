@@ -19,7 +19,7 @@ public class KeywordCampaign {
 
     // unique identifier for the keyword campaign
     public String keywordCampaignId;
-    // id of the user who created the keyword campaign
+    // id of the user who created the keyword campaign (user email)
     public String userId;
 
     // campaign settings
