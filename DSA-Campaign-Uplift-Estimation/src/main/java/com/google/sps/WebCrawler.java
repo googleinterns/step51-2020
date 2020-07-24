@@ -246,7 +246,7 @@ public class WebCrawler {
 
     // Checks if the word has meaningful content.
     public static boolean isSignificant(String word) {
-        // ingore empty and 1-letter strings
+        // ignore empty and 1-letter strings
         if (word.length() <= 1) {
             return false;
         }
