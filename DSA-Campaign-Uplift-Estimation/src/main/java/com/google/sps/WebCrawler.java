@@ -251,7 +251,7 @@ public class WebCrawler {
             return false;
         }
         // common url elements
-        if (word.equals("https") || word.equals("www") || word.equals("com") || word.equals("org") || word.equals("html") || word.equals("php")) {
+        if (word.equals("https") || word.equals("http") || word.equals("www") || word.equals("com") || word.equals("org") || word.equals("html") || word.equals("php")) {
             return false;
         }
         // articles
