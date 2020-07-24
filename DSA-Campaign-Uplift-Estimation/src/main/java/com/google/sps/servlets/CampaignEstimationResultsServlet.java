@@ -21,6 +21,7 @@ import com.google.sps.WebCrawler;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -69,8 +70,12 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
         Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, (String) DSACampaignEntity.getProperty("keywordCampaignId")));
     	Entity keywordCampaignEntity = datastore.prepare(query).asSingleEntity();
 
+        // implement the web crawler and obtain the website factor and SQR
+        WebCrawler webCrawler = new WebCrawler(keywordCampaignEntity, DSACampaignEntity);
+        double websiteFactor = webCrawler.getWebsiteFactor();
+        EmbeddedEntity SQR = webCrawler.getSQR();
+
         // calculate the estimation results
-        double websiteFactor = WebCrawler.getWebsiteFactor(keywordCampaignEntity, DSACampaignEntity);
         double impressionsToClicksFactor = getImpressionsToClicksFactor(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int clicks = (int) Math.round(impressions * impressionsToClicksFactor);;
@@ -83,14 +88,13 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
             impressions = (int) Math.round(clicks / impressionsToClicksFactor);
         }
 
-        // update the DSA campaign entity in datastore with the estimation results
+        // update the DSA campaign entity in datastore with the estimation results and SQR
         DSACampaignEntity.setProperty("impressions", impressions);
         DSACampaignEntity.setProperty("clicks", clicks);
         DSACampaignEntity.setProperty("cost", cost);
+        DSACampaignEntity.setProperty("SQR", SQR);
         DSACampaignEntity.setProperty("campaignStatus", "complete");
         datastore.put(DSACampaignEntity);
-
-        // TODO: SQR
     }
 
     public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) throws IOException {

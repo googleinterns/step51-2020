@@ -20,6 +20,7 @@ import com.google.sps.classes.DSACampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -74,7 +75,7 @@ public class DSACampaignsServlet extends HttpServlet {
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
                 request.getParameter("negativeLocations"), request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), 
-                Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
+                0, 0, 0, null);
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             datastore.put(createEntityFromDSACampaign(DSACampaignObject));
@@ -105,8 +106,9 @@ public class DSACampaignsServlet extends HttpServlet {
         int impressions = (int) ((long) entity.getProperty("impressions"));
         int clicks = (int) ((long) entity.getProperty("clicks"));
         double cost = (double) entity.getProperty("cost");
+        String[][] SQR = createSQRFromEntity((EmbeddedEntity) entity.getProperty("SQR"));
 
-        return new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, campaignStatus, startDate, endDate, manualCPC, dailyBudget, locations, negativeLocations, domain, targets, adText, impressions, clicks, cost);
+        return new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, campaignStatus, startDate, endDate, manualCPC, dailyBudget, locations, negativeLocations, domain, targets, adText, impressions, clicks, cost, SQR);
     }
 
     public static Entity createEntityFromDSACampaign(DSACampaign DSACampaignObject) {
@@ -133,6 +135,26 @@ public class DSACampaignsServlet extends HttpServlet {
         DSACampaignEntity.setProperty("cost", DSACampaignObject.cost);
 
         return DSACampaignEntity;
+    }
+
+    public static String[][] createSQRFromEntity(EmbeddedEntity SQREmbeddedEntity) {
+        if (SQREmbeddedEntity == null) {
+            return null;
+        }
+
+        int numLines = (int) ((long) SQREmbeddedEntity.getProperty("numLines"));
+
+        // col 1 = queries; col 2 = urls
+        String[][] SQRArr = new String[numLines][2];
+
+        for (int lineNum=1; lineNum<=numLines; lineNum++) {
+            String propertyName = "Line " + lineNum;
+
+            SQRArr[lineNum-1][0] = (String) SQREmbeddedEntity.getProperty(propertyName + " Query");
+            SQRArr[lineNum-1][1] = (String) SQREmbeddedEntity.getProperty(propertyName + " URL");
+        }
+
+        return SQRArr;
     }
 
     public void deleteDSACampaign(String campaignId) {
