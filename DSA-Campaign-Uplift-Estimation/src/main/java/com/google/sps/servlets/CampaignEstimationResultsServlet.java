@@ -32,10 +32,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashMap;
 
 // obtains estimation results for all the pending DSA campaigns
-@WebServlet("/data")
-public class DSACampaignDataServlet extends HttpServlet {
+@WebServlet("/estimation-results")
+public class CampaignEstimationResultsServlet extends HttpServlet {
+
+    static final int LOCATION_INDEX = 4;
+    static final int POPULATION_INDEX = 16;
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {	
@@ -57,7 +63,7 @@ public class DSACampaignDataServlet extends HttpServlet {
      * Updates the DSA campaign entity with the estimation results and changes the campaign status from pending to complete.
      * Implementation explanations are in the design doc.
      */
-    public static void estimationResults(Entity DSACampaignEntity) {
+    public static void estimationResults(Entity DSACampaignEntity) throws IOException {
         // retrieve the DSA campaign's corresponding keyword campaign from datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Query query = new Query("keywordCampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, (String) DSACampaignEntity.getProperty("keywordCampaignId")));
@@ -87,7 +93,7 @@ public class DSACampaignDataServlet extends HttpServlet {
         // TODO: SQR
     }
 
-    public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
+    public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) throws IOException {
         double manualCPCFactor = getManualCPCFactor(keywordCampaignEntity, DSACampaignEntity);
         double locationsFactor = getLocationsFactor(keywordCampaignEntity, DSACampaignEntity);
         double upliftFactor = .25*manualCPCFactor + .25*locationsFactor + .50*websiteFactor;
@@ -101,9 +107,65 @@ public class DSACampaignDataServlet extends HttpServlet {
         return Math.min(ratio, 3);
     }
 
-    public static double getLocationsFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
-        // TODO
-        return 1;
+    public static double getLocationsFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) throws IOException {
+        // read in US Census data
+        BufferedReader file = new BufferedReader(new FileReader("US_Census_Data_State_Populations.txt"));
+
+        // populate the census data into the hash map
+        HashMap<String, Long> statePopulations = new HashMap<String, Long>();
+
+        // ignore the first line containing column headers
+        file.readLine();
+        
+        // read the remaining lines
+        String line = file.readLine();
+        while (line != null) {
+            String[] lineElements = line.split(",");
+            String location = lineElements[LOCATION_INDEX].toLowerCase();
+            long population = Long.parseLong(lineElements[POPULATION_INDEX]);
+            statePopulations.put(location, population);
+
+            line = file.readLine();
+        }
+        file.close();
+
+        double targetPopulationSizeKeywordCampaign = getTargetPopulationSize((String) keywordCampaignEntity.getProperty("locations"), (String) keywordCampaignEntity.getProperty("negativeLocations"), statePopulations);
+        double targetPopulationSizeDSACampaign = getTargetPopulationSize((String) DSACampaignEntity.getProperty("locations"), (String) DSACampaignEntity.getProperty("negativeLocations"), statePopulations);
+
+        return Math.sqrt(targetPopulationSizeDSACampaign / targetPopulationSizeKeywordCampaign);
+    }
+
+    // Returns the amount of people living in the specified locations, subtracting the amount of people living in the negative locations.
+    public static double getTargetPopulationSize(String locations, String negativeLocations, HashMap<String, Long> statePopulations) {
+        String refinedLocations = locations.trim().toLowerCase();
+        String refinedNegativeLocations = negativeLocations.trim().toLowerCase();
+
+        // ensure that we don't subtract for negative locations if our initial target isn't the entire US
+        if (!refinedLocations.equals("united states")) {
+            refinedNegativeLocations = "";
+        }
+
+        /*
+         * In the front end, we ensure that
+         * 1) All of the locations are either US states or the US itself.
+         * 2) There is no overlap between locations and negative locations.
+         * 3) If the US is a location, no other states are given as locations as well.
+         * 4) At least one location is given.
+         */
+        double targetPopulationSize = 0;
+        String[] locationsArr = refinedLocations.split(",");
+        for (String location : locationsArr) {
+            targetPopulationSize += statePopulations.get(location.trim());
+        }
+
+        if (!refinedNegativeLocations.equals("")) {
+            String[] negativeLocationsArr = refinedNegativeLocations.split(",");
+            for (String negativeLocation : negativeLocationsArr) {
+                targetPopulationSize -= statePopulations.get(negativeLocation.trim());
+            }
+        }
+
+        return targetPopulationSize;
     }
 
     public static double getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
