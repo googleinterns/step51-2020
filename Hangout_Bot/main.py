@@ -36,7 +36,8 @@ app = Flask(__name__)
 # [Main Event Handler]
 
 def format_response(event):
-    """Determine what response to provide based upon event data.
+    """Determine what response to provide based upon type of event
+       and event data
     Args:
       event: A dictionary with the event data.
     Returns:

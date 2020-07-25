@@ -1,70 +1,162 @@
 from google.cloud import datastore
 from campaigndata import CampaignData
 from userdata import *
+from constant import *
 
 # [Datastore Interaction Functions]
-def obtain_user_key(user_id):
-    """Determine what key to provide based upon event data.
+
+
+def get_user_key(user_id):
+    return datastore.Client().key('ActiveUser', user_id)
+
+
+def get_campaign_key(user_id, campaign_name):
+    return datastore.Client().key('CampaignData', '{}{}'.format(user_id, campaign_name))
+
+
+def add_new_campaign(user_id, campaign_name):
+    """Adds newly created campaign to datastore
     Args:
-      event: A dictionary with the event data.
+      user_id:
+        The user associated with the new campaign
+      campaign_name:
+        The name of the newly added campaign
+    Returns:
+      None
     """
-    return datastore.Client().key('UserData', user_id)
 
+    new_campaign = CampaignData(user_id)
+    new_campaign.set_name(campaign_name)
+    new_campaign = convert_campaign_to_entity(new_campaign)
+    put_entity_in_datastore(new_campaign)
 
-def get_campaign_key(event, campaign_name):
-    return datastore.Client().key('CampaignData', '{}{}'.format(event['user']['email'], campaign_name))
 
 
 def update_campaign_data(campaign_data, phase_num, value):
-    if (phase_num == 1):
+    """Modifies CampaignData class parameters based on phase_num
+       and value function parameters
+    Args:
+      campaign_data:
+        The CampaignData class being modified
+      phase_num:
+        The phase_num of the parameter being modified
+      value:
+        The new value being set in the CampaignData class object
+    Returns:
+      CampaignData
+        Modified version of class
+    """
+
+    if (phase_num == NAME):
         campaign_data.set_start_date(value)
-    elif (phase_num == 2):
+    elif (phase_num == START_DATE):
         campaign_data.set_end_date(value)
-    elif (phase_num == 3):
+    elif (phase_num == END_DATE):
         campaign_data.set_daily_budget(value)
-    elif (phase_num == 4):
+    elif (phase_num == LOCATIONS):
         campaign_data.set_locations(value)
-    elif (phase_num == 5):
+    elif (phase_num == NEG_LOCATIONS):
         campaign_data.set_neg_locations(value)
-    elif (phase_num == 6):
+    elif (phase_num == DOMAIN):
         campaign_data.set_domain(value)
-    elif (phase_num == 7):
+    elif (phase_num == TARGETS):
         campaign_data.set_targets(value)
-    elif (phase_num == 8):
-        campaign_data.set_manual_CPC(value)   
-    elif (phase_num == 9):
-        campaign_data.set_ad_text(value) 
+    elif (phase_num == MANUAL_CPC):
+        campaign_data.set_manual_CPC(value)
+    elif (phase_num == AD_TEXT):
+        campaign_data.set_ad_text(value)
     return campaign_data
 
 
-def update_campaign_data(campaign_key, campaign_data):
-    datastore_client = datastore.Client()
-    campaign_entity = datastore_client.get(campaign_key)
-    campaign_entity.update({'campaign_data': campaign_data})
-    datastore_client.put(campaign_entity)
+def add_campaign_data(campaign_data):
+    """Adds CampaignData type to datastore
+    Args:
+      campaign_data: 
+        The CampaignData object that is prepared and added to datastore
+        as CampaignData entity
+    Returns:
+      None
+    """
 
-def add_user(event):
-    user_key = obtain_user_key(event['user']['email'])
-    entity = datastore.Entity(user_key)
-    entity.update({
-      'user': event['user']['email'],
-      'phase_num': -1,
-      'accepting_text': True,
-      'campaign_name': ''
-    })
+    campaign_entity = convert_campaign_to_entity(campaign_data)
+    put_entity_in_datastore(campaign_entity)
+
+
+def add_new_user(event):
+    """Initializes and adds user data in datastore based on passed in event
+    Args:
+      event:
+        The event containing user information to be added to datastore
+    Returns:
+      None
+    """
+
+    user_data = ActiveUser(event['user']['email'])
+    user_entity = convert_user_to_entity(user_data)
+    put_entity_in_datastore(user_entity)
+
+
+def put_entity_in_datastore(entity):
     datastore.Client().put(entity)
 
+
+def update_user(user_data):
+    """Updates user data in datastore with the passed in data
+    Args:
+      user_data:
+        The data used to generate a key and entity to be put in datastore
+    Returns:
+      None
+    """
+
+    user_entity = convert_user_to_entity(user_data)
+    put_entity_in_datastore(user_entity)
+
+
 def get_user_data(user_key):
+    """Returns entity specific to the key
+    Args:
+      user_key:
+        The key used to retrieve data from datastore
+    Yields:
+      UserData:
+        Parsed user data associated with key
+    """
 
     user_entity = datastore.Client().get(user_key)
-    return user_entity
+    return convert_entity_to_user(user_entity)
+
 
 def get_campaign_data(campaign_key):
+    """Returns campaign entity specific to the key
+    Args:
+      user_key:
+        The key used to retrieve data from datastore
+    Yields:
+      Entity
+        contains UserData, requires parsing to be used by bot
+    """
+
     return convert_entity_to_campaign(datastore.Client().get(campaign_key))
+
 
 # [Datastore and class conversion functions]
 
+
 def convert_entity_to_campaign(campaign_entity):
+    """Returns campaign specific to entity
+    Args:
+      campaign_entity:
+        Entity to be converted into CampaignData
+    Yields:
+      None
+        if entity is not valid
+      CampaignData
+        parsed CampaignData object from entity
+    """
+    
+    if campaign_entity == None: 
+        return None
     # Initialize the campaign object
     dsa_campaign = CampaignData(campaign_entity['owner'])
 
@@ -82,9 +174,19 @@ def convert_entity_to_campaign(campaign_entity):
 
     return dsa_campaign
 
+
 def convert_campaign_to_entity(campaign):
+    """Returns entity converted from campaign parameter
+    Args:
+      campaign:
+        Campaign to be converted into entity
+    Yields:
+      Entity
+        parsed Entity CampaignData object
+    """
+
     # Create the entity key
-    entity_key = datastore.Client().key('CampaignData', '{}{}'.format(event['user']['email'], campaign_name))
+    entity_key = get_campaign_key(campaign.owner, campaign.name)
 
     # Create the entity
     entity = datastore.Entity(entity_key)
@@ -105,27 +207,48 @@ def convert_campaign_to_entity(campaign):
     # Returns the created entity
     return entity
 
-def convert_entity_to_user(entity):
-    user_data = UserData(entity['user'])
 
-    if (entity['accepting_text'] == 'true'):
-        user_data.set_accepting_text(True)
-    else:
-        user_data.set_accepting_text(False)
+def convert_entity_to_user(user_entity):
+    """Returns user specific to entity
+    Args:
+      user_entity:
+        Entity to be converted into UserData
+    Yields:
+      None
+        if entity is not valid
+      UserData
+        parsed UserData object from entity
+    """    
+
+    if entity == None: 
+        return None
+    user_data = ActiveUser(entity['user'])
     
-    user_data.set_campaign_name(entity['campaign_name'])
-    user_data.set_phase_num(entity['phase_num'])
-
+    user_data.set_accepting_text(user_entity['accepting_text'])
+    user_data.set_campaign_name(user_entity['campaign_name'])
+    user_data.set_phase_num(user_entity['phase_num'])
+    user_data.set_editing(user_entity['editing'])
     return user_data
 
+
 def convert_user_to_entity(user_data):
-    entity_key = obtain_user_key(user_data.user_id)
+    """Returns entity specific to UserData
+    Args:
+      user_data:
+        UserData to be converted to datastore entity
+    Yields:
+      Entity
+        Converted entity object from UserData
+    """    
 
-    entity = datastore.Entity(entity_key)
+    entity_key = get_user_key(user_data.user_id)
 
-    entity['user'] = user_data.user_id
-    entity['phase_num'] = user_data.phase_num
-    entity['accepting_text'] = user_data.accepting_text
-    entity['campaign_name'] = user_data.campaign_name
+    user_entity = datastore.Entity(entity_key)
 
-    return entity
+    user_entity['user'] = user_data.user_id
+    user_entity['phase_num'] = user_data.phase_num
+    user_entity['accepting_text'] = user_data.accepting_text
+    user_entity['campaign_name'] = user_data.campaign_name
+    user_entity['editing'] = user_data.editing
+
+    return user_entity
