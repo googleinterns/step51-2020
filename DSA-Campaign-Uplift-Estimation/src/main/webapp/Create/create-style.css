@@ -129,35 +129,35 @@ label {
 }
 
 .submit-btn {
-  background-color: rgb(192, 192, 192);
+  background-color: #333;
 }
 
 .settings-btn {
-  background-color: rgb(192, 192, 192);
+  background-color: #333;
 }
 
 .reset-btn {
-  background-color: rgb(192, 192, 192);
+  background-color: #333;
 }
 
 .preset-btn {
-  background-color: rgb(192, 192, 192);
+  background-color: #333;
 }
 
 .reset-btn:hover {
-  background-color: rgb(119, 118, 118);
+  background-color: #c5c6c7;
 }
 
 .submit-btn:hover {
-  background-color: rgb(119, 118, 118);
+  background-color: #c5c6c7;
 }
 
 .settings-btn:hover {
-  background-color: rgb(119, 118, 118);
+  background-color: #c5c6c7;
 }
 
 .preset-btn:hover {
-  background-color: rgb(119, 118, 118);
+  background-color: #c5c6c7;
 }
 
 a {
