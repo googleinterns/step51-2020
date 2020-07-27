@@ -76,30 +76,25 @@
                 <input type="text" id="name" name="name" placeholder="DSA Campaign Name" required>
                 <div class="row">
                   <div class="col-50">
-                    <label for="startDate"><span style="color:red">&#42;</span> From:</label>
-                    <input type="date" id="startDate" name="startDate" placeholder="01/01/2000" required>
+                    <label for="startDate">From:</label>
+                    <input type="date" id="startDate" name="startDate" placeholder="01/01/2000">
                   </div>
                   <div class="col-50">
-                    <label for="endDate"><span style="color:red">&#42;</span> To:</label>
-                    <input type="date" id="endDate" name="endDate" placeholder="01/01/2001" required>
+                    <label for="endDate">To:</label>
+                    <input type="date" id="endDate" name="endDate" placeholder="01/01/2001">
                   </div>
                 </div>
                 <br>
                 <label for="dailyBudget"><span style="color:red">&#42;</span> Daily Budget: $</label>
                 <input type="number" onchange="setTwoNumberDecimal()" id="dailyBudget" name="dailyBudget" step=".01" placeholder="0.00" required>
                 <br>
-                <button class="btn preset-btn" onclick="addRegion(false, true);" style="float: right;" type="button">Add another location</button>
                 <br>
                 <div id="locations">
                   <div class="form-group" id="location1">
                     <h3>Location 1</h3>
-                    <label id="country1-label" class="control-label"><span style="color:red">&#42;</span> Country 1</label>
-                    <select class="form-control" id="country1" data-language="en" name="country1" required>
-                      <option value="USA">United States of America</option>
-                    </select>
                     <br>
                     <label id="gds-cr-1-label" for="gds-cr-1" class="control-label"><span style="color:red">&#42;</span> Region 1</label>
-                    <select class="form-control" id="gds-cr-1" name="region1">
+                    <select class="form-control" id="gds-cr-1" name="region1" onchange="regionSelection()">
                       <option value="" selected>Select a Region</option>
                       <option value="USA" selected>United States of America</option>
                       <option value="AL">Alabama</option>
@@ -154,19 +149,16 @@
                       <option value="WI">Wisconsin</option>
                       <option value="WY">Wyoming</option>
                     </select>
+                    <div id='new_locations'>
+                    </div>
+                    <button  id='add_region' class="btn preset-btn" onclick="addRegion(false, true);" style="float: right; display: none;" type="button">Add another location</button>
                   </div>
                   <br>
                 </div>
-                <br>
-                <button class="btn preset-btn" onclick="addRegion(true, true);" style="float: right;" type="button">Add another negative location</button>
-                <br>
-                <div id="negativeLocations">
+
+                <div id="negativeLocations" style="display: block;">
                   <div class="form-group" id='nlocation1'>
                     <h3>Negative Location 1</h3>
-                    <label class="control-label">Negative Country 1</label>
-                    <select class="form-control" id="ncountry1" data-language="en" name="country1">
-                      <option value="USA" selected>United States of America</option>
-                    </select>
                     <br>
                     <label for="gds-ncr-1" class="control-label">Negative Region 1</label>
                     <select class="form-control" id="gds-ncr-1" name="nregion1">
@@ -223,15 +215,19 @@
                       <option value="WI">Wisconsin</option>
                       <option value="WY">Wyoming</option>
                     </select>
+                    <div id='new_neg_locations'>
+                    </div>
+                    <button id='add_neg_region' class="btn preset-btn" onclick="addRegion(true, true);" style="float: right;" type="button">Add another negative location</button>
                   </div>
+                  <br>
                   <br>
                 </div>
                 <label for="domain"><span style="color:red">&#42;</span> Domain:</label>
                 <input type="url" id="domain" name="domain" placeholder="http://google.com" required>
                 <br>
                 <br>
-                <label for="targets"><span style="color:red">&#42;</span> Target Page:</label>
-                <input type="url" id="targets" name="targets" placeholder="http://google.com/page1" required>
+                <label for="targets"> Target Pages (Comma separated List):</label>
+                <input type="url" id="targets" name="targets" placeholder="http://google.com/page1">
                 <br>
                 <br>
                 <label for="adText"><span style="color:red">&#42;</span> Ad Text:</label>
