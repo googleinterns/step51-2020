@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
+import java.io.File;
 
 // obtains estimation results for all the pending DSA campaigns
 @WebServlet("/estimation-results")
@@ -78,7 +79,7 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
         // calculate the estimation results
         double impressionsToClicksFactor = getImpressionsToClicksFactor(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
-        int clicks = (int) Math.round(impressions * impressionsToClicksFactor);;
+        int clicks = (int) Math.round(impressions * impressionsToClicksFactor);
         double cost = clicks * ((double) DSACampaignEntity.getProperty("manualCPC"));
 
         // if exceeded the daily budget, must cap impressions, clicks, and cost
@@ -112,26 +113,60 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
     }
 
     public static double getLocationsFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) throws IOException {
-        // read in US Census data
-        BufferedReader file = new BufferedReader(new FileReader("US_Census_Data_State_Populations.txt"));
-
         // populate the census data into the hash map
-        HashMap<String, Long> statePopulations = new HashMap<String, Long>();
-
-        // ignore the first line containing column headers
-        file.readLine();
-        
-        // read the remaining lines
-        String line = file.readLine();
-        while (line != null) {
-            String[] lineElements = line.split(",");
-            String location = lineElements[LOCATION_INDEX].toLowerCase();
-            long population = Long.parseLong(lineElements[POPULATION_INDEX]);
-            statePopulations.put(location, population);
-
-            line = file.readLine();
-        }
-        file.close();
+        HashMap<String, Integer> statePopulations = new HashMap<String, Integer>();
+        statePopulations.put("united states", 328239523);
+        statePopulations.put("usa", 328239523);
+        statePopulations.put("alabama", 4903185);
+        statePopulations.put("alaska", 731545);
+        statePopulations.put("arizona", 7278717);
+        statePopulations.put("arkansas", 3017804);
+        statePopulations.put("california", 39512223);
+        statePopulations.put("colorado", 5758736);
+        statePopulations.put("connecticut", 3565287);
+        statePopulations.put("delaware", 973764);
+        statePopulations.put("florida", 21477737);
+        statePopulations.put("georgia", 10617423);
+        statePopulations.put("hawaii", 1415872);
+        statePopulations.put("idaho", 1787065);
+        statePopulations.put("illinois", 12671821);
+        statePopulations.put("indiana", 6732219);
+        statePopulations.put("iowa", 3155070);
+        statePopulations.put("kansas", 2913314);
+        statePopulations.put("kentucky", 4467673);
+        statePopulations.put("louisiana", 4648794);
+        statePopulations.put("maine", 1344212);
+        statePopulations.put("maryland", 6045680);
+        statePopulations.put("massachusetts", 6892503);
+        statePopulations.put("michigan", 9986857);
+        statePopulations.put("minnesota", 5639632);
+        statePopulations.put("mississippi", 2976149);
+        statePopulations.put("missouri", 6137428);
+        statePopulations.put("montana", 1068778);
+        statePopulations.put("nebraska", 1934408);
+        statePopulations.put("nevada", 3080156);
+        statePopulations.put("new hampshire", 1359711);
+        statePopulations.put("new jersey", 8882190);
+        statePopulations.put("new mexico", 2096829);
+        statePopulations.put("new york", 19453561);
+        statePopulations.put("north carolina", 10488084);
+        statePopulations.put("north dakota", 762062);
+        statePopulations.put("ohio", 11689100);
+        statePopulations.put("oklahoma", 3956971);
+        statePopulations.put("oregon", 4217737);
+        statePopulations.put("pennsylvania", 12801989);
+        statePopulations.put("rhode island", 1059361);
+        statePopulations.put("south carolina", 5148714);
+        statePopulations.put("south dakota", 884659);
+        statePopulations.put("tennessee", 6829174);
+        statePopulations.put("texas", 28995881);
+        statePopulations.put("utah", 3205958);
+        statePopulations.put("vermont", 623989);
+        statePopulations.put("virginia", 8535519);
+        statePopulations.put("washington", 7614893);
+        statePopulations.put("west virginia", 1792147);
+        statePopulations.put("wisconsin", 5822434);
+        statePopulations.put("wyoming", 578759);
 
         double targetPopulationSizeKeywordCampaign = getTargetPopulationSize((String) keywordCampaignEntity.getProperty("locations"), (String) keywordCampaignEntity.getProperty("negativeLocations"), statePopulations);
         double targetPopulationSizeDSACampaign = getTargetPopulationSize((String) DSACampaignEntity.getProperty("locations"), (String) DSACampaignEntity.getProperty("negativeLocations"), statePopulations);
@@ -140,7 +175,7 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
     }
 
     // Returns the amount of people living in the specified locations, subtracting the amount of people living in the negative locations.
-    public static double getTargetPopulationSize(String locations, String negativeLocations, HashMap<String, Long> statePopulations) {
+    public static double getTargetPopulationSize(String locations, String negativeLocations, HashMap<String, Integer> statePopulations) {
         String refinedLocations = locations.trim().toLowerCase();
         String refinedNegativeLocations = negativeLocations.trim().toLowerCase();
 
@@ -174,7 +209,7 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
 
     public static double getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
         double adTextFactor = getAdTextFactor(DSACampaignEntity);
-        return (1 - (1 / (.80*websiteFactor + .20*adTextFactor))) / 2;
+        return 1 - (1 / (.80*websiteFactor + .20*adTextFactor));
     }
 
     public static double getAdTextFactor(Entity DSACampaignEntity) {
