@@ -23,20 +23,20 @@
     <header>
       <!-- all the content relevant to the header is contained in this div -->
       <div class="header">
-        <span style="font-size: 30px; cursor: pointer; float: left;" onclick="openNav()">&#9776;</span>
+        <span style="font-size: 30px; cursor: pointer; float: left; color: #f2f2f2;" onclick="openNav()">&#9776;</span>
         <a class="title">Estimate Overview</a>
       </div>
     </header>
 
-    <div id="campaigns-container" class="center">
+    <div id="campaigns-container">
         <div id="keyword-campaigns-container" class="select">
             <h3>Select a keyword campaign</h3>
             <select id="keyword-campaigns" onchange="drawDsaCampaignCharts();">
-                <option value=0>Select a keyword campaign</option>
+                <option value=0>Keyword Campaign</option>
             </select>
         </div>
  
-       <div id="DSA-campaigns-container">
+       <div id="DSA-campaigns-container" class="center">
             <form id="DSA-campaigns">
                 <p>First select a keyword campaign.</p>
             </form>
