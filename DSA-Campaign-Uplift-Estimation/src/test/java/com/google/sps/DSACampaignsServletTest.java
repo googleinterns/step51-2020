@@ -77,7 +77,7 @@ public final class DSACampaignsServletTest {
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         DSACampaign DSACampaignObject = new DSACampaign("1", "2", "1", "entity 1", "pending", "1/1/1", "2/2/2", 23.1, 123.2, "United States of America", "California, Texas", "google.com",
-            "test1.com, test2.com", "sample ad text", 432, 123, 42.51);
+            "test1.com, test2.com", "sample ad text", 432, 123, 42.51, null);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
         assertEquals(1, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
@@ -99,7 +99,7 @@ public final class DSACampaignsServletTest {
         assertEquals(0, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
 
         DSACampaign DSACampaignObject = new DSACampaign("3", "2", "1", "Test DSA Campaign", "complete", "1/1/1", "2/2/2", 23.51, 20.12, "United States of America",
-            "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50);
+            "California, Texas", "google.com", "test1.com, test2.com", "sample ad text", 12412, 535, 2145.50, null);
         ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
 
 

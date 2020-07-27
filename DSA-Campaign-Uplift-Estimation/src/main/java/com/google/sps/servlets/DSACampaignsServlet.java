@@ -20,6 +20,9 @@ import com.google.sps.classes.DSACampaign;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -60,14 +63,19 @@ public class DSACampaignsServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
 
-        if (userService.isUserLoggedIn()) {
+        if (request.getParameter("delete") != null) {
+            System.err.println("Inside If Parameter");
+            String campaignId = request.getParameter("id");
+            deleteDSACampaign(campaignId);
+            return;
+        } else if (userService.isUserLoggedIn()) {
             // user ID represents user email
             String userId = userService.getCurrentUser().getEmail();
             DSACampaign DSACampaignObject = new DSACampaign(KeywordCampaignsServlet.getNewCampaignId(false), userId, request.getParameter("keywordCampaignId"),
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
                 request.getParameter("negativeLocations"), request.getParameter("domain"), request.getParameter("targets"), request.getParameter("adText"), 
-                Integer.parseInt(request.getParameter("impressions")), Integer.parseInt(request.getParameter("clicks")), Double.parseDouble(request.getParameter("cost")));
+                0, 0, 0, null);
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             datastore.put(createEntityFromDSACampaign(DSACampaignObject));
@@ -98,8 +106,9 @@ public class DSACampaignsServlet extends HttpServlet {
         int impressions = (int) ((long) entity.getProperty("impressions"));
         int clicks = (int) ((long) entity.getProperty("clicks"));
         double cost = (double) entity.getProperty("cost");
+        String[][] SQR = createSQRFromEntity((EmbeddedEntity) entity.getProperty("SQR"));
 
-        return new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, campaignStatus, startDate, endDate, manualCPC, dailyBudget, locations, negativeLocations, domain, targets, adText, impressions, clicks, cost);
+        return new DSACampaign(DSACampaignId, userId, keywordCampaignId, name, campaignStatus, startDate, endDate, manualCPC, dailyBudget, locations, negativeLocations, domain, targets, adText, impressions, clicks, cost, SQR);
     }
 
     public static Entity createEntityFromDSACampaign(DSACampaign DSACampaignObject) {
@@ -126,5 +135,40 @@ public class DSACampaignsServlet extends HttpServlet {
         DSACampaignEntity.setProperty("cost", DSACampaignObject.cost);
 
         return DSACampaignEntity;
+    }
+
+    public static String[][] createSQRFromEntity(EmbeddedEntity SQREmbeddedEntity) {
+        if (SQREmbeddedEntity == null) {
+            return null;
+        }
+
+        int numLines = (int) ((long) SQREmbeddedEntity.getProperty("numLines"));
+
+        // col 1 = queries; col 2 = urls
+        String[][] SQRArr = new String[numLines][2];
+
+        for (int lineNum=1; lineNum<=numLines; lineNum++) {
+            String propertyName = "Line " + lineNum;
+
+            SQRArr[lineNum-1][0] = (String) SQREmbeddedEntity.getProperty(propertyName + " Query");
+            SQRArr[lineNum-1][1] = (String) SQREmbeddedEntity.getProperty(propertyName + " URL");
+        }
+
+        return SQRArr;
+    }
+
+    public void deleteDSACampaign(String campaignId) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        Query query =
+            new Query("DSACampaign")
+                .setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, campaignId));
+        Entity entity = datastore.prepare(query).asSingleEntity();
+
+        long entityId = entity.getKey().getId();
+
+        System.err.println("Deleting this ID:" + entityId);
+        Key taskEntityKey = KeyFactory.createKey("DSACampaign", entityId);
+        datastore.delete(taskEntityKey);
     }
 }

@@ -19,14 +19,28 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.ArrayList;
 
 // Implements all of the functions that require the use of jsoup.
 public class WebCrawler {
 
-    public static double getWebsiteFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
+    public Entity keywordCampaignEntity;
+    public Entity DSACampaignEntity;
+
+    // key = query, value = associated url
+    public HashMap<String, String> SQR;
+    
+    public WebCrawler(Entity keywordCampaignEntity, Entity DSACampaignEntity) {
+        this.keywordCampaignEntity = keywordCampaignEntity;
+        this.DSACampaignEntity = DSACampaignEntity;
+        SQR = new HashMap<String, String>();
+    }
+
+    public double getWebsiteFactor() {
         try {
             // use a hashset to avoid duplicate entries
             HashSet<String> recommendedLinks = getRecommendedLinks((String) DSACampaignEntity.getProperty("domain"));
@@ -58,6 +72,25 @@ public class WebCrawler {
         return 1;
     }
 
+    /*
+     * Converts the SQR data from a hash map to an embedded entity (entity will be embedded in the associated DSA campaign entity).
+     * The SQR should have first been populated by calling getWebsiteFactor(); otherwise, the SQR will be empty.
+     */
+    public EmbeddedEntity getSQR() {
+        EmbeddedEntity SQREmbeddedEntity = new EmbeddedEntity();
+        SQREmbeddedEntity.setProperty("numLines", SQR.size());
+
+        int lineNum = 1;
+        for (String query : SQR.keySet()) {
+            String propertyName = "Line " + lineNum;
+            SQREmbeddedEntity.setProperty(propertyName + " Query", query);
+            SQREmbeddedEntity.setProperty(propertyName + " URL", SQR.get(query));
+            lineNum++;
+        }
+
+        return SQREmbeddedEntity;
+    }
+
     // Crawls all pages from the domain to a depth of 1 to create the recommended list of pages.
     public static HashSet<String> getRecommendedLinks(String domain) throws IOException {
         // use a hash set to avoid duplicate entries
@@ -84,7 +117,7 @@ public class WebCrawler {
         return recommendedLinks;
     }
 
-    public static double getPageFactor(String url) throws IOException {
+    public double getPageFactor(String url) throws IOException {
         // get the page HTML
         Document document = Jsoup.connect(url).get();
 
@@ -96,19 +129,18 @@ public class WebCrawler {
 
         /*
          * Go through every element of keywordsDescriptionHeaders and check if the word or a close variation of it (difference of one character) is found in keywordsURLTitle.
-         * If so, add the word to sharedKeywords.
+         * If so, add the word to the SQR (this word has the strongest chance of becoming a query).
          */
-        HashSet<String> sharedKeywords = new HashSet<String>();
         for (String keyword : keywordsDescriptionHeaders) {
             for (String matchingKeyword : keywordsURLTitle) {
-                if (!sharedKeywords.contains(matchingKeyword) && resembles(keyword, matchingKeyword)) {
-                    sharedKeywords.add(matchingKeyword);
+                if (!SQR.containsKey(matchingKeyword) && resembles(keyword, matchingKeyword)) {
+                    SQR.put(matchingKeyword, url);
                     break;
                 }
             }
         }
 
-        return (((double) sharedKeywords.size()) / ((double) keywordsURLTitle.size())) + 1;
+        return (((double) SQR.size()) / ((double) keywordsURLTitle.size())) + 1;
     }
 
     // Returns true if there is less than 1 character difference between strings str1 and str2.
@@ -214,11 +246,12 @@ public class WebCrawler {
 
     // Checks if the word has meaningful content.
     public static boolean isSignificant(String word) {
-        if (word.length() == 0) {
+        // ignore empty and 1-letter strings
+        if (word.length() <= 1) {
             return false;
         }
         // common url elements
-        if (word.equals("https") || word.equals("www") || word.equals("com") || word.equals("org") || word.equals("html") || word.equals("php")) {
+        if (word.equals("https") || word.equals("http") || word.equals("www") || word.equals("com") || word.equals("org") || word.equals("html") || word.equals("php")) {
             return false;
         }
         // articles
