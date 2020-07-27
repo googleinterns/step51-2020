@@ -73,7 +73,13 @@ function drawDsaCampaignCharts() {
           'style=\"text-decoration: none;\">Here</a>';
       } else {
         while (chartCounter <= numChartsPerPage) {
-          drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
+          if (DSACampaigns[chartsToShow].campaignStatus != "pending") {
+            drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
+          } else {
+            drawPendingBlock(chartCounter);
+          }
+
+          drawDSACampaignTable(DSACampaigns[chartsToShow], chartCounter);
           hideDiv(isNumberOfChartsOdd, DSACampaigns.length, chartsToShow);
           chartsToShow++;
           chartCounter++;
@@ -168,13 +174,11 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
     chartNumber));
   chart.draw(data, google.charts.Bar.convertOptions(options));
   console.log('Drew bar graph.');
-
-  drawDSACampaignTable(DSACampaign, chartNumber);
 }
 
 function drawDSACampaignTable(DSACampaign, chartNumber) {
   const data = new google.visualization.DataTable();
-  const data2 = new google.visualization.DataTable();
+  
   data.addColumn('string', 'DSA Campaign');
   data.addColumn('string', 'Start Date');
   data.addColumn('string', 'End Date');
@@ -183,24 +187,35 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   data.addColumn('string', 'Location');
   data.addColumn('string', 'Domain');
 
-
-  data2.addColumn('string', 'Target');
-  data2.addColumn('string', 'Ad Text');
-  data2.addColumn('number', 'Impressions');
-  data2.addColumn('number', 'Clicks');
-  data2.addColumn('number', 'Cost (USD)');
-
   data.addRow([DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate,
     DSACampaign.manualCPC, DSACampaign.dailyBudget, DSACampaign.locations,
     DSACampaign.domain]);
-
-  data2.addRow([DSACampaign.targets, DSACampaign.adText,
-    DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
 
   const table = new google.visualization.Table(document.getElementById('table' +
     chartNumber));
 
   table.draw(data, {showRowNumber: false, width: '100%', height: '50%'});
+
+  const data2 = new google.visualization.DataTable();
+  data2.addColumn('string', 'Target');
+  data2.addColumn('string', 'Ad Text');
+
+  if (DSACampaign.impressions == 0) {
+    data2.addColumn('string', 'Impressions');
+    data2.addColumn('string', 'Clicks');
+    data2.addColumn('string', 'Cost (USD)');
+    data2.addRow([DSACampaign.targets, DSACampaign.adText,
+        "N/A", "N/A", "N/A"]);
+  } else {
+      data2.addColumn('number', 'Impressions');
+      data2.addColumn('number', 'Clicks');
+      data2.addColumn('number', 'Cost (USD)');
+
+      data2.addRow([DSACampaign.targets, DSACampaign.adText,
+      DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
+  }
+  //data2.addRow([DSACampaign.targets, DSACampaign.adText,
+  //  DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
 
   const table2 = new google.visualization.Table(document.getElementById(
       'secondtable' + chartNumber));
@@ -212,9 +227,15 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   data3.addColumn('string', 'Status');
   data3.addColumn('string', 'SQR');
   data3.addColumn('string', 'Delete');
-
-  data3.addRow([DSACampaign.campaignStatus, '<a href=\"#SQR\" ' +
-    'style=\"text-align: center;\"> SQR </a>',
+  
+  let SQR = "";
+  if (DSACampaign.impressions == 0) {
+    SQR = "N/A";
+  } else {
+      SQR = "<a href=\"#SQR\" " +
+        "style=\"text-align: center;\"> SQR </a>";
+  }
+  data3.addRow([DSACampaign.campaignStatus, SQR,
   '<button onclick=\"deleteDSACampaign(' + DSACampaign.DSACampaignId +
   ')\" class=\"deleteCampaign\"> Delete </button>']);
 
@@ -238,4 +259,14 @@ function deleteDSACampaign(id) {
 
   currentPage = 0;
   drawDsaCampaignCharts();
+}
+
+function drawPendingBlock(chartNumber) {
+  const pendingBlockElement = document.getElementById('bar-chart' +
+    chartNumber);
+    let blockString = '';
+    blockString += '<div class=\"pendingblock\"><h3>' +
+    'Campaign is still processing </h3></div>';
+    pendingBlockElement.innerHTML = blockString;
+
 }
