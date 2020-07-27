@@ -1,10 +1,4 @@
 indexes:
-- kind: "DSACampaign"
-  properties:
-  - name: "keywordCampaignId"
-    direction: asc
-  - name: "DSACampaignId"
-    direction: asc
 - kind: "keywordCampaign"
   properties:
   - name: "userId"
