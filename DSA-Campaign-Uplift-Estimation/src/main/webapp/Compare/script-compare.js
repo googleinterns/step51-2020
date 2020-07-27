@@ -35,15 +35,19 @@ function getDSACampaigns() {
         DSACampaignsList.innerHTML = '';
 
         fetch('/DSA-campaigns?keywordCampaignId=' + keywordCampaignId).then(response => response.json()).then(DSACampaigns => {
-            // no DSA campaigns associated with the keyword campaign
-            if (DSACampaigns.length == 0) {
-                DSACampaignsList.innerHTML += '<p>No DSA campaigns associated with this keyword campaign.</p>';
-            } else {
-                DSACampaigns.forEach(DSACampaign => {
+            var count = 0;
+            DSACampaigns.forEach(DSACampaign => {
+                if (DSACampaign.campaignStatus == 'complete') {
                     DSACampaignsList.innerHTML += '<input class=\"checkbox\" type=\"checkbox\" value=' + DSACampaign.DSACampaignId + '>';
                     DSACampaignsList.innerHTML += '<label>' + DSACampaign.name + '</label>';
-                });
+                    count = count + 1;
+                }
+            });
 
+            if (count == 0) {
+                // no complete DSA campaigns associated with the keyword campaign
+                DSACampaignsList.innerHTML += '<p>No completed DSA campaigns associated with this keyword campaign.</p>';
+            } else {
                 DSACampaignsList.innerHTML += '<input id="keyword-campaign-id-form" type=\"hidden\" name=\"keywordCampaignId\" value=' + keywordCampaignId + '>';
                 DSACampaignsList.innerHTML += '<input type=\"submit\" value=\"Submit\" style=\"margin-left: 15px;\">';
             }
@@ -79,8 +83,10 @@ function drawBarGraph() {
                 data.addColumn('number', 'Cost Uplift (USD)');
 
                 DSACampaignList.forEach(DSACampaign => {
-                    data.addRow([DSACampaign.name, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), calculateUplift(DSACampaign.clicks, keywordCampaign.clicks), 
-                                calculateUplift(DSACampaign.cost, keywordCampaign.cost)]);
+                    var campaignDuration = getCampaignDuration(DSACampaign.startDate, DSACampaign.endDate);
+                    data.addRow([DSACampaign.name, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions, campaignDuration), 
+                                calculateUplift(DSACampaign.clicks, keywordCampaign.clicks, campaignDuration), 
+                                calculateUplift(DSACampaign.cost, keywordCampaign.cost, campaignDuration)]);
                 });
 
                 var options = {
@@ -104,12 +110,12 @@ function drawBarGraph() {
 function drawTable(DSACampaignList, keywordCampaign) {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'DSA Campaign');
-    data.addColumn('string', 'Campaign Status');
     data.addColumn('string', 'Start Date');
     data.addColumn('string', 'End Date');
     data.addColumn('number', 'Manual CPC');
     data.addColumn('number', 'Daily Budget');
     data.addColumn('string', 'Locations');
+    data.addColumn('string', 'Negative Locations');
     data.addColumn('string', 'Domain');
     data.addColumn('string', 'Targets');
     data.addColumn('string', 'Ad Text');
@@ -118,9 +124,12 @@ function drawTable(DSACampaignList, keywordCampaign) {
     data.addColumn('number', 'Cost Uplift (USD)');
 
     DSACampaignList.forEach(DSACampaign => {
-        data.addRow([DSACampaign.name, DSACampaign.campaignStatus, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget, 
-            DSACampaign.locations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, calculateUplift(DSACampaign.impressions, keywordCampaign.impressions), 
-            calculateUplift(DSACampaign.clicks, keywordCampaign.clicks), calculateUplift(DSACampaign.cost, keywordCampaign.cost)]);
+        var campaignDuration = getCampaignDuration(DSACampaign.startDate, DSACampaign.endDate);
+        data.addRow([DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget, 
+            DSACampaign.locations, DSACampaign.negativeLocations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, 
+            calculateUplift(DSACampaign.impressions, keywordCampaign.impressions, campaignDuration), 
+            calculateUplift(DSACampaign.clicks, keywordCampaign.clicks, campaignDuration), 
+            calculateUplift(DSACampaign.cost, keywordCampaign.cost, campaignDuration)]);
     });
 
     var table = new google.visualization.Table(document.getElementById('table'));
@@ -129,8 +138,25 @@ function drawTable(DSACampaignList, keywordCampaign) {
     console.log("Drew table.");
 }
 
-function calculateUplift(DSAStatistic, keywordCampaignStatistic) {
-    var uplift = DSAStatistic - keywordCampaignStatistic;
+function getCampaignDuration(startDate, endDate) {
+    var yearStart = parseInt(startDate.substring(0, 4));
+    var monthStart = parseInt(startDate.substring(5, 7));
+    var dayStart = parseInt(startDate.substring(8, 10));
+
+    var yearEnd = parseInt(endDate.substring(0, 4));
+    var monthEnd = parseInt(endDate.substring(5, 7));
+    var dayEnd = parseInt(endDate.substring(8, 10));
+
+    var duration = 360 * (yearEnd - yearStart) + 30 * (monthEnd - monthStart) + (dayEnd - dayStart);
+    if (duration <= 0) {
+        return 365;
+    } else {
+        return duration;
+    }
+}
+
+function calculateUplift(DSAStatistic, keywordCampaignStatistic, campaignDuration) {
+    var uplift = (DSAStatistic - keywordCampaignStatistic) * campaignDuration;
     // uplift must be non-negative
     if (uplift < 0) {
         return 0;
