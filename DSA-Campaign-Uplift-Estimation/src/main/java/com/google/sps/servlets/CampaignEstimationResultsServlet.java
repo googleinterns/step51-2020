@@ -79,7 +79,7 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
         // calculate the estimation results
         double impressionsToClicksFactor = getImpressionsToClicksFactor(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
-        int clicks = (int) Math.round(impressions * impressionsToClicksFactor);;
+        int clicks = (int) Math.round(impressions * impressionsToClicksFactor);
         double cost = clicks * ((double) DSACampaignEntity.getProperty("manualCPC"));
 
         // if exceeded the daily budget, must cap impressions, clicks, and cost
@@ -209,7 +209,7 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
 
     public static double getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {
         double adTextFactor = getAdTextFactor(DSACampaignEntity);
-        return (1 - (1 / (.80*websiteFactor + .20*adTextFactor))) / 2;
+        return 1 - (1 / (.80*websiteFactor + .20*adTextFactor));
     }
 
     public static double getAdTextFactor(Entity DSACampaignEntity) {

@@ -63,7 +63,7 @@ public class WebCrawler {
             int numPagesCrawled = recommendedLinks.size();
             double avgPageFactor = sumOfPageFactors / numPagesCrawled;
             double logBase100 = Math.log10(numPagesCrawled) / 2;
-            return (logBase100 + 1) * avgPageFactor;
+            return Math.max((logBase100 + 1) * avgPageFactor, 1.3);
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
