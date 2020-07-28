@@ -3,7 +3,7 @@ class CampaignData:
       self.owner = owner
       self.name = ''
       self.start_date = ''
-      self.end_data = ''
+      self.end_date = ''
       self.daily_budget = 0.0
       self.manual_CPC = 0.0
       self.locations = ''
