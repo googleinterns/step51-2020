@@ -294,6 +294,58 @@ def create_confirmation_message(event, phase_num, editing):
               ]
             }
 
+def start_campaign_edit(event):
+    """Formats the introduction message response
+    Args:
+      None
+    Returns:
+      dict
+        dictionary contains start campaign config message
+    """
+    
+
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header('Editing'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": "Please select the campaign you would like" +
+                                    "to edit." + campaign_list
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "QUIT",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "quit_campaign",
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+
+
 def start_user_campaign(event):
     """Formats the introduction message response
     Args:
@@ -418,42 +470,21 @@ def create_join_message(event):
     return {
               "cards": [
                 {
-                  "header": build_header('Standy'),
+                  "header": build_header('Standby'),
                   "sections": [
                     {
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "Thanks for adding the Dynamic Search Ads Configuration Bot, {}! To begin, please choose if you would like to start a new campaign or edit an existing campaign.".format(event['user']['displayName'])
+                            "text": "Thanks for adding the Dynamic Search Ads Configuration Bot, {}! To begin, please choose what you would like to do below.".format(event['user']['displayName'])
                           }
                         },
                       ]
                     },
                     {
-                      "widgets":[
+                      "widgets": [
                         {
-                          "buttons": [
-                            {
-                              "textButton": {
-                                "text": "START NEW CAMPAIGN",
-                                "onClick": {
-                                  "action": {
-                                    "actionMethodName": "start_campaign",
-                                  }
-                                }
-                              }
-                            },
-                            {
-                              "textButton": {
-                                "text": "EDIT EXISTING CAMPAIGN",
-                                "onClick": {
-                                  "action": {
-                                    "actionMethodName": "edit_campaign",
-                                  }
-                                }
-                              }
-                            }
-                          ]
+                          "buttons": add_edit_button(event['user']['email'])
                         }
                       ]
                     }
@@ -461,6 +492,36 @@ def create_join_message(event):
                 }
               ]
             }
+
+def add_edit_button(user_id):
+    button_list = []
+    button_list.append(
+      {
+        "textButton": {
+          "text": "START NEW CAMPAIGN",
+          "onClick": {
+            "action": {
+              "actionMethodName": "start_campaign",
+            }
+          }
+        }
+      }
+    )
+    if (len(get_user_campaigns(user_id)) != 0):
+      button_list.append(
+        {
+          "textButton": {
+            "text": "EDIT EXISTING CAMPAIGN",
+            "onClick": {
+              "action": {
+                "actionMethodName": "edit_campaign",
+              }
+            }
+          }
+        }
+      )
+    
+    return button_list
 
 def build_header(subtitle):
     """Create a header dictionary to be used by every message

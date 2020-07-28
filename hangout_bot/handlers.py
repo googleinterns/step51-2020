@@ -73,6 +73,7 @@ def handle_button_click(event):
         # return edit_user_campaign(event)
         # set user editing to True
         # TODO
+        
         print('editing')
     elif event_action == 'cancel_campaign':
         # TODO
@@ -112,3 +113,6 @@ def handle_button_click(event):
         
         # re-send current phase num configuration response
         return create_configure_message(user_data.phase_num)
+    elif event_action == 'submit':
+        delete_datastore_entity(obtain_user_key(event['user']['email']))
+        # TODO: post request to website

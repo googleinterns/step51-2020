@@ -128,6 +128,14 @@ def get_campaign_data(campaign_key):
 
     return convert_entity_to_campaign(datastore.Client().get(campaign_key))
 
+def get_user_campaigns(user_id):
+    query = datastore.Client().query(kind='CampaignData')
+    result = query.add_filter('owner', '=', user_id).fetch()
+    return list(result)
+
+def delete_datastore_entity(key):
+    datastore.Client().delete(key)
+
 # [Datastore and class conversion functions]
 
 def convert_entity_to_campaign(campaign_entity):
