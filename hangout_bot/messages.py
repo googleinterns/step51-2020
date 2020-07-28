@@ -212,6 +212,102 @@ def error_message(error_msg, phase_num):
               ]
             }
 
+def create_campaign_overview(campaign_data):
+
+    not_set = 'None'
+    return {
+      "cards": [
+        {
+          "header": build_header('In Progress'),
+          "sections": [
+            {
+              "widgets": [
+                {
+                  "keyValue": {
+                      "topLabel": "Campaign Name",
+                      "content": campaign_data.name if campaign_data.name != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "STAR"
+                  }
+                },
+                {
+                  "keyValue": {
+                      "topLabel": "Start Date",
+                      "content": campaign_data.start_date if campaign_data.start_date != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "CLOCK"
+                  }
+                },
+                {
+                  "keyValue": {
+                      "topLabel": "End Date",
+                      "content": campaign_data.end_date if campaign_data.end_date != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "CLOCK"
+                  }
+                },
+                {
+                  "keyValue": {
+                      "topLabel": "Daily Budget",
+                      "content": campaign_data.daily_budget if campaign_data.daily_budget != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "DOLLAR"
+                  }
+                },
+                {
+                  "keyValue": {
+                      "topLabel": "Cost per Click",
+                      "content": campaign_data.manual_CPC if campaign_data.manual_CPC != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "DOLLAR"
+                  }
+                },
+                {
+                  "keyValue": {
+                      "topLabel": "Locations",
+                      "content": campaign_data.locations if campaign_data.locations != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "MAP_PIN"
+                  }
+                },
+                {
+                  "keyValue": {
+                      "topLabel": "Negative Locations",
+                      "content": campaign_data.neg_locations if campaign_data.neg_locations != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "MAP_PIN"
+                  }
+                },
+                {
+                  "keyValue": {
+                      "topLabel": "Domain",
+                      "content": campaign_data.domain if campaign_data.domain != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "DESCRIPTION"
+                  }
+                },
+                {
+                  "keyValue": {
+                      "topLabel": "Targets",
+                      "content": campaign_data.targets if campaign_data.targets != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "DESCRIPTION"
+                  }
+                },
+                {
+                  "keyValue": {
+                      "topLabel": "Ad Text",
+                      "content": campaign_data.ad_text if campaign_data.ad_text != None else not_set,
+                      "contentMultiline": "true",
+                      "icon": "DESCRIPTION"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
 
 def create_confirmation_message(event, phase_num, editing):
     """Formats a confirmation message response for valid input
@@ -302,7 +398,12 @@ def start_campaign_edit(event):
       dict
         dictionary contains start campaign config message
     """
-    
+
+    campaign_list = ''
+    campaigns = get_user_campaigns(event['user']['email'])
+    for i in range(len(campaigns)):
+        campaign = convert_entity_to_campaign(campaigns[i])
+        campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, campaign.name)
 
     return {
               "actionResponse": {
@@ -316,8 +417,8 @@ def start_campaign_edit(event):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "Please select the campaign you would like" +
-                                    "to edit." + campaign_list
+                            "text": "Please send a number corresponding to the campaign " +
+                              "you would like to edit.<br>" + campaign_list
                           }
                         }
                       ]

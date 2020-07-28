@@ -85,6 +85,8 @@
                   </div>
                 </div>
                 <br>
+                <label for="manualCPC"><span style="color:red">&#42;</span> Max CPC: $</label>
+                <input type="number" onchange="setTwoNumberDecimal()" id="manualCPC" name="manualCPC" step=".01" placeholder="0.00" required>
                 <label for="dailyBudget"><span style="color:red">&#42;</span> Daily Budget: $</label>
                 <input type="number" onchange="setTwoNumberDecimal()" id="dailyBudget" name="dailyBudget" step=".01" placeholder="0.00" required>
                 <br>
@@ -232,8 +234,6 @@
                 <br>
                 <label for="adText"><span style="color:red">&#42;</span> Ad Text:</label>
                 <input type="text" id="adText" name="adText" placeholder="Some ad text." required>
-                <label for="manualCPC"><span style="color:red">&#42;</span> Max CPC: $</label>
-                <input type="number" onchange="setTwoNumberDecimal()" id="manualCPC" name="manualCPC" step=".01" placeholder="0.00" required>
               </div> 
 
               <!-- Preset Data -->
@@ -252,7 +252,6 @@
             <!-- Page buttons -->
             <div class="col-50" id="buttons" style="display: none;">
               <button class="btn submit-btn" style="float: left;" onclick="sendFormData();">Estimate your Campaign</button>
-              <button class="btn settings-btn" style="float: center;" type="button">Show Advanced Settings</button> 
               <button class="btn reset-btn" style="float: right;" type="button" onclick="resetCampaignForm();">Reset Form</button> 
             </div>  
           </form>

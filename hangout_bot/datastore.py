@@ -130,7 +130,8 @@ def get_campaign_data(campaign_key):
 
 def get_user_campaigns(user_id):
     query = datastore.Client().query(kind='CampaignData')
-    result = query.add_filter('owner', '=', user_id).fetch()
+    query.add_filter('owner', '=', user_id)
+    result = query.fetch()
     return list(result)
 
 def delete_datastore_entity(key):
@@ -166,6 +167,7 @@ def convert_entity_to_campaign(campaign_entity):
     dsa_campaign.set_domain(campaign_entity['domain'])
     dsa_campaign.set_targets(campaign_entity['targets'])
     dsa_campaign.set_ad_text(campaign_entity['ad_text'])
+    dsa_campaign.set_phase_num(campaign_entity['phase_num'])
 
     return dsa_campaign
 
@@ -197,6 +199,7 @@ def convert_campaign_to_entity(campaign):
     entity['domain'] = campaign.domain
     entity['targets'] = campaign.targets
     entity['ad_text'] = campaign.ad_text
+    entity['phase_num'] = campaign.phase_num
 
     # Returns the created entity
     return entity
@@ -213,9 +216,9 @@ def convert_entity_to_user(user_entity):
         parsed UserData object from entity
     """    
 
-    if entity == None: 
+    if user_entity == None: 
         return None
-    user_data = ActiveUser(entity['user'])
+    user_data = ActiveUser(user_entity['user'])
     
     user_data.set_accepting_text(user_entity['accepting_text'])
     user_data.set_campaign_name(user_entity['campaign_name'])

@@ -33,7 +33,25 @@ def handle_message(event):
     """
 
     user_data = get_user_data(get_user_key(event['user']['email']))
-    print(user_data.accepting_text)
+
+    if (user_data.editing == True and user_data.phase_num == -1):
+        user_campaigns = get_user_campaigns(event['user']['email'])
+        message = event['message']['text']
+        print('Message: ' + message)
+        print('name: ' + user_data.user_id)
+        print('phase_Num: {}'.format(user_data.phase_num))
+        if (not message.isnumeric()):
+            return error_message('Selection is not a valid number! Please input a number indicating what campaign you would like to edit.', INVALID_INPUT)
+        elif (int(message) < 1 or int(message) > len(user_campaigns)):
+            return error_message('Selection is out of bounds!', INVALID_INPUT)
+        else:
+            print('return')
+            user_data.set_accepting_text(False)
+            update_user(user_data)
+            campaign = convert_entity_to_campaign(user_campaigns[int(message) - 1])
+            return create_campaign_overview(campaign)
+        # TODO specific edit being made
+
     if user_data.accepting_text != True:
         return error_message('Unexpected input, please respond according to the prompts!', INVALID_INPUT)
 
@@ -68,13 +86,15 @@ def handle_button_click(event):
         user_data.increment_phase_num()
         user_data.set_accepting_text(True)
         update_user(user_data)
-        return start_user_campaign()
+        return start_user_campaign(event)
     if event_action == 'edit_campaign':
-        # return edit_user_campaign(event)
         # set user editing to True
-        # TODO
-        
-        print('editing')
+        user_data.set_editing(True)
+
+        # allow text input
+        user_data.set_accepting_text(True)
+        update_user(user_data)
+        return start_campaign_edit(event)
     elif event_action == 'cancel_campaign':
         # TODO
         print('cancelling')
@@ -98,6 +118,8 @@ def handle_button_click(event):
           user_campaign_data = update_campaign_data(user_campaign_data,
                                                     user_data.phase_num,
                                                     user_value)
+          user_campaign_data.increment_phase_num()
+
           add_campaign_data(user_campaign_data)
 
         # current phase complete, append user phase number
@@ -116,3 +138,8 @@ def handle_button_click(event):
     elif event_action == 'submit':
         delete_datastore_entity(obtain_user_key(event['user']['email']))
         # TODO: post request to website
+    elif event_action == 'confirm_edit':
+        user_data.campaign_name = event['action']['parameters'][0].value
+        user_data.phase_num = campaign.phase_num
+        update_user(user_data)
+        return create_configure_message(user_data.phase_num)
