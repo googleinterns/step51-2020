@@ -129,35 +129,35 @@ label {
 }
 
 .submit-btn {
-  background-color: #4CAF50;
+  background-color: rgb(192, 192, 192);
 }
 
 .settings-btn {
-  background-color: rgb(230, 125, 40);
+  background-color: rgb(192, 192, 192);
 }
 
 .reset-btn {
-  background-color: rgb(235, 87, 76);
+  background-color: rgb(192, 192, 192);
 }
 
 .preset-btn {
-  background-color: rgb(172, 171, 171);
+  background-color: rgb(192, 192, 192);
 }
 
 .reset-btn:hover {
-  background-color: rgb(185, 63, 54);
+  background-color: rgb(119, 118, 118);
 }
 
 .submit-btn:hover {
-  background-color: #45a049;
+  background-color: rgb(119, 118, 118);
 }
 
 .settings-btn:hover {
-  background-color: rgb(185, 105, 39);
+  background-color: rgb(119, 118, 118);
 }
 
 .preset-btn:hover {
-  background-color: rgb(136, 135, 135);
+  background-color: rgb(119, 118, 118);
 }
 
 a {
