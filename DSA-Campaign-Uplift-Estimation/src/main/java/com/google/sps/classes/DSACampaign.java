@@ -69,8 +69,10 @@ public class DSACampaign {
     public int clicks;
     // total money spent on the campaign on average in a single day
     public double cost;
+    // contains the likely queries that would be made for a website and the associated urls
+    public String[][] SQR;
 
-    public DSACampaign(String DSACampaignId, String userId, String keywordCampaignId, String name, String campaignStatus, String startDate, String endDate, double manualCPC, double dailyBudget, String locations, String negativeLocations, String domain, String targets, String adText, int impressions, int clicks, double cost) {
+    public DSACampaign(String DSACampaignId, String userId, String keywordCampaignId, String name, String campaignStatus, String startDate, String endDate, double manualCPC, double dailyBudget, String locations, String negativeLocations, String domain, String targets, String adText, int impressions, int clicks, double cost, String[][] SQR) {
         this.DSACampaignId = DSACampaignId;
         this.userId = userId;
         this.keywordCampaignId = keywordCampaignId;
@@ -90,5 +92,6 @@ public class DSACampaign {
         this.impressions = impressions;
         this.clicks = clicks;
         this.cost = cost;
+        this.SQR = SQR;
     }
 }

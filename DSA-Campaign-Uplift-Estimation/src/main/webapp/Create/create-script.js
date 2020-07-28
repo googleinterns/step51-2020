@@ -42,9 +42,6 @@ const NEG_LOCATION_SECTION_ID = 'negativeLocations';
 const LOCATION_ID = 'location';
 const NEG_LOCATION_ID = 'nlocation';
 
-const COUNTRY_ID = 'country';
-const NEG_COUNTRY_ID = 'ncountry';
-
 const REGION_ID = 'gds-cr-';
 const NEG_REGION_ID = 'gds-ncr-';
 
@@ -227,9 +224,7 @@ function getPresetData(indexSelection) {
       negLocationExists = true;
       console.log(presetSelection[key].split(','));
       fillOutLocations(presetSelection[key].split(','), true);
-    } else if ((key != 'DSACampaignId') && (key != 'keywordCampaignId') &&
-        (key != 'userId') && (key != 'cost') && (key != 'impressions') &&
-        (key != 'clicks') && (key != 'campaignStatus')) {
+    } else if (document.getElementById(key) != null) {
       document.getElementById(key).value = presetSelection[key];
     }
   }
@@ -295,6 +290,9 @@ function fillOutLocations(locationsArray, isNegativeLocation) {
     locationIndex++) {
     const regionId = isNegativeLocation ? NEG_REGION_ID + (locationIndex + 1) :
                                           REGION_ID + (locationIndex + 1);
+    if (locationsArray[locationIndex] == '') {
+      continue;
+    }
     let currElement = null;
     if (document.getElementById(regionId) != null) {
       currElement = document.getElementById(regionId);
@@ -363,8 +361,6 @@ function sendFormData() {
     alert('Login before submitting!');
     return;
   }
-  keyvalPairs.push(encodeURIComponent('userId') + '=' +
-                   encodeURIComponent(userId));
 
   // verify that keywordCampaignId is set.
   if (keywordCampaignId == null) {
@@ -372,26 +368,6 @@ function sendFormData() {
     return;
   }
 
-  /*
-   * default values for variables (not applicable to creation phase)
-   * sent to servlet
-   */
-  keyvalPairs.push(encodeURIComponent('DSACampaignId') + '=' +
-                   encodeURIComponent('0'));
-  keyvalPairs.push(encodeURIComponent('campaignStatus') + '=' +
-                   encodeURIComponent('pending'));
-
-  // temporary random generation for data
-  const impressions = Math.round(1000 + Math.random() * 1000);
-  const clicks = Math.round(250 + Math.random() * 250);
-  const cost = Math.round(100 + Math.random() * 100);
-
-  keyvalPairs.push(encodeURIComponent('clicks') + '=' +
-                   encodeURIComponent(clicks));
-  keyvalPairs.push(encodeURIComponent('cost') + '=' +
-                   encodeURIComponent(cost.toFixed(2)));
-  keyvalPairs.push(encodeURIComponent('impressions') + '=' +
-                   encodeURIComponent(impressions));
   keyvalPairs = addFormElements(keyvalPairs);
   if (keyvalPairs == null) {
     return;
@@ -423,6 +399,8 @@ function addFormElements(keyvalPairs) {
   const form = document.getElementById('campaign-form');
   let locationString = '';
   let negLocationString = '';
+  let specific_region = true;
+
   for (let i = 0; i < form.elements.length; i++) {
     /*
      * Form contains buttons that are irrelevant to input - need to filter out
@@ -455,17 +433,22 @@ function addFormElements(keyvalPairs) {
 
     // push parameter name and value to keyvalPairs.
     const formRegion = 'region';
-    const formCountry = 'country';
-    if (!form.elements[i].name.includes(formRegion) &&
-        !(form.elements[i].name.includes(formCountry))) {
+    if (!form.elements[i].name.includes(formRegion)) {
+      let value = form.elements[i].value == null ? '' : form.elements[i].value
       keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' +
-                       encodeURIComponent(form.elements[i].value));
-    } else if (form.elements[i].name.includes('n' + formRegion)) {
-      negLocationString = negLocationString == '' ? form.elements[i].value :
-                          negLocationString + ',' + form.elements[i].value;
-    } else if (form.elements[i].name.includes(formRegion)) {
-      locationString = locationString == '' ? form.elements[i].value :
-                       locationString + ',' + form.elements[i].value;
+                       encodeURIComponent(value));
+    } else if (form.elements[i].name.includes(formRegion) && specific_region) {
+      if (form.elements[i].value == 'USA') {
+        specific_region = false;
+        locationString = 'USA'
+        continue;
+      }
+      locationString = locationString == '' ? form.elements[i].value + ', USA':
+                       locationString + ',' + form.elements[i].value + ', USA';
+    } else if (!specific_region && form.elements[i].name.includes('n' + formRegion)) {
+      console.log(negLocationString)
+      negLocationString = negLocationString == '' ? form.elements[i].value + ', USA' :
+                          negLocationString + ',' + form.elements[i].value + ', USA';
     }
   }
 
@@ -505,7 +488,6 @@ function keywordSelection() {
  */
 function addRegion(negativeRegion, submission) {
   const regionId = negativeRegion ? NEG_REGION_ID : REGION_ID;
-  const countryId = negativeRegion ? NEG_COUNTRY_ID : COUNTRY_ID;
   const locationId = negativeRegion ? NEG_LOCATION_SECTION_ID :
       LOCATION_SECTION_ID;
   let locationCounter = negativeRegion ? negLocationCount : locationCount;
@@ -556,11 +538,9 @@ function addRegion(negativeRegion, submission) {
   const first_element_idx = 1;
   const regionSelect = document.getElementById(
       regionId + first_element_idx).cloneNode(true);
-  regionSelect.id = regionId + locationCounter;
+  regionSelect.name = regionId + locationCounter;
 
-  const countrySelect = document.getElementById(
-      countryId + first_element_idx).cloneNode(true);
-  countrySelect.id = countryId + locationCounter;
+  regionSelect.setAttribute('onchange', 'regionSelection()');
 
   const locations = document.getElementById(locationId);
 
@@ -582,11 +562,6 @@ function addRegion(negativeRegion, submission) {
                            `Negative Country ${locationCounter}` :
                            `Country ${locationCounter}`;
 
-  locationDiv.appendChild(countryLabel);
-  locationDiv.appendChild(countrySelect);
-  locationDiv.appendChild(document.createElement('br'));
-
-
   const regionLabel = document.createElement('label');
   regionLabel.className = 'control-label';
   regionLabel.innerText = negativeRegion ?
@@ -598,7 +573,9 @@ function addRegion(negativeRegion, submission) {
   locationDiv.appendChild(regionSelect);
   locationDiv.appendChild(document.createElement('br'));
 
-  locations.appendChild(locationDiv);
+  location_section = negativeRegion ? 'new_neg_locations' : 'new_locations';
+  location_section = document.getElementById(location_section)
+  location_section.appendChild(locationDiv);
 }
 
 /**
@@ -649,4 +626,17 @@ function resetCampaignForm() {
     locationCount = 1;
     negLocationCount = 1;
   }
+}
+
+function regionSelection() {
+    for (let i = 1; i <= locationCount; i++) {
+      // USA index = 1
+      if (document.getElementById(`gds-cr-${i}`).selectedIndex != 1) {
+        document.getElementById('negativeLocations').style.display = 'none'
+        document.getElementById('add_region').style.display = 'inline-block'
+      } else {
+        document.getElementById('negativeLocations').style.display = 'block'
+        document.getElementById('add_region').style.display = 'none'
+      }
+    }
 }
