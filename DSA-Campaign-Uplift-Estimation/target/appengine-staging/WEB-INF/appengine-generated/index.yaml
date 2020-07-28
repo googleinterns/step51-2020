@@ -1,10 +1,4 @@
 indexes:
-- kind: "keywordCampaign"
-  properties:
-  - name: "userId"
-    direction: asc
-  - name: "keywordCampaignId"
-    direction: asc
 - kind: "PresetData"
   properties:
   - name: "userId"

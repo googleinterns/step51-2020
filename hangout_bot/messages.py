@@ -196,12 +196,7 @@ def error_message(error_msg, phase_num):
     return {
               "cards": [
                 {
-                  "header": {
-                    "title": "Dynamic Search Ads Configuration Bot",
-                    "subtitle": "Alert",
-                    "imageStyle": "AVATAR",
-                    "imageUrl": "https://9to5google.com/2018/05/05/exclusive-new-google-app-icons-i-o-2018-gallery/ads_512dp/"
-                  },
+                  "header": build_header('Alert'),
                   "sections": [
                     {
                       "widgets": [
@@ -235,12 +230,7 @@ def create_confirmation_message(event, phase_num, editing):
     return {
               "cards": [
                 {
-                  "header": {
-                    "title": "Dynamic Search Ads Configuration Bot",
-                    "subtitle": "Editing",
-                    "imageStyle": "AVATAR",
-                    "imageUrl": "https://9to5google.com/2018/05/05/exclusive-new-google-app-icons-i-o-2018-gallery/ads_512dp/"
-                  },
+                  "header": build_header('Editing'),
                   "sections": [
                     {
                       "widgets": [
@@ -252,7 +242,7 @@ def create_confirmation_message(event, phase_num, editing):
                       ]
                     },
                     {
-                      "widgets":[
+                      "widgets": [
                         {
                           "buttons": [
                             {
@@ -312,18 +302,14 @@ def start_user_campaign(event):
       dict
         dictionary contains start campaign config message
     """
+
     return {
               "actionResponse": {
                 "type": "UPDATE_MESSAGE"
               },
               "cards": [
                 {
-                  "header": {
-                    "title": "Dynamic Search Ads Configuration Bot",
-                    "subtitle": "Editing",
-                    "imageStyle": "AVATAR",
-                    "imageUrl": "https://9to5google.com/2018/05/05/exclusive-new-google-app-icons-i-o-2018-gallery/ads_512dp/"
-                  },
+                  "header": build_header('Editing'),
                   "sections": [
                     {
                       "widgets": [
@@ -387,12 +373,7 @@ def create_configure_message(phase_num):
               },
               "cards": [
                 {
-                  "header": {
-                    "title": "Dynamic Search Ads Configuration Bot",
-                    "subtitle": "Editing",
-                    "imageStyle": "AVATAR",
-                    "imageUrl": "https://9to5google.com/2018/05/05/exclusive-new-google-app-icons-i-o-2018-gallery/ads_512dp/"
-                  },
+                  "header": build_header('Editing'),
                   "sections": [
                     {
                       "widgets": [
@@ -430,16 +411,14 @@ def create_join_message(event):
     """Create a join message with content based on event data
     Args:
       event: A dictionary with the event data.
+    Returns:
+      dict
+        dictionary containing join response message
     """
     return {
               "cards": [
                 {
-                  "header": {
-                    "title": "Dynamic Search Ads Configuration Bot",
-                    "subtitle": "Standby",
-                    "imageStyle": "AVATAR",
-                    "imageUrl": "https://9to5google.com/2018/05/05/exclusive-new-google-app-icons-i-o-2018-gallery/ads_512dp/"
-                  },
+                  "header": build_header('Standy'),
                   "sections": [
                     {
                       "widgets": [
@@ -482,3 +461,21 @@ def create_join_message(event):
                 }
               ]
             }
+
+def build_header(subtitle):
+    """Create a header dictionary to be used by every message
+    Args:
+      subtitle: User defined subtitle appearing on the messages
+    Returns:
+      dict
+        dictionary containing the header information for a message
+    """
+
+    header_dict = {
+      'title': 'Dynamic Search Ads Configuration Bot'
+      'subtitle': subtitle
+      'imageStyle': "AVATAR",
+      'imageUrl': "https://9to5google.com/2018/05/05/exclusive-new-google-app-icons-i-o-2018-gallery/ads_512dp/"
+    }
+
+    return header_dict
