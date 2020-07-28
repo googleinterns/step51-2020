@@ -124,7 +124,6 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
         statePopulations.put("california", 39512223);
         statePopulations.put("colorado", 5758736);
         statePopulations.put("connecticut", 3565287);
-        statePopulations.put("ct", 3565287);
         statePopulations.put("delaware", 973764);
         statePopulations.put("florida", 21477737);
         statePopulations.put("georgia", 10617423);
@@ -132,7 +131,6 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
         statePopulations.put("idaho", 1787065);
         statePopulations.put("illinois", 12671821);
         statePopulations.put("indiana", 6732219);
-        statePopulations.put("in", 6732219);
         statePopulations.put("iowa", 3155070);
         statePopulations.put("kansas", 2913314);
         statePopulations.put("kentucky", 4467673);
