@@ -42,8 +42,11 @@ const NEG_LOCATION_SECTION_ID = 'negativeLocations';
 const LOCATION_ID = 'location';
 const NEG_LOCATION_ID = 'nlocation';
 
-const REGION_ID = 'gds-cr-';
-const NEG_REGION_ID = 'gds-ncr-';
+const REGION_NAME = 'region';
+const NEG_REGION_NAME = 'nregion';
+
+const REGION_ID = 'gds-cr-'
+const NEG_REGION_ID = 'gds-ncr-'
 
 /**
  * Submission form only requires 2 decimals, this function enforces that rule
@@ -219,11 +222,23 @@ function getPresetData(indexSelection) {
   let negLocationExists = false;
   for (const key in presetSelection) {
     if (key == LOCATION_SECTION_ID) {
-      fillOutLocations(presetSelection[key].split(','), false);
+      let locationsArray = presetSelection[key].split(',');
+      locationsArray = locationsArray.filter(function(value) {
+        if (value.trim() != 'USA' && value.trim() != '') {
+          return value.trim();
+        }
+      });
+      fillOutLocations(locationsArray, false);
     } else if (key == NEG_LOCATION_SECTION_ID) {
       negLocationExists = true;
       console.log(presetSelection[key].split(','));
-      fillOutLocations(presetSelection[key].split(','), true);
+      let locationsArray = presetSelection[key].split(',');
+      locationsArray = locationsArray.filter(function(value) {
+        if (value.trim() != 'USA' && value.trim() != '') {
+          return value.trim();
+        }
+      });
+      fillOutLocations(locationsArray, true);
     } else if (document.getElementById(key) != null) {
       document.getElementById(key).value = presetSelection[key];
     }
@@ -285,14 +300,11 @@ function deleteCurrentAppliedPreset() {
                              negative locations
  */
 function fillOutLocations(locationsArray, isNegativeLocation) {
-  console.log(locationsArray);
   for (let locationIndex = 0; locationIndex < locationsArray.length;
     locationIndex++) {
+    locationsArray[locationIndex] = locationsArray[locationIndex].trim();
     const regionId = isNegativeLocation ? NEG_REGION_ID + (locationIndex + 1) :
                                           REGION_ID + (locationIndex + 1);
-    if (locationsArray[locationIndex] == '') {
-      continue;
-    }
     let currElement = null;
     if (document.getElementById(regionId) != null) {
       currElement = document.getElementById(regionId);
@@ -409,7 +421,7 @@ function addFormElements(keyvalPairs) {
     if (form.elements[i].nodeName === 'BUTTON') {
       continue;
     }
-
+    console.log(form.elements[i].nodeName)
     // stop submission process if parameter is required and incorrect.
     if ((form.elements[i].required) && ((form.elements[i].value === null) ||
         (form.elements[i].value === ''))) {
@@ -432,11 +444,15 @@ function addFormElements(keyvalPairs) {
     }
 
     // push parameter name and value to keyvalPairs.
-    const formRegion = 'region';
+    const formRegion = REGION_NAME;
     if (!form.elements[i].name.includes(formRegion)) {
       let value = form.elements[i].value == null ? '' : form.elements[i].value
       keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' +
                        encodeURIComponent(value));
+    } else if (form.elements[i].name.includes('n' + formRegion)) {
+      console.log(negLocationString)
+      negLocationString = negLocationString == '' ? form.elements[i].value + ', USA' :
+                          negLocationString + ', ' + form.elements[i].value + ', USA';
     } else if (form.elements[i].name.includes(formRegion) && specific_region) {
       if (form.elements[i].value == 'USA') {
         specific_region = false;
@@ -445,18 +461,13 @@ function addFormElements(keyvalPairs) {
       }
       locationString = locationString == '' ? form.elements[i].value + ', USA':
                        locationString + ',' + form.elements[i].value + ', USA';
-    } else if (!specific_region && form.elements[i].name.includes('n' + formRegion)) {
-      console.log(negLocationString)
-      negLocationString = negLocationString == '' ? form.elements[i].value + ', USA' :
-                          negLocationString + ',' + form.elements[i].value + ', USA';
     }
   }
-
-  keyvalPairs.push(encodeURIComponent(NEG_LOCATION_SECTION_ID) + '=' +
-                   encodeURIComponent(negLocationString));
+  console.log(negLocationString)
   keyvalPairs.push(encodeURIComponent(LOCATION_SECTION_ID) + '=' +
                    encodeURIComponent(locationString));
-
+  keyvalPairs.push(encodeURIComponent(NEG_LOCATION_SECTION_ID) + '=' +
+                   encodeURIComponent(negLocationString));
   return keyvalPairs;
 }
 
@@ -538,7 +549,7 @@ function addRegion(negativeRegion, submission) {
   const first_element_idx = 1;
   const regionSelect = document.getElementById(
       regionId + first_element_idx).cloneNode(true);
-  regionSelect.name = regionId + locationCounter;
+  regionSelect.id = regionId + locationCounter;
 
   regionSelect.setAttribute('onchange', 'regionSelection()');
 

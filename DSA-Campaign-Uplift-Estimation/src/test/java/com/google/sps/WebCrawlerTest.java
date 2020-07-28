@@ -36,64 +36,6 @@ import java.util.HashSet;
 public final class WebCrawlerTest {
 
     @Test
-    public void WebCrawlerGetRecommendedLinks() throws IOException {
-        // crawl the home page of the deployed website
-        HashSet<String> recommendedLinks = WebCrawler.getRecommendedLinks("http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html");
-
-        // these are links on the home page
-        HashSet<String> expectedRecommendedLinks = new HashSet<String>();
-        expectedRecommendedLinks.add("http://dsa-uplift-estimation-2020.uc.r.appspot.com/Compare/compare.html");
-        expectedRecommendedLinks.add("http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html");
-        expectedRecommendedLinks.add("http://dsa-uplift-estimation-2020.uc.r.appspot.com/Create/create.html");
-        expectedRecommendedLinks.add("http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html#");
-
-        assertEquals(expectedRecommendedLinks, recommendedLinks);
-    }
-
-    @Test
-    public void WebCrawlerGetKeywordsFromURLAndTitle() throws IOException {
-        // obtain the significant keywords of the url and title of the GitHub repo
-        String url = "http://dsa-uplift-estimation-2020.uc.r.appspot.com";
-        Document document = Jsoup.connect(url).get();
-        HashSet<String> keywords = WebCrawler.getKeywordsFromURLAndTitle(url, document);
-
-        // these are links on the home page
-        HashSet<String> expectedKeywords = new HashSet<String>();
-        expectedKeywords.add("login");
-        expectedKeywords.add("dsa");
-        expectedKeywords.add("uplift");
-        expectedKeywords.add("estimation");
-        expectedKeywords.add("2020");
-        expectedKeywords.add("uc");
-        expectedKeywords.add("appspot");
-
-        assertEquals(expectedKeywords, keywords);
-    }
-
-    @Test
-    public void WebCrawlerGetKeywordsFromDescriptionAndHeaders() throws IOException {
-        // obtain the significant keywords of the url and title of the GitHub repo
-        String url = "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Create/create.html";
-        Document document = Jsoup.connect(url).get();
-        HashSet<String> keywords = WebCrawler.getKeywordsFromDescriptionAndHeaders(document);
-
-        // these are links on the home page
-        HashSet<String> expectedKeywords = new HashSet<String>();
-        expectedKeywords.add("dsa");
-        expectedKeywords.add("campaign");
-        expectedKeywords.add("configuration");
-        expectedKeywords.add("select");
-        expectedKeywords.add("keyword");
-        expectedKeywords.add("campaign");
-        expectedKeywords.add("negative");
-        expectedKeywords.add("location");
-        expectedKeywords.add("available");
-        expectedKeywords.add("presets");
-
-        assertEquals(expectedKeywords, keywords);
-    }
-
-    @Test
     public void WebCrawlerResembles() throws IOException {
         // true cases
 
