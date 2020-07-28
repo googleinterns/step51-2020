@@ -472,7 +472,7 @@ def build_header(subtitle):
     """
 
     header_dict = {
-      'title': 'Dynamic Search Ads Configuration Bot'
+      'title': 'Dynamic Search Ads Configuration Bot',
       'subtitle': subtitle,
       'imageStyle': "AVATAR",
       'imageUrl': "https://9to5google.com/2018/05/05/exclusive-new-google-app-icons-i-o-2018-gallery/ads_512dp/"
