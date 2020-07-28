@@ -49,6 +49,22 @@ const REGION_ID = 'gds-cr-'
 const NEG_REGION_ID = 'gds-ncr-'
 
 /**
+ * sets the default values for the endDate and startDate
+ * elements in the create page.
+ */
+function setDate() {
+  let today = new Date();
+  let startYear = today.getFullYear();
+  let endYear = today.getFullYear() + 1;
+  let day = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
+  let dateString  = '-' + day + '-' + today.getDate();
+  document.getElementById('startDate').value = startYear + dateString
+  document.getElementById('endDate').value = endYear + dateString
+  console.log(startYear + dateString)
+  console.log(endYear + dateString)
+}
+
+/**
  * Submission form only requires 2 decimals, this function enforces that rule
  */
 function setTwoNumberDecimal() {
@@ -224,7 +240,7 @@ function getPresetData(indexSelection) {
     if (key == LOCATION_SECTION_ID) {
       let locationsArray = presetSelection[key].split(',');
       locationsArray = locationsArray.filter(function(value) {
-        if (value.trim() != 'USA' && value.trim() != '') {
+        if (value.trim() != '') {
           return value.trim();
         }
       });
