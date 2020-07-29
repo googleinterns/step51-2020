@@ -50,3 +50,7 @@ div.bar-chart {
     margin-right: auto;
     width: 75%;
 }
+
+label {
+    padding-right: 15px;
+}
