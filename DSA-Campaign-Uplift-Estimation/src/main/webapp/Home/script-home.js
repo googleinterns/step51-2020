@@ -196,92 +196,53 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
 // This function makes three tables for the barchart that was made before this
 // function was called. The first table correlates with data and the second
 // table correlates with data2. At the end of the function a delete button is
-// also created to acommpany the tables.
+// also created to accompany the tables.
 function drawDSACampaignTable(DSACampaign, chartNumber) {
-  // The start of the creation of the first table which includes the name,
-  // start date, end date, manual cost per click, and daily budget.
-  const data = new google.visualization.DataTable();
+    var table = document.getElementById('table' + chartNumber);
 
-  data.addColumn('string', 'DSA Campaign');
-  data.addColumn('string', 'Start Date');
-  data.addColumn('string', 'End Date');
-  data.addColumn('number', 'Manual CPC');
-  data.addColumn('number', 'Daily Budget');
+    // create the table
+    var settingsTable = document.createElement("TABLE"); 
+    settingsTable.style.fontSize = "small";
 
-  data.addRow([DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate,
-    DSACampaign.manualCPC, DSACampaign.dailyBudget]);
+    // create the row of headers
+    var headers = ["DSA Campaign", "Start Date", "End Date", "Manual CPC", "Daily Budget", "Locations", "Negative Locations", "Domain", "Targets",
+                    "Ad Text", "Impressions", "Clicks", "Cost (USD)"];
+    createRow(settingsTable, "TH", headers);
 
-  const table = new google.visualization.Table(document.getElementById('table' +
-    chartNumber));
+    var negLocations = DSACampaign.negativeLocations;
+    if (negLocations == '') {
+        negLocations = 'n/a';
+    }
 
-  table.draw(data, {showRowNumber: false, width: '100%', height: '50%'});
-  // End of the process of first table creation.
+    var rowElements = [DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget,
+                            DSACampaign.locations, negLocations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, 
+                            DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost];
+    createRow(settingsTable, "TD", rowElements);
 
-  // The start of the creation of the second table which includes the targets,
-  // domains, impressions, clicks, cost, and daily budget.
-  const data2 = new google.visualization.DataTable();
-  data2.addColumn('string', 'Targets');
-  data2.addColumn('string', 'Domain');
+    settingsTable.style.width = "75%";
+    table.appendChild(settingsTable);  
 
-  // If the DSA campaign is still running then  impressions, clicks, and
-  // cost must be N/A.
-  if (DSACampaign.campaignStatus == 'pending') {
-    data2.addColumn('string', 'Impressions');
-    data2.addColumn('string', 'Clicks');
-    data2.addColumn('string', 'Cost (USD)');
-    data2.addRow([DSACampaign.targets, DSACampaign.domain,
-      'N/A', 'N/A', 'N/A']);
-  } else {
-    data2.addColumn('number', 'Impressions');
-    data2.addColumn('number', 'Clicks');
-    data2.addColumn('number', 'Cost (USD)');
+    // This marks the beginning of the delte button process. We define the html
+    // of the deletebutton id and link it to the deleteDSACampaign function when
+    // clicked.
+    const deleteElement = document.getElementById('deletebutton' +
+        chartNumber);
+    let deleteString = '';
+    deleteString += '<button onclick=\"deleteDSACampaign(' +
+        DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
+    deleteElement.innerHTML = deleteString;
+}
 
-    data2.addRow([DSACampaign.targets, DSACampaign.domain,
-      DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
-  }
+function createRow(container, elementType, textArr) {
+    var row = document.createElement("TR");
 
-  const table2 = new google.visualization.Table(document.getElementById(
-      'secondtable' + chartNumber));
+    textArr.forEach(text => {
+        var header = document.createElement(elementType);
+        header.appendChild(document.createTextNode(text));
+        row.appendChild(header);
+    });
 
-  table2.draw(data2, {showRowNumber: false, width: '100%', height: '100%'});
-  // End of the process of second table creation.
-
-  // The start of the creation of the second table which includes the location,
-  // negative locations, ad text, and campaigns status.
-  const data3 = new google.visualization.DataTable();
-
-  data3.addColumn('string', 'Locations');
-  data3.addColumn('string', 'Negative Locations');
-  data3.addColumn('string', 'Ad Text');
-  data3.addColumn('string', 'Status');
-
-  // If the negative location data has ", USA" then there was no negative
-  // location set and should be explained in the table chart.
-  let negativeLocations = '';
-  if (DSACampaign.negativeLocations == '' ) {
-    negativeLocations = 'No negative locations.';
-  } else {
-    negativeLocations = DSACampaign.negativeLocations;
-  }
-
-  data3.addRow([DSACampaign.locations, negativeLocations,
-    DSACampaign.adText, DSACampaign.campaignStatus]);
-
-  const table3 = new google.visualization.Table(document.getElementById(
-      'thirdtable' + chartNumber));
-  table3.draw(data3, {allowHtml: true, showRowNumber: false, width: '100%',
-    height: '50%'});
-  // End of the process of third table creation.
-
-  // This marks the beginning of the delte button process. We define the html
-  // of the deletebutton id and link it to the deleteDSACampaign function when
-  // clicked.
-  const deleteElement = document.getElementById('deletebutton' +
-    chartNumber);
-  let deleteString = '';
-  deleteString += '<button onclick=\"deleteDSACampaign(' +
-    DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
-  deleteElement.innerHTML = deleteString;
+    container.appendChild(row);
 }
 
 // Sends the id from related DSA campaigns to the DSACampaign servlet where
