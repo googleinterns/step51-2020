@@ -91,12 +91,12 @@ div.table {
     color: white;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     margin-left: auto;
     margin-right: auto;
     padding: 5px 13px;
     border-radius: 4px;
     cursor: pointer;
+    float: right;
 }
 
 .pendingblock{

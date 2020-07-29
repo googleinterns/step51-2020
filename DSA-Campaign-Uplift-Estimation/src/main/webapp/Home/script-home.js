@@ -48,6 +48,8 @@ function drawDsaCampaignCharts() {
   const dsaCampaignsList = document.getElementById('DSA-campaigns');
   dsaCampaignsList.innerHTML = '<p>First select a keyword campaign.</p>';
   const keywordCampaignId = document.getElementById('keyword-campaigns').value;
+  const firstBarChart = document.getElementById('Chart1');
+  const secondBarChart = document.getElementById('Chart2');
 
   if (keywordCampaignId != 0) {
     dsaCampaignsList.innerHTML = '';
@@ -66,11 +68,19 @@ function drawDsaCampaignCharts() {
       // two charts have been processed.
       let chartCounter = 1;
 
+      
+
+      // If the list of DSA campaigns are empty than display there are no
+      // DSA campaigns and hide any previously showing charts and tables.
       if (DSACampaigns.length == 0) {
         dsaCampaignsList.innerHTML = '<p>There are no DSA campaigns. ' +
           'Please create one.</p>';
         dsaCampaignsList.innerHTML += '<a href=\"../Create/create.html\" ' +
           'style=\"text-decoration: none;\">Here</a>';
+
+        firstBarChart.style.visibility = 'hidden';
+        secondBarChart.style.visibility = 'hidden';
+
       } else {
         while (chartCounter <= numChartsPerPage) {
           if (DSACampaigns[chartsToShow].campaignStatus != "pending") {
@@ -88,13 +98,21 @@ function drawDsaCampaignCharts() {
           (DSACampaigns.length % numChartsPerPage), (currentPage));
       }
     });
+  } else {
+      firstBarChart.style.visibility = 'hidden';
+      secondBarChart.style.visibility = 'hidden';
   }
 }
 
 // Hides the second chart if the last pair of charts only contains one
 // chart left to display.
 function hideDiv(isNumberOfChartsOdd, numberOfCharts, currentChart) {
+  const firstBarChart = document.getElementById('Chart1');
   const secondBarChart = document.getElementById('Chart2');
+
+  if ( numberOfCharts != 0 ) { 
+    firstBarChart.style.visibility = 'visible';  
+  } 
 
   if (isNumberOfChartsOdd == 1 && currentChart == numberOfCharts - 1 ||
     numberOfCharts == 0) {
@@ -152,6 +170,8 @@ function previousPage() {
   activePage.innerText = decreasePage;
 }
 
+// This function draws the bar graph that displays the name, impressions,
+// clicks, and cost. 
 function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
   const data = new google.visualization.DataTable();
   data.addColumn('string', 'DSA Campaign');
@@ -176,7 +196,14 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
   console.log('Drew bar graph.');
 }
 
+// This function makes three tables for the barchart that was made before this
+// function was called. The first table correlates with data and the second
+// table correlates with data2. At the end of the function a delete button is
+// also created to acommpany the tables.
 function drawDSACampaignTable(DSACampaign, chartNumber) {
+
+  // The start of the creation of the first table which includes the name,
+  // start date, end date, manual cost per click, and daily budget.
   const data = new google.visualization.DataTable();
   
   data.addColumn('string', 'DSA Campaign');
@@ -184,67 +211,85 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   data.addColumn('string', 'End Date');
   data.addColumn('number', 'Manual CPC');
   data.addColumn('number', 'Daily Budget');
-  data.addColumn('string', 'Location');
-  data.addColumn('string', 'Domain');
 
   data.addRow([DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate,
-    DSACampaign.manualCPC, DSACampaign.dailyBudget, DSACampaign.locations,
-    DSACampaign.domain]);
+    DSACampaign.manualCPC, DSACampaign.dailyBudget]);
 
   const table = new google.visualization.Table(document.getElementById('table' +
     chartNumber));
 
   table.draw(data, {showRowNumber: false, width: '100%', height: '50%'});
+  // End of the process of first table creation.
 
+  // The start of the creation of the second table which includes the targets,
+  // domains, impressions, clicks, cost, and daily budget.
   const data2 = new google.visualization.DataTable();
-  data2.addColumn('string', 'Target');
-  data2.addColumn('string', 'Ad Text');
+  data2.addColumn('string', 'Targets');
+  data2.addColumn('string', 'Domain');
 
-  if (DSACampaign.impressions == 0) {
+  // If the DSA campaign is still running then  impressions, clicks, and
+  // cost must be N/A.
+  if (DSACampaign.campaignStatus == "pending") {
     data2.addColumn('string', 'Impressions');
     data2.addColumn('string', 'Clicks');
     data2.addColumn('string', 'Cost (USD)');
-    data2.addRow([DSACampaign.targets, DSACampaign.adText,
+    data2.addRow([DSACampaign.targets, DSACampaign.domain,
         "N/A", "N/A", "N/A"]);
   } else {
       data2.addColumn('number', 'Impressions');
       data2.addColumn('number', 'Clicks');
       data2.addColumn('number', 'Cost (USD)');
 
-      data2.addRow([DSACampaign.targets, DSACampaign.adText,
+      data2.addRow([DSACampaign.targets, DSACampaign.domain,
       DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
   }
-  //data2.addRow([DSACampaign.targets, DSACampaign.adText,
-  //  DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
 
   const table2 = new google.visualization.Table(document.getElementById(
       'secondtable' + chartNumber));
 
   table2.draw(data2, {showRowNumber: false, width: '100%', height: '100%'});
+  // End of the process of second table creation.
 
+  // The start of the creation of the second table which includes the location,
+  // negative locations, ad text, and campaigns status.
   const data3 = new google.visualization.DataTable();
 
+  data3.addColumn('string', 'Locations');
+  data3.addColumn('string', 'Negative Locations');
+  data3.addColumn('string', 'Ad Text');
   data3.addColumn('string', 'Status');
-  data3.addColumn('string', 'SQR');
-  data3.addColumn('string', 'Delete');
-  
-  let SQR = "";
-  if (DSACampaign.impressions == 0) {
-    SQR = "N/A";
+
+  // If the negative location data has ", USA" then there was no negative
+  // location set and should be explained in the table chart.
+  let negativeLocations = "";
+  if (DSACampaign.negativeLocations == ", USA" ) {
+    negativeLocations = "No negative locations."
   } else {
-      SQR = "<a href=\"#SQR\" " +
-        "style=\"text-align: center;\"> SQR </a>";
+      negativeLocations = DSACampaign.negativeLocations;
   }
-  data3.addRow([DSACampaign.campaignStatus, SQR,
-  '<button onclick=\"deleteDSACampaign(' + DSACampaign.DSACampaignId +
-  ')\" class=\"deleteCampaign\"> Delete </button>']);
+
+  data3.addRow([DSACampaign.locations, negativeLocations,
+    DSACampaign.adText, DSACampaign.campaignStatus,]);
 
   const table3 = new google.visualization.Table(document.getElementById(
-      'deletebutton' + chartNumber));
+      'thirdtable' + chartNumber));
   table3.draw(data3, {allowHtml: true, showRowNumber: false, width: '100%',
     height: '50%'});
+  // End of the process of third table creation.
+
+  // This marks the beginning of the delte button process. We define the html
+  // of the deletebutton id and link it to the deleteDSACampaign function when
+  // clicked.
+  const deleteElement = document.getElementById('deletebutton' +
+    chartNumber);
+  let deleteString = '';
+  deleteString += '<button onclick=\"deleteDSACampaign(' +
+    DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
+  deleteElement.innerHTML = deleteString;
 }
 
+// Sends the id from related DSA campaigns to the DSACampaign servlet where
+// it will use the ID to delete the campaign from the container where its held.
 function deleteDSACampaign(id) {
   console.log('Start Deleting DSA');
 
@@ -252,15 +297,19 @@ function deleteDSACampaign(id) {
   params.append('id', id);
   params.append('delete', true);
   fetch('/DSA-campaigns', {method: 'POST', body: params});
-
+  
+  // Reload page if on first page.
   if (currentPage == 0) {
     location.reload();
   }
-
+  // Reload charts if not on first page.
   currentPage = 0;
   drawDsaCampaignCharts();
 }
 
+// Used when a campaign is till running/pending. This function creates
+// a block that displays the campaign is still processing and replaces the
+// chart that would display normally.
 function drawPendingBlock(chartNumber) {
   const pendingBlockElement = document.getElementById('bar-chart' +
     chartNumber);
@@ -268,5 +317,4 @@ function drawPendingBlock(chartNumber) {
     blockString += '<div class=\"pendingblock\"><h3>' +
     'Campaign is still processing </h3></div>';
     pendingBlockElement.innerHTML = blockString;
-
 }
