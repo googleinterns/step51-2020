@@ -35,7 +35,7 @@ def handle_message(event):
     user_data = get_user_data(get_user_key(event['user']['email']))
 
     # user is selecting a campaign to edit (home page prompt)
-    if (user_data.editing == True and user_data.phase_num == -1):
+    if (user_data.editing == True and user_data.phase_num == INACTIVE):
         user_campaigns = get_user_campaigns(event['user']['email'])
         message = event['message']['text']
 
@@ -92,14 +92,14 @@ def handle_button_click(event):
     if event_action == 'edit_campaign':
         # allow text input(so user can specify which campaign they would like to edit)
         user_data.set_accepting_text(True)
-        user_data.set_phase_num(-1)
+        user_data.set_phase_num(INACTIVE)
         user_data.set_editing(True)
         update_user(user_data)
 
         return start_campaign_edit(event)
     elif event_action == 'quit_campaign':
         # Reset user data to new user status
-        user_data.set_phase_num(-1)
+        user_data.set_phase_num(INACTIVE)
         user_data.set_editing(False)
         user_data.set_accepting_text(False)
         user_data.set_campaign_name(None)
@@ -181,7 +181,7 @@ def handle_button_click(event):
         user_data.campaign_name = event['action']['parameters'][VALUE_INDEX]['value']
         campaign = get_campaign_data(get_campaign_key(user_data.user_id, user_data.campaign_name))
         user_data.phase_num = campaign.phase_num
-
+        user_data.set_editing(False)
         # If campaign is complete, show overview message
         if (user_data.phase_num == SUBMISSION):
             user_data.set_accepting_text(False)

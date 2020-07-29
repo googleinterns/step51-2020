@@ -255,7 +255,7 @@ def error_message(error_msg, phase_num):
         dictionary contains error response message
     """
 
-    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != -1 else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
+    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != INACTIVE else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
     return {
               "cards": [
                 {

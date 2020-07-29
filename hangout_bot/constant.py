@@ -21,6 +21,7 @@ DAY_ONE = 1
 LAST_DAY_MONTH = 31
 
 # PHASE_CONSTANTS (order of configuration)
+INACTIVE = -1
 NAME = 0
 START_DATE = 1
 END_DATE = 2
