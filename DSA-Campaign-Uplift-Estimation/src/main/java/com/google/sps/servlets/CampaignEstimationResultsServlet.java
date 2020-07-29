@@ -180,7 +180,7 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
         String refinedNegativeLocations = negativeLocations.trim().toLowerCase();
 
         // ensure that we don't subtract for negative locations if our initial target isn't the entire US
-        if (!refinedLocations.equals("usa")) {
+        if (!refinedLocations.equals("united states")) {
             refinedNegativeLocations = "";
         }
 
