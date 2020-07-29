@@ -51,9 +51,6 @@ div.bar-chart {
     width: 75%;
 }
 
-div.table {
-    padding-top: 75px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
+label {
+    padding-right: 15px;
 }

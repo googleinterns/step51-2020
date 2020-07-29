@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-google.charts.load('current', {'packages':['bar', 'table']});
+google.charts.load('current', {'packages':['bar']});
 
 function getKeywordCampaigns() {
 	const keywordCampaignList = document.getElementById('keyword-campaigns');
@@ -58,6 +58,14 @@ function getDSACampaigns() {
 }
 
 function drawBarGraph() {
+    // reset the existing graphs
+    var chartContainer = document.getElementById('bar-chart');
+    chartContainer.innerHTML = '';
+    var table = document.getElementById('table');
+    table.innerHTML = '';
+    var SQR = document.getElementById("SQR");
+    SQR.innerHTML = '';
+
     var keywordCampaignId = document.getElementById("keyword-campaign-id-form").value;
 
     // add to DSACampaignIds the id's of all the DSA campaigns whose check boxes were checked
@@ -108,32 +116,34 @@ function drawBarGraph() {
 }
 
 function drawTable(DSACampaignList, keywordCampaign) {
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'DSA Campaign');
-    data.addColumn('string', 'Start Date');
-    data.addColumn('string', 'End Date');
-    data.addColumn('number', 'Manual CPC');
-    data.addColumn('number', 'Daily Budget');
-    data.addColumn('string', 'Locations');
-    data.addColumn('string', 'Negative Locations');
-    data.addColumn('string', 'Domain');
-    data.addColumn('string', 'Targets');
-    data.addColumn('string', 'Ad Text');
-    data.addColumn('number', 'Impressions Uplift');
-    data.addColumn('number', 'Clicks Uplift');
-    data.addColumn('number', 'Cost Uplift (USD)');
+    var table = document.getElementById('table');
 
+    // create the table
+    var settingsTable = document.createElement("TABLE"); 
+    settingsTable.style.fontSize = "small";
+
+    // create the row of headers
+    var headers = ["DSA Campaign", "Start Date", "End Date", "Manual CPC", "Daily Budget", "Locations", "Negative Locations", "Domain", "Targets",
+                      "Ad Text", "Impressions Uplift", "Clicks Uplift", "Cost Uplift (USD)"];
+    createRow(settingsTable, "TH", headers);
+
+    // create the rest of the rows
     DSACampaignList.forEach(DSACampaign => {
         var campaignDuration = getCampaignDuration(DSACampaign.startDate, DSACampaign.endDate);
-        data.addRow([DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget, 
-            DSACampaign.locations, DSACampaign.negativeLocations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, 
-            calculateUplift(DSACampaign.impressions, keywordCampaign.impressions, campaignDuration), 
-            calculateUplift(DSACampaign.clicks, keywordCampaign.clicks, campaignDuration), 
-            calculateUplift(DSACampaign.cost, keywordCampaign.cost, campaignDuration)]);
+
+        var rowElements = [DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget, DSACampaign.locations,
+                               DSACampaign.negativeLocations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, 
+                               calculateUplift(DSACampaign.impressions, keywordCampaign.impressions, campaignDuration),
+                               calculateUplift(DSACampaign.clicks, keywordCampaign.clicks, campaignDuration),
+                               calculateUplift(DSACampaign.cost, keywordCampaign.cost, campaignDuration)];
+        createRow(settingsTable, "TD", rowElements);
     });
 
-    var table = new google.visualization.Table(document.getElementById('table'));
-    table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+    settingsTable.style.width = "75%";
+    table.appendChild(settingsTable);  
+
+    table.style.paddingTop = "75px";
+    table.style.paddingBottom = "75px";
 
     console.log("Drew table.");
 
@@ -147,47 +157,46 @@ function drawSQRs(DSACampaignList) {
         // set up the div for the SQR
         var SQRContainer = document.createElement("div"); 
 
-        var br1 = document.createElement('BR');
-        SQRContainer.appendChild(br1); 
-
-        var br2 = document.createElement('BR');
-        SQRContainer.appendChild(br2); 
-
         var h3 = document.createElement('H3');
         h3.innerHTML = "SQR for " + DSACampaign.name;
         h3.style.textAlign = "center";
         SQRContainer.appendChild(h3);  
 
-        // create the SQR
-        var SQRTable = document.createElement("div"); 
+        // create the SQR table
+        var SQRTable = document.createElement("TABLE"); 
+        SQRTable.style.fontSize = "small";
 
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Query');
-        data.addColumn('string', 'URL');
+        // create the row of headers
+        var headers = ["Query", "URL"];
+        createRow(SQRTable, "TH", headers);
 
-        DSACampaign.SQR.forEach(row => {
-            data.addRow([row[0], row[1]]);
+        // create the rest of the rows
+        DSACampaign.SQR.forEach(SQRrow => {
+            var queryUrlElements = [SQRrow[0], SQRrow[1]];
+            createRow(SQRTable, "TD", queryUrlElements);
         });
 
-        var table = new google.visualization.Table(SQRTable);
-        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
-
-        SQRTable.style.marginLeft = "auto";
-        SQRTable.style.marginRight = "auto";
         SQRTable.style.width = "35%";
+        SQRContainer.appendChild(SQRTable);
 
-        SQRContainer.appendChild(SQRTable);  
+        SQRContainer.style.paddingBottom = "75px";
 
-        document.body.insertBefore(SQRContainer, SQRDiv); 
+        SQRDiv.appendChild(SQRContainer);
     });
 
-    var br1 = document.createElement('BR');
-    document.body.insertBefore(br1, SQRDiv)
-
-    var br2 = document.createElement('BR');
-    document.body.insertBefore(br2, SQRDiv) 
-
     console.log("Drew SQRs.");
+}
+
+function createRow(container, elementType, textArr) {
+    var row = document.createElement("TR");
+
+    textArr.forEach(text => {
+        var header = document.createElement(elementType);
+        header.appendChild(document.createTextNode(text));
+        row.appendChild(header);
+    });
+
+    container.appendChild(row);
 }
 
 function getCampaignDuration(startDate, endDate) {
