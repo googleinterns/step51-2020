@@ -66,12 +66,12 @@ public final class CampaignEstimationResultsServletTest {
 
     @Test
     public void DSACampaignDataServletGetLocationsFactor() throws IOException, ServletException {
-        KeywordCampaign KeywordCampaignObject = new KeywordCampaign("1", "1", "Test KC", .8, "Texas, California, Michigan",
+        KeywordCampaign KeywordCampaignObject = new KeywordCampaign("1", "1", "Test KC", .8, "TX, CA, MI",
             "", 0, 0, 0);
         Entity keywordCampaignEntity = KeywordCampaignsServlet.createEntityFromKeywordCampaign(KeywordCampaignObject);
 
-        DSACampaign DSACampaignObject= new DSACampaign("2", "1", "1", "Test DC", "pending", "1/1/1", "2/2/2", .8, 500, "United States",
-            "California, Texas", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0, null);
+        DSACampaign DSACampaignObject= new DSACampaign("2", "1", "1", "Test DC", "pending", "1/1/1", "2/2/2", .8, 500, "USA",
+            "CA, TX", "http://dsa-uplift-estimation-2020.uc.r.appspot.com/Home/home.html", "", "sample ad text 2", 0, 0, 0, null);
         Entity DSACampaignEntity = DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject);
 
         assertEquals(1.81904, CampaignEstimationResultsServlet.getLocationsFactor(keywordCampaignEntity, DSACampaignEntity), .01);
