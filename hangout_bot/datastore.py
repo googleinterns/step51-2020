@@ -43,10 +43,12 @@ def update_campaign_data(campaign_data, phase_num, value):
     """
 
     if (phase_num == NAME):
-        campaign_data.set_start_date(value)
+        campaign_data.set_name(value)
     elif (phase_num == START_DATE):
-        campaign_data.set_end_date(value)
+        campaign_data.set_start_date(value)
     elif (phase_num == END_DATE):
+        campaign_data.set_end_date(value)
+    elif (phase_num == DAILY_BUDGET):
         campaign_data.set_daily_budget(value)
     elif (phase_num == LOCATIONS):
         campaign_data.set_locations(value)
@@ -137,6 +139,11 @@ def get_user_campaigns(user_id):
 def delete_datastore_entity(key):
     datastore.Client().delete(key)
 
+def get_user_campaign(user_key):
+    user = datastore.Client().get(user_key)
+    user = convert_entity_to_user(user)
+    return get_campaign_data(get_campaign_key(user.user_id, user.campaign_name))
+
 # [Datastore and class conversion functions]
 
 def convert_entity_to_campaign(campaign_entity):
@@ -157,17 +164,17 @@ def convert_entity_to_campaign(campaign_entity):
     dsa_campaign = CampaignData(campaign_entity['owner'])
 
     # individually set each parameter with the entity values
-    dsa_campaign.set_name(campaign_entity['name'])
-    dsa_campaign.set_start_date(campaign_entity['start_date'])
-    dsa_campaign.set_end_date(campaign_entity['end_date'])
-    dsa_campaign.set_daily_budget(campaign_entity['daily_budget'])
-    dsa_campaign.set_manual_CPC(campaign_entity['manual_CPC'])
-    dsa_campaign.set_locations(campaign_entity['locations'])
-    dsa_campaign.set_neg_locations(campaign_entity['neg_locations'])
-    dsa_campaign.set_domain(campaign_entity['domain'])
-    dsa_campaign.set_targets(campaign_entity['targets'])
-    dsa_campaign.set_ad_text(campaign_entity['ad_text'])
-    dsa_campaign.set_phase_num(campaign_entity['phase_num'])
+    dsa_campaign.set_name(str(campaign_entity['name']))
+    dsa_campaign.set_start_date(str(campaign_entity['start_date']))
+    dsa_campaign.set_end_date(str(campaign_entity['end_date']))
+    dsa_campaign.set_daily_budget(float(campaign_entity['daily_budget']))
+    dsa_campaign.set_manual_CPC(float(campaign_entity['manual_CPC']))
+    dsa_campaign.set_locations(str(campaign_entity['locations']))
+    dsa_campaign.set_neg_locations(str(campaign_entity['neg_locations']))
+    dsa_campaign.set_domain(str(campaign_entity['domain']))
+    dsa_campaign.set_targets(str(campaign_entity['targets']))
+    dsa_campaign.set_ad_text(str(campaign_entity['ad_text']))
+    dsa_campaign.set_phase_num(int(campaign_entity['phase_num']))
 
     return dsa_campaign
 
@@ -221,8 +228,8 @@ def convert_entity_to_user(user_entity):
     user_data = ActiveUser(user_entity['user'])
     
     user_data.set_accepting_text(user_entity['accepting_text'])
-    user_data.set_campaign_name(user_entity['campaign_name'])
-    user_data.set_phase_num(user_entity['phase_num'])
+    user_data.set_campaign_name(str(user_entity['campaign_name']))
+    user_data.set_phase_num(int(user_entity['phase_num']))
     user_data.set_editing(user_entity['editing'])
     return user_data
 
