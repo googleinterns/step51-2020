@@ -120,6 +120,7 @@ function drawTable(DSACampaignList, keywordCampaign) {
 
     // create the table
     var settingsTable = document.createElement("TABLE"); 
+    settingsTable.style.fontSize = "small";
 
     // create the row of headers
     var headers = ["DSA Campaign", "Start Date", "End Date", "Manual CPC", "Daily Budget", "Locations", "Negative Locations", "Domain", "Targets",
@@ -163,6 +164,7 @@ function drawSQRs(DSACampaignList) {
 
         // create the SQR table
         var SQRTable = document.createElement("TABLE"); 
+        SQRTable.style.fontSize = "small";
 
         // create the row of headers
         var headers = ["Query", "URL"];
