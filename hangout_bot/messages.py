@@ -6,7 +6,7 @@ import re
 # phase number (key) : [phase name, phase specific prompt message]
 # used to generate phase specific messages
 
-phase_dictionary = {
+PHASE_DICTIONARY = {
   NAME: ['name',
       'Please input the name that will be associated with your dynamic ' +
       'search ad campaign estimate.'],
@@ -56,8 +56,8 @@ def error_handler(event, phase_num):
         specifes the specific error if an error is raised
     """
 
-    # error map (phase_dictionary key) : error handling reference
-    error_dictionary = {
+    # error map (PHASE_DICTIONARY key) : error handling reference
+    ERROR_DICTIONARY = {
       0: '',  # name cannot be an empty string or length 0
       1: 'mm-dd-yyyy',   # start date must be in the form mm-dd-yyyy
       2: 'mm-dd-yyyy',   # end date must be in the form mm-dd-yyyy
@@ -73,7 +73,7 @@ def error_handler(event, phase_num):
 
     # phase 0: name
     if phase_num == NAME:
-        if (len(message) > 0 and message != error_dictionary[0]):
+        if (len(message) > 0 and message != ERROR_DICTIONARY[0]):
             user_key = get_campaign_key(event['user']['email'], message)
             if (get_campaign_data(user_key) == None):
                 return success
@@ -107,7 +107,7 @@ def error_handler(event, phase_num):
         message = message[0:].strip()
         try:
           float(message)
-          if (Decimal(message) >= error_dictionary[3]): 
+          if (Decimal(message) >= ERROR_DICTIONARY[3]): 
             return success
           else:
             return '{} must be at least $0.01!'.format(attribute_name)
@@ -171,7 +171,7 @@ def error_handler(event, phase_num):
         
         return success if re.match(url_regex, message) else failed
     elif phase_num == 9:
-        if (len(message) > 0 and message != error_dictionary[0]):
+        if (len(message) > 0 and message != ERROR_DICTIONARY[0]):
             return success
         else:
           return 'Ad text is not valid! Cannot be an empty value!'
@@ -255,7 +255,7 @@ def error_message(error_msg, phase_num):
         dictionary contains error response message
     """
 
-    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, phase_dictionary.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != -1 else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
+    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != -1 else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
     return {
               "cards": [
                 {
@@ -276,9 +276,19 @@ def error_message(error_msg, phase_num):
             }
 
 def create_campaign_overview(campaign_data, submission):
-    print('name: ' + campaign_data.name)
-    print('Date: \'{}\''.format(campaign_data.start_date))
-    print('BUDGET: {}'.format(campaign_data.daily_budget))
+    """Returns a campaign overview for users to view,
+    Buttons on message vary based on submission boolean
+
+    Args:
+      campaign_data:
+        CampaignData used to populate campaign data
+      submission:
+        boolean representing if overview is for submission
+    Returns:
+      dict
+        dictionary containing overview message
+    """    
+
     not_set = 'None'
     return {
       "actionResponse": {
@@ -376,6 +386,20 @@ def create_campaign_overview(campaign_data, submission):
 
 
 def add_overview_buttons(campaign_data, submission):
+    """Returns list of submission specific buttons (Submit, Edit, Quit).
+    If not submission, then different list of buttons are
+    returned (Edit (not same as submit), Back)
+
+    Args:
+      campaign_data:
+        CampaignData used to populate button values
+      submission:
+        boolean representing if overview is for submission
+    Returns:
+      list
+        list of dictionaries containing buttons
+    """
+
     button_list = []
     if not submission:
         button_list.append(
@@ -470,7 +494,7 @@ def create_confirmation_message(event, phase_num, editing):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "You picked <b>\"{}\"</b> for your campaign {}, is this correct?".format(event['message']['text'], phase_dictionary.get(phase_num)[PHASE_NAME_INDEX])
+                            "text": "You picked <b>\"{}\"</b> for your campaign {}, is this correct?".format(event['message']['text'], PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX])
                           }
                         }
                       ]
@@ -608,7 +632,7 @@ def start_user_campaign(event):
                           "textParagraph": {
                             "text": "You will now start configuring your " +
                                 "DSA Campaign! If you would like to " + 
-                                "save and quit, you may click <b>\"QUIT\"" +
+                                "save and quit, you may click <b>\"QUIT\" " +
                                 "</b>below at any point in the " +
                                 "configuration process. Additionally, " + 
                                 "the process of entering data is simple. " + 
@@ -671,7 +695,7 @@ def create_configure_message(phase_num):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": '<br>{}</b>'.format(phase_dictionary.get(phase_num)[PROMPT_MSG_INDEX])
+                            "text": '<br>{}</b>'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
                           }
                         }
                       ]
@@ -707,6 +731,7 @@ def create_join_message(event):
       dict
         dictionary containing join response message
     """
+
     return {
               "cards": [
                 {
@@ -743,6 +768,7 @@ def create_home_message(event):
       dict
         dictionary containing home response message
     """
+
     return {
               "actionResponse": {
                 "type": "UPDATE_MESSAGE"
@@ -773,6 +799,15 @@ def create_home_message(event):
             }
 
 def add_edit_button(user_id):
+    """Determines if home page requires an edit button
+    Args:
+      user_id:
+        user_id being used to request home page
+    Returns:
+      list
+        list of dictionaries containing buttons
+    """
+
     button_list = []
     button_list.append(
       {

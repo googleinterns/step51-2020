@@ -1,6 +1,6 @@
 from messages import *
 from datastore import *
-from userdata import *
+from activeuser import *
 from constant import *
 
 def handle_join(event):
@@ -34,13 +34,12 @@ def handle_message(event):
 
     user_data = get_user_data(get_user_key(event['user']['email']))
 
-    # user is selecting a campaign to edit
+    # user is selecting a campaign to edit (home page prompt)
     if (user_data.editing == True and user_data.phase_num == -1):
         user_campaigns = get_user_campaigns(event['user']['email'])
         message = event['message']['text']
-        print('Message: ' + message)
-        print('name: ' + user_data.user_id)
-        print('phase_Num: {}'.format(user_data.phase_num))
+
+        # message is unrecognizable
         if (not message.isnumeric()):
             return error_message('Selection is not a valid number! Please input a number indicating what campaign you would like to edit.', INVALID_INPUT)
         elif (int(message) < 1 or int(message) > len(user_campaigns)):
@@ -147,10 +146,12 @@ def handle_button_click(event):
 
         user_data.set_accepting_text(True)
         user_key = get_user_key(event['user']['email'])
-        campaigns = get_user_campaign(user_key)
+        campaigns = get_user_current_campaign(user_key)
 
          # check if user is allowed to input negative locations (Can only put in negative locations if USA is a target)
         if (user_data.phase_num == NEG_LOCATIONS and "USA" not in campaigns.locations):
+            # user is not allowed to add negative locations
+
             # skip negative locations
             user_data.increment_phase_num()
 
@@ -173,22 +174,28 @@ def handle_button_click(event):
         # re-send current phase num configuration response
         return create_configure_message(user_data.phase_num)
     elif event_action == 'submit':
-        # TODO: post request to website
+        # TODO: post request to web page
         print('submitting')
-
     elif event_action == 'confirm_edit':
+        # User has viewed the WIP campaign and has confirmed to edit
         user_data.campaign_name = event['action']['parameters'][VALUE_INDEX]['value']
         campaign = get_campaign_data(get_campaign_key(user_data.user_id, user_data.campaign_name))
         user_data.phase_num = campaign.phase_num
+
+        # If campaign is complete, show overview message
         if (user_data.phase_num == SUBMISSION):
             user_data.set_accepting_text(False)
             update_user(user_data)
             return create_campaign_overview(campaign, True)
+        
+        # user is prompted to input settings
         user_data.set_accepting_text(True)
         update_user(user_data)
         return create_configure_message(user_data.phase_num)
     elif event_action == 'back_action':
+        # if user is not happy with the campaign they have chosen, they can go back
         return start_campaign_edit(event)
     elif event_action == 'back_submission':
+        # user cancelled editing a submission
         campaign = get_campaign_data(get_campaign_key(user_data.user_id, user_data.campaign_name))
         return create_campaign_overview(campaigns, True)

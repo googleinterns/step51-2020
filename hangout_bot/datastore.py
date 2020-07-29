@@ -1,6 +1,6 @@
 from google.cloud import datastore
 from campaigndata import CampaignData
-from userdata import *
+from activeuser import *
 from constant import *
 
 # [Datastore Interaction Functions]
@@ -139,7 +139,18 @@ def get_user_campaigns(user_id):
 def delete_datastore_entity(key):
     datastore.Client().delete(key)
 
-def get_user_campaign(user_key):
+def get_user_current_campaign(user_key):
+    """Returns campaign that user is currently editing
+    Args:
+      user_key:
+        Key of user used to request current campaign
+    Yields:
+      None
+        if entity is not valid
+      CampaignData
+        parsed CampaignData object found
+    """ 
+  
     user = datastore.Client().get(user_key)
     user = convert_entity_to_user(user)
     return get_campaign_data(get_campaign_key(user.user_id, user.campaign_name))
