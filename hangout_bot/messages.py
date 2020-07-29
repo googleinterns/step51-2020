@@ -24,7 +24,7 @@ phase_dictionary = {
       'Enter \"USA\" if you would like to target the entire US.'],
   NEG_LOCATIONS: ['negative locations', 'Are there any locations that your ' +
       'ad will not target? Ex: CA, USA (Must follow this format!' + 
-      '). Input N/A if not applcable.'],
+      '). Input N/A if not applicable.'],
   DOMAIN: ['domain', 'What is the domain of the webpage being advertised? ' +
       '(Ex: http://google.com)'],
   TARGETS: ['targets', 'What are specific target pages of your domain ' +
@@ -176,6 +176,70 @@ def error_handler(event, phase_num):
         else:
           return 'Ad text is not valid! Cannot be an empty value!'
 
+def create_setting_list():
+    """Formats the introduction message response
+    Args:
+      None
+    Returns:
+      dict
+        dictionary contains start campaign config message
+    """
+
+    campaign_list = ''
+    for i in range(SUBMISSION):
+        campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, phase_map.get(i)[PHASE_NAME_INDEX])
+
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header('Editing'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": "Please send a number corresponding to the setting " +
+                              "you would like to edit.<br>" + campaign_list
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "QUIT",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "quit_campaign",
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "textButton": {
+                                "text": "BACK",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "back_submission",
+                                  }
+                                }
+                              }
+                            },
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+
 
 # [Message Generating Functions]
 
@@ -211,12 +275,15 @@ def error_message(error_msg, phase_num):
               ]
             }
 
-def create_campaign_overview(campaign_data):
+def create_campaign_overview(campaign_data, submission):
     print('name: ' + campaign_data.name)
     print('Date: \'{}\''.format(campaign_data.start_date))
     print('BUDGET: {}'.format(campaign_data.daily_budget))
     not_set = 'None'
     return {
+      "actionResponse": {
+        "type": "UPDATE_MESSAGE"
+      },
       "cards": [
         {
           "header": build_header('Editing'),
@@ -298,34 +365,7 @@ def create_campaign_overview(campaign_data):
             {
               "widgets": [
                 {
-                  "buttons": [
-                    {
-                      "textButton": {
-                        "text": "EDIT",
-                        "onClick": {
-                          "action": {
-                            "actionMethodName": "confirm_edit",
-                            "parameters": [
-                              {
-                                "key": "campaign_name",
-                                "value": campaign_data.name
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "textButton": {
-                        "text": "BACK",
-                        "onClick": {
-                          "action": {
-                            "actionMethodName": "back_action"
-                          }
-                        }
-                      }
-                    }
-                  ]
+                  "buttons": add_overview_buttons(campaign_data, submission)
                 }
               ]
             }
@@ -333,6 +373,79 @@ def create_campaign_overview(campaign_data):
         }
       ]
     }
+
+
+def add_overview_buttons(campaign_data, submission):
+    button_list = []
+    if not submission:
+        button_list.append(
+          {
+            "textButton": {
+              "text": "EDIT",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "confirm_edit",
+                  "parameters": [
+                    {
+                      "key": "campaign_name",
+                      "value": campaign_data.name
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        )
+        button_list.append(
+          {
+            "textButton": {
+              "text": "BACK",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "back_action"
+                }
+              }
+            }
+          }
+        )
+    else:
+        button_list.append(
+          {
+            "textButton": {
+              "text": "SUBMIT",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "submit"
+                }
+              }
+            }
+          }
+        )
+        button_list.append(
+          {
+            "textButton": {
+              "text": "QUIT",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "quit_campaign"
+                }
+              }
+            }
+          }
+        )
+        button_list.append(
+           {
+            "textButton": {
+              "text": "EDIT SETTINGS",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "edit_campaign_settings"
+                }
+              }
+            }
+          }
+        )
+    return button_list
 
 def create_confirmation_message(event, phase_num, editing):
     """Formats a confirmation message response for valid input

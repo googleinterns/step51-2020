@@ -50,7 +50,7 @@ def handle_message(event):
             user_data.set_accepting_text(False)
             update_user(user_data)
             campaign = convert_entity_to_campaign(user_campaigns[int(message) - 1])
-            return create_campaign_overview(campaign)
+            return create_campaign_overview(campaign, False)
         # TODO specific edit being made
 
     # user sent a message to the bot without being prompted
@@ -135,16 +135,22 @@ def handle_button_click(event):
 
           add_campaign_data(user_campaign_data)
 
-        if (user_data.editing == True and user_data.phase_num == SUBMISSION):
-            return create_configure_message(SUBMISSION)
 
         # current phase complete, append user phase number
         user_data.increment_phase_num()
-        user_data.set_accepting_text(True)
 
-         # user is not allowed to input negative locations (Can only put in negative locations if USA is a target)
+        # User is on the submission phase
+        if (user_data.phase_num == SUBMISSION):
+            user_data.set_accepting_text(False)
+            update_user(user_data)
+            return create_campaign_overview(campaigns, True)
+
+        user_data.set_accepting_text(True)
         user_key = get_user_key(event['user']['email'])
-        if (user_data.phase_num == NEG_LOCATIONS and "USA" not in get_user_campaign(user_key).locations):
+        campaigns = get_user_campaign(user_key)
+
+         # check if user is allowed to input negative locations (Can only put in negative locations if USA is a target)
+        if (user_data.phase_num == NEG_LOCATIONS and "USA" not in campaigns.locations):
             # skip negative locations
             user_data.increment_phase_num()
 
@@ -167,15 +173,22 @@ def handle_button_click(event):
         # re-send current phase num configuration response
         return create_configure_message(user_data.phase_num)
     elif event_action == 'submit':
-        delete_datastore_entity(obtain_user_key(event['user']['email']))
         # TODO: post request to website
+        print('submitting')
 
     elif event_action == 'confirm_edit':
-        user_data.campaign_name = event['action']['parameters'][0]['value']
+        user_data.campaign_name = event['action']['parameters'][VALUE_INDEX]['value']
         campaign = get_campaign_data(get_campaign_key(user_data.user_id, user_data.campaign_name))
         user_data.phase_num = campaign.phase_num
+        if (user_data.phase_num == SUBMISSION):
+            user_data.set_accepting_text(False)
+            update_user(user_data)
+            return create_campaign_overview(campaign, True)
         user_data.set_accepting_text(True)
         update_user(user_data)
         return create_configure_message(user_data.phase_num)
     elif event_action == 'back_action':
         return start_campaign_edit(event)
+    elif event_action == 'back_submission':
+        campaign = get_campaign_data(get_campaign_key(user_data.user_id, user_data.campaign_name))
+        return create_campaign_overview(campaigns, True)
