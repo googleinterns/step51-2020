@@ -80,10 +80,9 @@ function drawDsaCampaignCharts() {
 
         firstBarChart.style.visibility = 'hidden';
         secondBarChart.style.visibility = 'hidden';
-
       } else {
         while (chartCounter <= numChartsPerPage) {
-          if (DSACampaigns[chartsToShow].campaignStatus != "pending") {
+          if (DSACampaigns[chartsToShow].campaignStatus != 'pending') {
             drawDSACampaignBarGraph(DSACampaigns[chartsToShow], chartCounter);
           } else {
             drawPendingBlock(chartCounter);
@@ -99,8 +98,8 @@ function drawDsaCampaignCharts() {
       }
     });
   } else {
-      firstBarChart.style.visibility = 'hidden';
-      secondBarChart.style.visibility = 'hidden';
+    firstBarChart.style.visibility = 'hidden';
+    secondBarChart.style.visibility = 'hidden';
   }
 }
 
@@ -110,9 +109,9 @@ function hideDiv(isNumberOfChartsOdd, numberOfCharts, currentChart) {
   const firstBarChart = document.getElementById('Chart1');
   const secondBarChart = document.getElementById('Chart2');
 
-  if ( numberOfCharts != 0 ) { 
-    firstBarChart.style.visibility = 'visible';  
-  } 
+  if ( numberOfCharts != 0 ) {
+    firstBarChart.style.visibility = 'visible';
+  }
 
   if (isNumberOfChartsOdd == 1 && currentChart == numberOfCharts - 1 ||
     numberOfCharts == 0) {
@@ -171,7 +170,7 @@ function previousPage() {
 }
 
 // This function draws the bar graph that displays the name, impressions,
-// clicks, and cost. 
+// clicks, and cost.
 function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
   const data = new google.visualization.DataTable();
   data.addColumn('string', 'DSA Campaign');
@@ -201,11 +200,10 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
 // table correlates with data2. At the end of the function a delete button is
 // also created to acommpany the tables.
 function drawDSACampaignTable(DSACampaign, chartNumber) {
-
   // The start of the creation of the first table which includes the name,
   // start date, end date, manual cost per click, and daily budget.
   const data = new google.visualization.DataTable();
-  
+
   data.addColumn('string', 'DSA Campaign');
   data.addColumn('string', 'Start Date');
   data.addColumn('string', 'End Date');
@@ -229,18 +227,18 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
 
   // If the DSA campaign is still running then  impressions, clicks, and
   // cost must be N/A.
-  if (DSACampaign.campaignStatus == "pending") {
+  if (DSACampaign.campaignStatus == 'pending') {
     data2.addColumn('string', 'Impressions');
     data2.addColumn('string', 'Clicks');
     data2.addColumn('string', 'Cost (USD)');
     data2.addRow([DSACampaign.targets, DSACampaign.domain,
-        "N/A", "N/A", "N/A"]);
+      'N/A', 'N/A', 'N/A']);
   } else {
-      data2.addColumn('number', 'Impressions');
-      data2.addColumn('number', 'Clicks');
-      data2.addColumn('number', 'Cost (USD)');
+    data2.addColumn('number', 'Impressions');
+    data2.addColumn('number', 'Clicks');
+    data2.addColumn('number', 'Cost (USD)');
 
-      data2.addRow([DSACampaign.targets, DSACampaign.domain,
+    data2.addRow([DSACampaign.targets, DSACampaign.domain,
       DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost]);
   }
 
@@ -261,15 +259,15 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
 
   // If the negative location data has ", USA" then there was no negative
   // location set and should be explained in the table chart.
-  let negativeLocations = "";
-  if (DSACampaign.negativeLocations == ", USA" ) {
-    negativeLocations = "No negative locations."
+  let negativeLocations = '';
+  if (DSACampaign.negativeLocations == ', USA' ) {
+    negativeLocations = 'No negative locations.';
   } else {
-      negativeLocations = DSACampaign.negativeLocations;
+    negativeLocations = DSACampaign.negativeLocations;
   }
 
   data3.addRow([DSACampaign.locations, negativeLocations,
-    DSACampaign.adText, DSACampaign.campaignStatus,]);
+    DSACampaign.adText, DSACampaign.campaignStatus]);
 
   const table3 = new google.visualization.Table(document.getElementById(
       'thirdtable' + chartNumber));
@@ -297,7 +295,7 @@ function deleteDSACampaign(id) {
   params.append('id', id);
   params.append('delete', true);
   fetch('/DSA-campaigns', {method: 'POST', body: params});
-  
+
   // Reload page if on first page.
   if (currentPage == 0) {
     location.reload();
@@ -313,8 +311,8 @@ function deleteDSACampaign(id) {
 function drawPendingBlock(chartNumber) {
   const pendingBlockElement = document.getElementById('bar-chart' +
     chartNumber);
-    let blockString = '';
-    blockString += '<div class=\"pendingblock\"><h3>' +
+  let blockString = '';
+  blockString += '<div class=\"pendingblock\"><h3>' +
     'Campaign is still processing </h3></div>';
-    pendingBlockElement.innerHTML = blockString;
+   pendingBlockElement.innerHTML = blockString;
 }
