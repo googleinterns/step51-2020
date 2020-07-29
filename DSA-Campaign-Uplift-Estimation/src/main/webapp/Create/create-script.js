@@ -467,16 +467,16 @@ function addFormElements(keyvalPairs) {
                        encodeURIComponent(value));
     } else if (form.elements[i].name.includes('n' + formRegion)) {
       console.log(negLocationString)
-      negLocationString = negLocationString == '' ? form.elements[i].value + ', USA' :
-                          negLocationString + ', ' + form.elements[i].value + ', USA';
+      negLocationString = negLocationString == '' ? form.elements[i].value :
+                          negLocationString + ', ' + form.elements[i].value;
     } else if (form.elements[i].name.includes(formRegion) && specific_region) {
       if (form.elements[i].value == 'USA') {
         specific_region = false;
         locationString = 'USA'
         continue;
       }
-      locationString = locationString == '' ? form.elements[i].value + ', USA':
-                       locationString + ',' + form.elements[i].value + ', USA';
+      locationString = locationString == '' ? form.elements[i].value :
+                       locationString + ',' + form.elements[i].value;
     }
   }
   console.log(negLocationString)
