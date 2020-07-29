@@ -50,6 +50,7 @@ function drawDsaCampaignCharts() {
   const keywordCampaignId = document.getElementById('keyword-campaigns').value;
   const firstBarChart = document.getElementById('Chart1');
   const secondBarChart = document.getElementById('Chart2');
+  const pagination = document.getElementById('pagination');
 
   if (keywordCampaignId != 0) {
     dsaCampaignsList.innerHTML = '';
@@ -78,6 +79,7 @@ function drawDsaCampaignCharts() {
 
         firstBarChart.style.visibility = 'hidden';
         secondBarChart.style.visibility = 'hidden';
+        pagination.style.visibility = 'hidden';
       } else {
         while (chartCounter <= numChartsPerPage) {
           if (DSACampaigns[chartsToShow].campaignStatus != 'pending') {
@@ -98,6 +100,7 @@ function drawDsaCampaignCharts() {
   } else {
     firstBarChart.style.visibility = 'hidden';
     secondBarChart.style.visibility = 'hidden';
+    pagination.style.visibility = 'hidden';
   }
 }
 
@@ -123,6 +126,7 @@ function hideDiv(isNumberOfChartsOdd, numberOfCharts, currentChart) {
 // existing number of pages and the active page the user is on.
 function makePagination(numberOfPages, activePageNumber) {
   const pagination = document.getElementById('pagination');
+  pagination.style.visibility = 'visible';
   let paginationString = '';
   paginationString += '<div class=\"pageCenter\"><input type=\"button\" ' +
     'id=\"previous\" onclick=\"previousPage()\" value=\"previous\" />';
