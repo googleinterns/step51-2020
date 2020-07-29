@@ -258,7 +258,7 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   // If the negative location data has ", USA" then there was no negative
   // location set and should be explained in the table chart.
   let negativeLocations = '';
-  if (DSACampaign.negativeLocations == ', USA' ) {
+  if (DSACampaign.negativeLocations == '' ) {
     negativeLocations = 'No negative locations.';
   } else {
     negativeLocations = DSACampaign.negativeLocations;
