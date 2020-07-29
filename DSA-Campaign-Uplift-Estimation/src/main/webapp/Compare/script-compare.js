@@ -164,6 +164,7 @@ function drawTable(DSACampaignList, keywordCampaign) {
     headersRow.appendChild(header11);
     headersRow.appendChild(header12);
     headersRow.appendChild(header13);
+    
     settingsTable.appendChild(headersRow);
 
     // create the rest of the rows
@@ -212,6 +213,7 @@ function drawTable(DSACampaignList, keywordCampaign) {
         rowElements.appendChild(element11);
         rowElements.appendChild(element12);
         rowElements.appendChild(element13);
+
         settingsTable.appendChild(rowElements);
     });
 
