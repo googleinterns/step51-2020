@@ -136,6 +136,58 @@ function drawTable(DSACampaignList, keywordCampaign) {
     table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
 
     console.log("Drew table.");
+
+    drawSQRs(DSACampaignList);
+}
+
+function drawSQRs(DSACampaignList) {
+    var SQRDiv = document.getElementById("SQR");
+
+    DSACampaignList.forEach(DSACampaign => {
+        // set up the div for the SQR
+        var SQRContainer = document.createElement("div"); 
+
+        var br1 = document.createElement('BR');
+        SQRContainer.appendChild(br1); 
+
+        var br2 = document.createElement('BR');
+        SQRContainer.appendChild(br2); 
+
+        var h3 = document.createElement('H3');
+        h3.innerHTML = "SQR for " + DSACampaign.name;
+        h3.style.textAlign = "center";
+        SQRContainer.appendChild(h3);  
+
+        // create the SQR
+        var SQRTable = document.createElement("div"); 
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Query');
+        data.addColumn('string', 'URL');
+
+        DSACampaign.SQR.forEach(row => {
+            data.addRow([row[0], row[1]]);
+        });
+
+        var table = new google.visualization.Table(SQRTable);
+        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+
+        SQRTable.style.marginLeft = "auto";
+        SQRTable.style.marginRight = "auto";
+        SQRTable.style.width = "35%";
+
+        SQRContainer.appendChild(SQRTable);  
+
+        document.body.insertBefore(SQRContainer, SQRDiv); 
+    });
+
+    var br1 = document.createElement('BR');
+    document.body.insertBefore(br1, SQRDiv)
+
+    var br2 = document.createElement('BR');
+    document.body.insertBefore(br2, SQRDiv) 
+
+    console.log("Drew SQRs.");
 }
 
 function getCampaignDuration(startDate, endDate) {

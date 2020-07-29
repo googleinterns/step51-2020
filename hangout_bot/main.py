@@ -36,7 +36,8 @@ app = Flask(__name__)
 # [Main Event Handler]
 
 def format_response(event):
-    """Determine what response to provide based upon event data.
+    """Determine what response to provide based upon type of event
+       and event data
     Args:
       event: A dictionary with the event data.
     Returns:
@@ -48,13 +49,11 @@ def format_response(event):
 
     # Case: The bot was added to a DM
     if event_type == 'ADDED_TO_SPACE' and event['space']['type'] == 'DM':
-        responseText = create_join_message(event)
+        responseText = handle_join(event)
     elif event_type == 'MESSAGE':
-        #responseText = handle_message(event)
-        responseText = {"text": "test"}
+        responseText = handle_message(event)
     elif event_type == 'CARD_CLICKED':
-        responseText = {"text": "test"}
-        #responseText = handle_button_click(event)
+        responseText = handle_button_click(event)
     elif event_type == "REMOVED_FROM_SPACE":
         # TODO: add user progress to datastore
         # user is no longer active, remove from active users
@@ -75,7 +74,7 @@ def format_response(event):
 
 # [Hangouts Bot API Functions]
 
-@app.route('/', methods=['GET'])
+@app.route('/bot', methods=['GET'])
 def home_get():
     """Respond to GET requests to this endpoint.
     This function responds to requests with a simple HTML landing page for this
@@ -92,7 +91,7 @@ if __name__ == '__main__':
 
     app.run(host='127.0.0.1', port=8080, debug=True)
 
-@app.route('/', methods=['POST'])
+@app.route('/bot', methods=['POST'])
 def home_post():
     """Respond to POST requests to this endpoint.
     All requests sent to this endpoint from Hangouts Chat are POST
