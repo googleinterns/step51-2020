@@ -83,6 +83,10 @@ body {
   flex: 75%;
 }
 
+.navBar:hover {
+  text-decoration: none;
+}
+
 .col-25,
 .col-50,
 .col-75 {
@@ -132,10 +136,6 @@ label {
 .button:hover {
   color: white;
   background-color: rgb(158, 157, 157);
-}
-
-a {
-  color: #2196F3;
 }
 
 hr.header_tag {
