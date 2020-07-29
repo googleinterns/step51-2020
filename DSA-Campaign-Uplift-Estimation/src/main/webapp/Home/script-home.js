@@ -68,8 +68,6 @@ function drawDsaCampaignCharts() {
       // two charts have been processed.
       let chartCounter = 1;
 
-      
-
       // If the list of DSA campaigns are empty than display there are no
       // DSA campaigns and hide any previously showing charts and tables.
       if (DSACampaigns.length == 0) {
@@ -314,5 +312,5 @@ function drawPendingBlock(chartNumber) {
   let blockString = '';
   blockString += '<div class=\"pendingblock\"><h3>' +
     'Campaign is still processing </h3></div>';
-   pendingBlockElement.innerHTML = blockString;
+  pendingBlockElement.innerHTML = blockString;
 }
