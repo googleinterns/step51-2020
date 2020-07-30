@@ -129,8 +129,6 @@ function drawTable(DSACampaignList, keywordCampaign) {
 
     // create the rest of the rows
     DSACampaignList.forEach(DSACampaign => {
-        var campaignDuration = getCampaignDuration(DSACampaign.startDate, DSACampaign.endDate);
-
         // combine the locations and negative locations values
         var locationsOutput = DSACampaign.locations;
         if (DSACampaign.negativeLocations.length > 0) {
@@ -157,6 +155,7 @@ function drawTable(DSACampaignList, keywordCampaign) {
             curPage += 1;
         }
 
+        var campaignDuration = getCampaignDuration(DSACampaign.startDate, DSACampaign.endDate);
         var rowElements = [DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, 
                                DSACampaign.dailyBudget, locationsOutput, totalPages, DSACampaign.adText, 
                                calculateUplift(DSACampaign.impressions, keywordCampaign.impressions, campaignDuration),
