@@ -193,6 +193,7 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
   
   let barchart = document.getElementById('bar-chart' + chartNumber);
   barchart.innerHTML = '';
+  barchart.style.paddingTop = "40px";
   const chart = new google.charts.Bar(barchart);
   chart.draw(data, google.charts.Bar.convertOptions(options));
   console.log('Drew bar graph.');
@@ -256,7 +257,7 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   deleteString += '<button onclick=\"deleteDSACampaign(' +
     DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
   deleteElement.innerHTML = deleteString;
-  deleteElement.style.paddingBottom = "80px";
+  deleteElement.style.paddingBottom = "40px";
 }
 
 function createRow(container, elementType, textArr) {
