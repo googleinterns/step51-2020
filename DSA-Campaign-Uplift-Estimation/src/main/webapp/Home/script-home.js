@@ -190,7 +190,7 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
     },
     bars: 'horizontal', // Required for Material Bar Charts.
   };
-  
+
   const barchart = document.getElementById('bar-chart' + chartNumber);
   barchart.innerHTML = '';
   const chart = new google.charts.Bar(barchart);
