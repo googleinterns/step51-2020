@@ -6,7 +6,7 @@ import re
 # phase number (key) : [phase name, phase specific prompt message]
 # used to generate phase specific messages
 
-phase_dictionary = {
+PHASE_DICTIONARY = {
   NAME: ['name',
       'Please input the name that will be associated with your dynamic ' +
       'search ad campaign estimate.'],
@@ -24,7 +24,7 @@ phase_dictionary = {
       'Enter \"USA\" if you would like to target the entire US.'],
   NEG_LOCATIONS: ['negative locations', 'Are there any locations that your ' +
       'ad will not target? Ex: CA, USA (Must follow this format!' + 
-      '). Input N/A if not applcable.'],
+      '). Input N/A if not applicable.'],
   DOMAIN: ['domain', 'What is the domain of the webpage being advertised? ' +
       '(Ex: http://google.com)'],
   TARGETS: ['targets', 'What are specific target pages of your domain ' +
@@ -56,8 +56,8 @@ def error_handler(event, phase_num):
         specifes the specific error if an error is raised
     """
 
-    # error map (phase_dictionary key) : error handling reference
-    error_dictionary = {
+    # error map (PHASE_DICTIONARY key) : error handling reference
+    ERROR_DICTIONARY = {
       0: '',  # name cannot be an empty string or length 0
       1: 'mm-dd-yyyy',   # start date must be in the form mm-dd-yyyy
       2: 'mm-dd-yyyy',   # end date must be in the form mm-dd-yyyy
@@ -73,7 +73,7 @@ def error_handler(event, phase_num):
 
     # phase 0: name
     if phase_num == NAME:
-        if (len(message) > 0 and message != error_dictionary[0]):
+        if (len(message) > 0 and message != ERROR_DICTIONARY[0]):
             user_key = get_campaign_key(event['user']['email'], message)
             if (get_campaign_data(user_key) == None):
                 return success
@@ -103,30 +103,29 @@ def error_handler(event, phase_num):
 
     # phase 3: daily budget, phase 8: manual CPC
     elif phase_num == DAILY_BUDGET or phase_num == MANUAL_CPC:
-        attribute_name = 'Daily budget' if phase_num == 3 else 'Manual CPC (Cost Per Click)'
-        begin_index = 0
-        if '$' in message:
-            # omit the dollar sign (must be first character in msg)
-            begin_index = 1
-        message = message[begin_index:].strip()
+        attribute_name = 'Daily budget' if phase_num == DAILY_BUDGET else 'Manual CPC (Cost Per Click)'
+        message = message[0:].strip()
         try:
           float(message)
-          if (Decimal(message) >= error_dictionary[3]): 
+          if (Decimal(message) >= ERROR_DICTIONARY[3]): 
             return success
           else:
             return '{} must be at least $0.01!'.format(attribute_name)
         except:
-           return '{} must be a valid decimal value! Ex: $34.00'.format(attribute_name)
+           return '{} must be a valid decimal value! Ex: 34.00'.format(attribute_name)
     
     # phase 4: locations, phase 5: negative locations
     elif phase_num == LOCATIONS or phase_num == NEG_LOCATIONS:
+        if (phase_num == NEG_LOCATIONS and message.lower() == 'n/a'):
+            return success
         locations = message.split(',')
         for idx in range(len(locations)):
             # trim white space
             locations[idx] = locations[idx].strip()
             if phase_num == NEG_LOCATIONS:
-                user_key = get_campaign_key(event['user']['email'], message)
-                location_data = get_campaign_data(user_key).locations.split(',')
+                campaign_name = get_user_data(get_user_key(event['user']['email'])).campaign_name
+                campaign_key = get_campaign_key(event['user']['email'], campaign_name)
+                location_data = get_campaign_data(campaign_key).locations.split(',')
                 
                 # Remove whitespace from all location entries
                 map(str.strip, location_data)
@@ -172,10 +171,74 @@ def error_handler(event, phase_num):
         
         return success if re.match(url_regex, message) else failed
     elif phase_num == 9:
-        if (len(message) > 0 and message != error_dictionary[0]):
+        if (len(message) > 0 and message != ERROR_DICTIONARY[0]):
             return success
         else:
           return 'Ad text is not valid! Cannot be an empty value!'
+
+def create_setting_list():
+    """Formats the introduction message response
+    Args:
+      None
+    Returns:
+      dict
+        dictionary contains start campaign config message
+    """
+
+    campaign_list = ''
+    for i in range(SUBMISSION):
+        campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, PHASE_DICTIONARY.get(i)[PHASE_NAME_INDEX])
+
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header('Editing'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": "Please send a number corresponding to the setting " +
+                              "you would like to edit.<br>" + campaign_list
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "QUIT",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "quit_campaign",
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "textButton": {
+                                "text": "BACK",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "back_submission",
+                                  }
+                                }
+                              }
+                            },
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
 
 
 # [Message Generating Functions]
@@ -192,7 +255,7 @@ def error_message(error_msg, phase_num):
         dictionary contains error response message
     """
 
-    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, phase_dictionary.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != -1 else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
+    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != INACTIVE else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
     return {
               "cards": [
                 {
@@ -212,6 +275,201 @@ def error_message(error_msg, phase_num):
               ]
             }
 
+def create_campaign_overview(campaign_data, submission):
+    """Returns a campaign overview for users to view,
+    Buttons on message vary based on submission boolean
+
+    Args:
+      campaign_data:
+        CampaignData used to populate campaign data
+      submission:
+        boolean representing if overview is for submission
+    Returns:
+      dict
+        dictionary containing overview message
+    """    
+
+    not_set = 'None'
+    return {
+      "actionResponse": {
+        "type": "UPDATE_MESSAGE" if submission else "NEW_MESSAGE"
+      },
+      "cards": [
+        {
+          "header": build_header('Editing'),
+          "sections": [
+            {
+              "widgets": [
+                {
+                  "keyValue": {
+                    "topLabel": "Campaign Name",
+                    "content": campaign_data.name if campaign_data.name != '' else not_set,
+                    "icon": "STAR"
+                  }
+                },
+                {
+                  "keyValue": {
+                    "topLabel": "Start Date",
+                    "content": campaign_data.start_date if campaign_data.start_date != '' else not_set,
+                    "icon": "INVITE"
+                  }
+                },
+                {
+                  "keyValue": {
+                    "topLabel": "End Date",
+                    "content": campaign_data.end_date if campaign_data.end_date != '' else not_set,
+                    "icon": "INVITE"
+                  }
+                },
+                {
+                  "keyValue": {
+                    "topLabel": "Daily Budget",
+                    "content": campaign_data.daily_budget if campaign_data.daily_budget != 0.0 else not_set,
+                    "icon": "DOLLAR"
+                  }
+                },
+                {
+                  "keyValue": {
+                    "topLabel": "Cost Per Click",
+                    "content": campaign_data.manual_CPC if campaign_data.manual_CPC != 0.0 else not_set,
+                    "icon": "DOLLAR"
+                  }
+                },
+                {
+                  "keyValue": {
+                    "topLabel": "Domain",
+                    "content": campaign_data.domain if campaign_data.domain != '' else not_set,
+                    "icon": "BOOKMARK"
+                  }
+                },
+                {
+                  "keyValue": {
+                    "topLabel": "Target Pages",
+                    "content": campaign_data.targets if campaign_data.targets != '' else not_set,
+                    "icon": "BOOKMARK"
+                  }
+                },
+                {
+                  "keyValue": {
+                    "topLabel": "Locations",
+                    "content": campaign_data.locations if campaign_data.locations != '' else not_set,
+                    "icon": "MAP_PIN"
+                  }
+                },
+                {
+                  "keyValue": {
+                    "topLabel": "Negative Locations",
+                    "content": campaign_data.neg_locations if campaign_data.neg_locations != '' else not_set,
+                    "icon": "MAP_PIN"
+                  }
+                },
+                {
+                  "keyValue": {
+                    "topLabel": "Ad Text",
+                    "content": campaign_data.ad_text if campaign_data.ad_text != '' else not_set,
+                    "icon": "DESCRIPTION"
+                  }
+                }
+              ]
+            },
+            {
+              "widgets": [
+                {
+                  "buttons": add_overview_buttons(campaign_data, submission)
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+
+
+def add_overview_buttons(campaign_data, submission):
+    """Returns list of submission specific buttons (Submit, Edit, Quit).
+    If not submission, then different list of buttons are
+    returned (Edit (not same as submit), Back)
+
+    Args:
+      campaign_data:
+        CampaignData used to populate button values
+      submission:
+        boolean representing if overview is for submission
+    Returns:
+      list
+        list of dictionaries containing buttons
+    """
+
+    button_list = []
+    if not submission:
+        button_list.append(
+          {
+            "textButton": {
+              "text": "EDIT",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "confirm_edit",
+                  "parameters": [
+                    {
+                      "key": "campaign_name",
+                      "value": campaign_data.name
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        )
+        button_list.append(
+          {
+            "textButton": {
+              "text": "BACK",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "back_action"
+                }
+              }
+            }
+          }
+        )
+    else:
+        button_list.append(
+          {
+            "textButton": {
+              "text": "SUBMIT",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "submit"
+                }
+              }
+            }
+          }
+        )
+        button_list.append(
+          {
+            "textButton": {
+              "text": "QUIT",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "quit_campaign"
+                }
+              }
+            }
+          }
+        )
+        button_list.append(
+           {
+            "textButton": {
+              "text": "EDIT SETTINGS",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "edit_campaign_settings"
+                }
+              }
+            }
+          }
+        )
+    return button_list
 
 def create_confirmation_message(event, phase_num, editing):
     """Formats a confirmation message response for valid input
@@ -236,7 +494,7 @@ def create_confirmation_message(event, phase_num, editing):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "You picked <b>\"{}\"</b> for your campaign {}, is this correct?".format(event['message']['text'], phase_dictionary.get(phase_num)[PHASE_NAME_INDEX])
+                            "text": "You picked <b>\"{}\"</b> for your campaign {}, is this correct?".format(event['message']['text'], PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX])
                           }
                         }
                       ]
@@ -302,7 +560,12 @@ def start_campaign_edit(event):
       dict
         dictionary contains start campaign config message
     """
-    
+
+    campaign_list = ''
+    campaigns = get_user_campaigns(event['user']['email'])
+    for i in range(len(campaigns)):
+        campaign = convert_entity_to_campaign(campaigns[i])
+        campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, campaign.name)
 
     return {
               "actionResponse": {
@@ -316,8 +579,8 @@ def start_campaign_edit(event):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "Please select the campaign you would like" +
-                                    "to edit." + campaign_list
+                            "text": "Please send a number corresponding to the campaign " +
+                              "you would like to edit.<br>" + campaign_list
                           }
                         }
                       ]
@@ -369,8 +632,8 @@ def start_user_campaign(event):
                           "textParagraph": {
                             "text": "You will now start configuring your " +
                                 "DSA Campaign! If you would like to " + 
-                                "save and quit, you may click \"QUIT " +
-                                "CAMPAIGN\" below at any point in the " +
+                                "save and quit, you may click <b>\"QUIT\" " +
+                                "</b>below at any point in the " +
                                 "configuration process. Additionally, " + 
                                 "the process of entering data is simple. " + 
                                 "<br><b>1.</b> I will prompt you for a specific " +
@@ -391,10 +654,10 @@ def start_user_campaign(event):
                           "buttons": [
                             {
                               "textButton": {
-                                "text": "QUIT CAMPAIGN",
+                                "text": "QUIT",
                                 "onClick": {
                                   "action": {
-                                    "actionMethodName": "cancel_campaign",
+                                    "actionMethodName": "quit_campaign",
                                   }
                                 }
                               }
@@ -408,7 +671,8 @@ def start_user_campaign(event):
               ]
             }
 
-def create_configure_message(phase_num):
+
+def create_configure_message(phase_num, editing):
     """Determine what setting message to provide based on
       phase number.
     Args:
@@ -421,7 +685,7 @@ def create_configure_message(phase_num):
 
     return {
               "actionResponse": {
-                "type": "UPDATE_MESSAGE"
+                "type": "UPDATE_MESSAGE" if not editing else "NEW_MESSAGE"
               },
               "cards": [
                 {
@@ -431,7 +695,7 @@ def create_configure_message(phase_num):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": '<br>{}</b>'.format(phase_dictionary.get(phase_num)[PROMPT_MSG_INDEX])
+                            "text": '<b>{}</b>'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
                           }
                         }
                       ]
@@ -439,18 +703,7 @@ def create_configure_message(phase_num):
                     {
                       "widgets": [
                         {
-                          "buttons": [
-                            {
-                              "textButton": {
-                                "text": "CANCEL CAMPAIGN",
-                                "onClick": {
-                                  "action": {
-                                    "actionMethodName": "cancel_campaign",
-                                  }
-                                }
-                              }
-                            }
-                          ]
+                          "buttons": add_configure_buttons(editing)
                         }
                       ]
                     }
@@ -458,6 +711,48 @@ def create_configure_message(phase_num):
                 }
               ]
             }
+
+def add_configure_buttons(editing):
+    """Returns a list of buttons to be used by
+    create_configure_message, adds additional
+    'BACK' button if user is editing a submission
+    Args:
+      editing: boolean for if user is editing
+    Returns:
+      list
+        containing the buttons to be used by the
+        create_configure_message function
+    """
+    
+    button_list = [
+      {
+        "textButton": {
+          "text": "QUIT",
+          "onClick": {
+            "action": {
+              "actionMethodName": "quit_campaign",
+            }
+          }
+        }
+      }   
+    ]
+
+    if editing:
+        button_list.append(
+          {
+            "textButton": {
+              "text": "BACK",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "back_submission",
+                }
+              }
+            }
+          }
+        )
+
+    return button_list  
+        
 
 def create_join_message(event):
     """Create a join message with content based on event data
@@ -467,6 +762,7 @@ def create_join_message(event):
       dict
         dictionary containing join response message
     """
+
     return {
               "cards": [
                 {
@@ -493,9 +789,57 @@ def create_join_message(event):
               ]
             }
 
+def create_home_message(event):
+    """Create a home message with content based on event data.
+    User is prompted with this when configuration process is
+    cancelled.
+    Args:
+      event: A dictionary with the event data.
+    Returns:
+      dict
+        dictionary containing home response message
+    """
+
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header('Standby'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": "Please choose what you would like to do below."
+                          }
+                        },
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": add_edit_button(event['user']['email'])
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+
 def add_edit_button(user_id):
-    button_list = []
-    button_list.append(
+    """Determines if home page requires an edit button
+    Args:
+      user_id:
+        user_id being used to request home page
+    Returns:
+      list
+        list of dictionaries containing buttons
+    """
+    
+    button_list = [
       {
         "textButton": {
           "text": "START NEW CAMPAIGN",
@@ -506,7 +850,7 @@ def add_edit_button(user_id):
           }
         }
       }
-    )
+    ]
     if (len(get_user_campaigns(user_id)) != 0):
       button_list.append(
         {

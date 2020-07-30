@@ -83,6 +83,10 @@ body {
   flex: 75%;
 }
 
+.navBar:hover {
+  text-decoration: none;
+}
+
 .col-25,
 .col-50,
 .col-75 {
@@ -117,8 +121,9 @@ label {
   font-size: 24px;
 }
 
-.btn {
+.button {
   color: white;
+  background-color: rgb(80, 80, 80);
   padding: 15px;
   margin: 10px 0;
   border: none;
@@ -128,40 +133,9 @@ label {
   font-size: 13px;
 }
 
-.submit-btn {
-  background-color: rgb(100, 100, 100);
-}
-
-.settings-btn {
-  background-color: rgb(100, 100, 100);
-}
-
-.reset-btn {
-  background-color: rgb(100, 100, 100);
-}
-
-.preset-btn {
-  background-color: rgb(100, 100, 100);
-}
-
-.reset-btn:hover {
-  background-color: rgb(80, 80, 80);
-}
-
-.submit-btn:hover {
-  background-color: rgb(80, 80, 80);
-}
-
-.settings-btn:hover {
-  background-color: rgb(80, 80, 80);
-}
-
-.preset-btn:hover {
-  background-color: rgb(80, 80, 80);
-}
-
-a {
-  color: #2196F3;
+.button:hover {
+  color: white;
+  background-color: rgb(158, 157, 157);
 }
 
 hr.header_tag {
@@ -178,4 +152,31 @@ hr.header_tag {
   .col-25 {
     margin-bottom: 20px;
   }
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
