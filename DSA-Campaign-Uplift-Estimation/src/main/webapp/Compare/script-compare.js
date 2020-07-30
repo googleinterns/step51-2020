@@ -131,8 +131,13 @@ function drawTable(DSACampaignList, keywordCampaign) {
     DSACampaignList.forEach(DSACampaign => {
         var campaignDuration = getCampaignDuration(DSACampaign.startDate, DSACampaign.endDate);
 
-        var rowElements = [DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget, DSACampaign.locations,
-                               DSACampaign.negativeLocations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, 
+        var negLocations = DSACampaign.negativeLocations;
+        if (negLocations == '') {
+            negLocations = 'n/a';
+        }
+
+        var rowElements = [DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget,
+                               DSACampaign.locations, negLocations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, 
                                calculateUplift(DSACampaign.impressions, keywordCampaign.impressions, campaignDuration),
                                calculateUplift(DSACampaign.clicks, keywordCampaign.clicks, campaignDuration),
                                calculateUplift(DSACampaign.cost, keywordCampaign.cost, campaignDuration)];
