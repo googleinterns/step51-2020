@@ -243,7 +243,7 @@ function getCampaignDuration(startDate, endDate) {
 }
 
 function calculateUplift(DSAStatistic, keywordCampaignStatistic, campaignDuration) {
-    var uplift = (DSAStatistic - keywordCampaignStatistic) * campaignDuration;
+    var uplift = Math.round(100 * ((DSAStatistic - keywordCampaignStatistic) * campaignDuration)) / 100;
     // uplift must be non-negative
     if (uplift < 0) {
         return 0;
