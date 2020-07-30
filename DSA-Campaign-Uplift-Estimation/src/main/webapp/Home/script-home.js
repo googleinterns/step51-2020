@@ -129,11 +129,11 @@ function makePagination(numberOfPages, activePageNumber) {
   pagination.style.visibility = 'visible';
   let paginationString = '';
   paginationString += '<div class=\"pageCenter\"><input type=\"button\" ' +
-    'id=\"previous\" onclick=\"previousPage()\" value=\"previous\" />';
+    'id=\"previous\" onclick=\"previousPage()\" value=\"Previous\" />';
   paginationString += '<a id=\"activePageNumber\">  ' + (activePageNumber +
     1)  +'  </a>';
   paginationString += '<input type=\"button\" id=\"next\" ' +
-    'onclick=\"nextPage(' + numberOfPages + ')\" value=\"next\" /></div>';
+    'onclick=\"nextPage(' + numberOfPages + ')\" value=\"Next\" /></div>';
   pagination.innerHTML = paginationString;
 }
 
@@ -151,7 +151,7 @@ function nextPage(numberOfPages) {
     currentPage++;
     drawDsaCampaignCharts();
   }
-  activePage.innerText = increasePage;
+  activePage.innerText = ' ' + increasePage + ' ';
 }
 
 // Decreases the page backward by decreasing the active page by one and letting
@@ -168,7 +168,7 @@ function previousPage() {
     currentPage--;
     drawDsaCampaignCharts();
   }
-  activePage.innerText = decreasePage;
+  activePage.innerText = ' ' + decreasePage + ' ';
 }
 
 // This function draws the bar graph that displays the name, impressions,
@@ -190,10 +190,9 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
     },
     bars: 'horizontal', // Required for Material Bar Charts.
   };
-  
-  let barchart = document.getElementById('bar-chart' + chartNumber);
+
+  const barchart = document.getElementById('bar-chart' + chartNumber);
   barchart.innerHTML = '';
-  barchart.style.paddingTop = "40px";
   const chart = new google.charts.Bar(barchart);
   chart.draw(data, google.charts.Bar.convertOptions(options));
   console.log('Drew bar graph.');
@@ -261,7 +260,7 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
 
     settingsTable.style.width = "75%";
 
-    table.innerHTML='';
+    table.innerHTML = '';
     table.appendChild(settingsTable);  
 
     table.style.paddingTop = "35px";
@@ -276,19 +275,19 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
     deleteString += '<button onclick=\"deleteDSACampaign(' +
         DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
     deleteElement.innerHTML = deleteString;
-    deleteElement.style.paddingBottom = "40px";
+    deleteElement.style.paddingBottom = '40px';
 }
 
 function createRow(container, elementType, textArr) {
-    var row = document.createElement("TR");
+  const row = document.createElement('TR');
 
-    textArr.forEach(text => {
-        var header = document.createElement(elementType);
-        header.appendChild(document.createTextNode(text));
-        row.appendChild(header);
-    });
+  textArr.forEach((text) => {
+    const header = document.createElement(elementType);
+    header.appendChild(document.createTextNode(text));
+    row.appendChild(header);
+  });
 
-    container.appendChild(row);
+  container.appendChild(row);
 }
 
 // Sends the id from related DSA campaigns to the DSACampaign servlet where

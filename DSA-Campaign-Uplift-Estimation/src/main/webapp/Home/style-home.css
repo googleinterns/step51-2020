@@ -34,7 +34,7 @@ body {
   margin: 0;
 }
 
-.center{
+.center {
     text-align: center;
 }
 
@@ -65,19 +65,32 @@ div.bar-chart {
     margin-right: auto;
     justify-content: center;
     text-align: center;
+    height: 75px;
 }
-.pageCenter{
+
+.pageCenter {
     display: inline-block;
 }
 
 .pagination input {
-    color: black;
-    /*float: left;*/
     padding: 8px 16px;
+    padding-right: 16px;
+    padding-left: 16px;
     text-decoration: none;
+    background-color: rgb(100, 100, 100);
+    border: black;
+    color: white;
+    border-radius: 4px;
 }
 
-.pagination input:hover{background-color: rgb(50, 144, 182);}
+.pagination input:hover {
+    background-color: rgb(50, 144, 182);
+}
+
+input#next {
+    padding-right: 28px;
+    padding-left: 28px;
+}
 
 .deleteCampaign {
     background-color: rgb(180, 42, 42);
@@ -94,7 +107,7 @@ div.bar-chart {
     left: 83.5%
 }
 
-.pendingblock{
+.pendingblock {
     background-color:white;
     text-align: center;
     color:black;
