@@ -91,14 +91,13 @@ div.bar-chart {
     border-radius: 4px;
     cursor: pointer;
     position: relative;
-    left: 84%;
+    left: 83.5%
 }
 
 .pendingblock{
     background-color:white;
-    padding-bottom: 75px;
     text-align: center;
     color:black;
-    padding:20px;
+    padding: 0;
     border-radius: 4px;
 }

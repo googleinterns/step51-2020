@@ -224,9 +224,9 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   let clicks;
   let cost;
   if (DSACampaign.campaignStatus == 'pending') {
-    impressions = 'N/A';
-    clicks = 'N/A';
-    cost = 'N/A';
+    impressions = 'n/a';
+    clicks = 'n/a';
+    cost = 'n/a';
   } else {
     impressions = DSACampaign.impressions;
     clicks = DSACampaign.clicks;
@@ -244,6 +244,9 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   table.innerHTML='';
   table.appendChild(settingsTable);  
 
+  table.style.paddingTop = "35px";
+  table.style.paddingBottom = "15px";
+
   // This marks the beginning of the delete button process. We define the html
   // of the deletebutton id and link it to the deleteDSACampaign function when
   // clicked.
@@ -253,6 +256,7 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   deleteString += '<button onclick=\"deleteDSACampaign(' +
     DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
   deleteElement.innerHTML = deleteString;
+  deleteElement.style.paddingBottom = "80px";
 }
 
 function createRow(container, elementType, textArr) {
