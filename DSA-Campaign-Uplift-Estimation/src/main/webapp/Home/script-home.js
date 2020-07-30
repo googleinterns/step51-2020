@@ -191,7 +191,7 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
     bars: 'horizontal', // Required for Material Bar Charts.
   };
   
-  let barchart = document.getElementById('bar-chart' + chartNumber);
+  const barchart = document.getElementById('bar-chart' + chartNumber);
   barchart.innerHTML = '';
   const chart = new google.charts.Bar(barchart);
   chart.draw(data, google.charts.Bar.convertOptions(options));
@@ -203,14 +203,14 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
 // table correlates with data2. At the end of the function a delete button is
 // also created to accompany the tables.
 function drawDSACampaignTable(DSACampaign, chartNumber) {
-  let table = document.getElementById('table' + chartNumber);
+  const table = document.getElementById('table' + chartNumber);
 
   // create the table
-  let settingsTable = document.createElement('TABLE');
+  const settingsTable = document.createElement('TABLE');
   settingsTable.style.fontSize = 'small';
 
   // create the row of headers
-  let headers = ['DSA Campaign', 'Start Date', 'End Date', 'Manual CPC',
+  const headers = ['DSA Campaign', 'Start Date', 'End Date', 'Manual CPC',
     'Daily Budget', 'Locations', 'Negative Locations', 'Domain', 'Targets',
     'Ad Text', 'Impressions', 'Clicks', 'Cost (USD)'];
   createRow(settingsTable, 'TH', headers);
@@ -231,9 +231,9 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
     impressions = DSACampaign.impressions;
     clicks = DSACampaign.clicks;
     cost = DSACampaign.cost;
-    }
+  }
 
-  let rowElements = [DSACampaign.name, DSACampaign.startDate,
+  const rowElements = [DSACampaign.name, DSACampaign.startDate,
     DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget,
     DSACampaign.locations, negLocations, DSACampaign.domain,
     DSACampaign.targets, DSACampaign.adText, impressions, clicks, cost];
@@ -242,7 +242,7 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   settingsTable.style.width = '75%';
 
   table.innerHTML='';
-  table.appendChild(settingsTable);  
+  table.appendChild(settingsTable);
 
   table.style.paddingTop = '35px';
   table.style.paddingBottom = '15px';
@@ -256,13 +256,13 @@ function drawDSACampaignTable(DSACampaign, chartNumber) {
   deleteString += '<button onclick=\"deleteDSACampaign(' +
     DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
   deleteElement.innerHTML = deleteString;
-  deleteElement.style.paddingBottom = '80px';
+  deleteElement.style.paddingBottom = '40px';
 }
 
 function createRow(container, elementType, textArr) {
-  let row = document.createElement('TR');
+  const row = document.createElement('TR');
 
-  textArr.forEach(text => {
+  textArr.forEach((text) => {
     const header = document.createElement(elementType);
     header.appendChild(document.createTextNode(text));
     row.appendChild(header);
