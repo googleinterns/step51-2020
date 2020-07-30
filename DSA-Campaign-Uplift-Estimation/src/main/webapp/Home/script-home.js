@@ -190,9 +190,11 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
     },
     bars: 'horizontal', // Required for Material Bar Charts.
   };
-
-  const chart = new google.charts.Bar(document.getElementById('bar-chart' +
-    chartNumber));
+  
+  let barchart = document.getElementById('bar-chart' + chartNumber);
+  barchart.innerHTML = '';
+  barchart.style.paddingTop = "40px";
+  const chart = new google.charts.Bar(barchart);
   chart.draw(data, google.charts.Bar.convertOptions(options));
   console.log('Drew bar graph.');
 }
@@ -202,39 +204,60 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
 // table correlates with data2. At the end of the function a delete button is
 // also created to accompany the tables.
 function drawDSACampaignTable(DSACampaign, chartNumber) {
-    var table = document.getElementById('table' + chartNumber);
+  let table = document.getElementById('table' + chartNumber);
 
-    // create the table
-    var settingsTable = document.createElement("TABLE"); 
-    settingsTable.style.fontSize = "small";
+  // create the table
+  let settingsTable = document.createElement("TABLE");
+  settingsTable.style.fontSize = "small";
 
-    // create the row of headers
-    var headers = ["DSA Campaign", "Start Date", "End Date", "Manual CPC", "Daily Budget", "Locations", "Negative Locations", "Domain", "Targets",
-                    "Ad Text", "Impressions", "Clicks", "Cost (USD)"];
-    createRow(settingsTable, "TH", headers);
+  // create the row of headers
+  let headers = ["DSA Campaign", "Start Date", "End Date", "Manual CPC",
+    "Daily Budget", "Locations", "Negative Locations", "Domain", "Targets",
+    "Ad Text", "Impressions", "Clicks", "Cost (USD)"];
+  createRow(settingsTable, "TH", headers);
 
-    var negLocations = DSACampaign.negativeLocations;
-    if (negLocations == '') {
-        negLocations = 'n/a';
+  let negLocations = DSACampaign.negativeLocations;
+  if (negLocations == '') {
+    negLocations = 'n/a';
+  }
+
+  let impressions;
+  let clicks;
+  let cost;
+  if (DSACampaign.campaignStatus == 'pending') {
+    impressions = 'n/a';
+    clicks = 'n/a';
+    cost = 'n/a';
+  } else {
+    impressions = DSACampaign.impressions;
+    clicks = DSACampaign.clicks;
+    cost = DSACampaign.cost;
     }
 
-    var rowElements = [DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget,
-                            DSACampaign.locations, negLocations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, 
-                            DSACampaign.impressions, DSACampaign.clicks, DSACampaign.cost];
-    createRow(settingsTable, "TD", rowElements);
+  let rowElements = [DSACampaign.name, DSACampaign.startDate,
+    DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget,
+    DSACampaign.locations, negLocations, DSACampaign.domain,
+    DSACampaign.targets, DSACampaign.adText, impressions, clicks, cost];
+  createRow(settingsTable, "TD", rowElements);
 
-    settingsTable.style.width = "75%";
-    table.appendChild(settingsTable);  
+  settingsTable.style.width = "75%";
 
-    // This marks the beginning of the delte button process. We define the html
-    // of the deletebutton id and link it to the deleteDSACampaign function when
-    // clicked.
-    const deleteElement = document.getElementById('deletebutton' +
-        chartNumber);
-    let deleteString = '';
-    deleteString += '<button onclick=\"deleteDSACampaign(' +
-        DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
-    deleteElement.innerHTML = deleteString;
+  table.innerHTML='';
+  table.appendChild(settingsTable);  
+
+  table.style.paddingTop = "35px";
+  table.style.paddingBottom = "15px";
+
+  // This marks the beginning of the delete button process. We define the html
+  // of the deletebutton id and link it to the deleteDSACampaign function when
+  // clicked.
+  const deleteElement = document.getElementById('deletebutton' +
+    chartNumber);
+  let deleteString = '';
+  deleteString += '<button onclick=\"deleteDSACampaign(' +
+    DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
+  deleteElement.innerHTML = deleteString;
+  deleteElement.style.paddingBottom = "40px";
 }
 
 function createRow(container, elementType, textArr) {
