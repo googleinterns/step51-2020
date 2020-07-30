@@ -11,6 +11,10 @@ class CampaignData:
       self.domain = ''
       self.targets = ''
       self.ad_text = ''
+      self.phase_num = 1
+
+    def set_phase_num(self, phase_num):
+        self.phase_num = phase_num
 
     def set_owner(self, owner):
         self.owner = owner
@@ -46,6 +50,8 @@ class CampaignData:
     def set_domain(self, domain):
         self.domain = domain
 
+    def increment_phase_num(self):
+        self.phase_num = self.phase_num + 1
 
     def set_targets(self, targets):
         self.targets = targets

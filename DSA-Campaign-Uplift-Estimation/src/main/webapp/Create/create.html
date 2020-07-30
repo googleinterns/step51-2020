@@ -35,18 +35,19 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   </head>
-  <!-- on page load, login status is verified and preset data is fetched. -->
-  <body onload="getLogsStatus(); verifyLoginStatus(); getKeywordCampaigns();">
+  <!-- on page load, login status is verified, preset data is fetched, and date is set -->
+  <body onload="getLogsStatus(); verifyLoginStatus(); getKeywordCampaigns(); setDate();">
     <!-- NavBar  - to add to page, copy mySidenav div and paste into body, and navbar_script.js and navbar_style.css to page-->
     <div id="mySidenav" class="sidenav">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <img src="../Resources/images/DSA-campaign-white.png" class="navbar-image"/>
-      <a href="/Home/home.html">Home</a>
-      <a href="/Create/create.html">Create</a>
-      <a href="/Compare/compare.html">Compare</a>
+      <a class="navBar" href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <img src="../Resources/images/DSA-campaign-white.png" style="max-width: 50%; max-height: 50%; margin-left: auto; margin-right: auto; display: block;"/>
+      <a class="navBar" href="/Home/home.html">Home</a>
+      <a class="navBar" href="/Create/create.html">Create</a>
+      <a class="navBar" href="/Compare/compare.html">Compare</a>
       <a href="/About/about.html">About</a>
-      <a id="loginout-link" href="#">Logout</a>
+      <a class="navBar" id="loginout-link" href="#">Logout</a>
     </div>
+
     <header>
       <!-- page header content -->
       <div class="header">
@@ -76,14 +77,19 @@
                 <input type="text" id="name" name="name" placeholder="DSA Campaign Name" required>
                 <div class="row">
                   <div class="col-50">
-                    <label for="startDate">From:</label>
+                    <label for="startDate">Start Date:</label>
                     <input type="date" id="startDate" name="startDate" placeholder="01/01/2000">
                   </div>
+                  <br>
                   <div class="col-50">
-                    <label for="endDate">To:</label>
+                    <label for="endDate">End Date:</label>
                     <input type="date" id="endDate" name="endDate" placeholder="01/01/2001">
                   </div>
                 </div>
+                <br>
+                <label for="manualCPC"><span style="color:red">&#42;</span> Max CPC: $</label>
+                <input type="number" onchange="setTwoNumberDecimal()" id="manualCPC" name="manualCPC" step=".01" placeholder="0.00" required>
+                <br>
                 <br>
                 <label for="dailyBudget"><span style="color:red">&#42;</span> Daily Budget: $</label>
                 <input type="number" onchange="setTwoNumberDecimal()" id="dailyBudget" name="dailyBudget" step=".01" placeholder="0.00" required>
@@ -151,7 +157,7 @@
                     </select>
                     <div id='new_locations'>
                     </div>
-                    <button  id='add_region' class="btn preset-btn" onclick="addRegion(false, true);" style="float: right; display: none;" type="button">Add another location</button>
+                    <button  id='add_region' class="button" onclick="addRegion(false, true);" style="float: right; display: none;" type="button">Add another location</button>
                   </div>
                   <br>
                 </div>
@@ -217,7 +223,7 @@
                     </select>
                     <div id='new_neg_locations'>
                     </div>
-                    <button id='add_neg_region' class="btn preset-btn" onclick="addRegion(true, true);" style="float: right;" type="button">Add another negative location</button>
+                    <button id='add_neg_region' class="button" onclick="addRegion(true, true);" style="float: right;" type="button">Add another negative location</button>
                   </div>
                   <br>
                   <br>
@@ -232,8 +238,6 @@
                 <br>
                 <label for="adText"><span style="color:red">&#42;</span> Ad Text:</label>
                 <input type="text" id="adText" name="adText" placeholder="Some ad text." required>
-                <label for="manualCPC"><span style="color:red">&#42;</span> Max CPC: $</label>
-                <input type="number" onchange="setTwoNumberDecimal()" id="manualCPC" name="manualCPC" step=".01" placeholder="0.00" required>
               </div> 
 
               <!-- Preset Data -->
@@ -244,16 +248,15 @@
                 <ol id="preset-container">
                   
                 </ol>
-                <button class="btn reset-btn" onclick="deleteCurrentAppliedPreset();" style="float: left; display: none;" id="preset-delete-btn" type="button">Delete preset currently applied.</button> 
+                <button class="button" onclick="deleteCurrentAppliedPreset();" style="float: left; display: none;" id="preset-delete-btn" type="button">Delete preset currently applied.</button> 
              
-                <button class="btn preset-btn" onclick="submitPresetData();" style="float: right;" type="button">Save Configuration as Preset</button> 
+                <button class="button" onclick="submitPresetData();" style="float: right;" type="button">Save Configuration as Preset</button> 
               </div> 
             </div>  
             <!-- Page buttons -->
             <div class="col-50" id="buttons" style="display: none;">
-              <button class="btn submit-btn" style="float: left;" onclick="sendFormData();">Estimate your Campaign</button>
-              <button class="btn settings-btn" style="float: center;" type="button">Show Advanced Settings</button> 
-              <button class="btn reset-btn" style="float: right;" type="button" onclick="resetCampaignForm();">Reset Form</button> 
+              <button class="button" style="float: left;" onclick="sendFormData();">Estimate your Campaign</button>
+              <button class="button" style="float: right;" type="button" onclick="resetCampaignForm();">Reset Form</button> 
             </div>  
           </form>
         </div>
