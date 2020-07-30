@@ -1,6 +1,6 @@
 from google.cloud import datastore
 from campaigndata import CampaignData
-from userdata import *
+from activeuser import *
 from constant import *
 
 # [Datastore Interaction Functions]
@@ -43,10 +43,16 @@ def update_campaign_data(campaign_data, phase_num, value):
     """
 
     if (phase_num == NAME):
-        campaign_data.set_start_date(value)
+        campaign_data.set_name(value)
     elif (phase_num == START_DATE):
-        campaign_data.set_end_date(value)
+        entries = value.split('-')
+        value = entries[YEAR] + '-' + entries[MONTH] + '-' + entries[DAY]
+        campaign_data.set_start_date(value)
     elif (phase_num == END_DATE):
+        entries = value.split('-')
+        value = entries[YEAR] + '-' + entries[MONTH] + '-' + entries[DAY]
+        campaign_data.set_end_date(value)
+    elif (phase_num == DAILY_BUDGET):
         campaign_data.set_daily_budget(value)
     elif (phase_num == LOCATIONS):
         campaign_data.set_locations(value)
@@ -130,11 +136,28 @@ def get_campaign_data(campaign_key):
 
 def get_user_campaigns(user_id):
     query = datastore.Client().query(kind='CampaignData')
-    result = query.add_filter('owner', '=', user_id).fetch()
+    query.add_filter('owner', '=', user_id)
+    result = query.fetch()
     return list(result)
 
 def delete_datastore_entity(key):
     datastore.Client().delete(key)
+
+def get_user_current_campaign(user_key):
+    """Returns campaign that user is currently editing
+    Args:
+      user_key:
+        Key of user used to request current campaign
+    Yields:
+      None
+        if entity is not valid
+      CampaignData
+        parsed CampaignData object found
+    """ 
+  
+    user = datastore.Client().get(user_key)
+    user = convert_entity_to_user(user)
+    return get_campaign_data(get_campaign_key(user.user_id, user.campaign_name))
 
 # [Datastore and class conversion functions]
 
@@ -156,16 +179,17 @@ def convert_entity_to_campaign(campaign_entity):
     dsa_campaign = CampaignData(campaign_entity['owner'])
 
     # individually set each parameter with the entity values
-    dsa_campaign.set_name(campaign_entity['name'])
-    dsa_campaign.set_start_date(campaign_entity['start_date'])
-    dsa_campaign.set_end_date(campaign_entity['end_date'])
-    dsa_campaign.set_daily_budget(campaign_entity['daily_budget'])
-    dsa_campaign.set_manual_CPC(campaign_entity['manual_CPC'])
-    dsa_campaign.set_locations(campaign_entity['locations'])
-    dsa_campaign.set_neg_locations(campaign_entity['neg_locations'])
-    dsa_campaign.set_domain(campaign_entity['domain'])
-    dsa_campaign.set_targets(campaign_entity['targets'])
-    dsa_campaign.set_ad_text(campaign_entity['ad_text'])
+    dsa_campaign.set_name(str(campaign_entity['name']))
+    dsa_campaign.set_start_date(str(campaign_entity['start_date']))
+    dsa_campaign.set_end_date(str(campaign_entity['end_date']))
+    dsa_campaign.set_daily_budget(float(campaign_entity['daily_budget']))
+    dsa_campaign.set_manual_CPC(float(campaign_entity['manual_CPC']))
+    dsa_campaign.set_locations(str(campaign_entity['locations']))
+    dsa_campaign.set_neg_locations(str(campaign_entity['neg_locations']))
+    dsa_campaign.set_domain(str(campaign_entity['domain']))
+    dsa_campaign.set_targets(str(campaign_entity['targets']))
+    dsa_campaign.set_ad_text(str(campaign_entity['ad_text']))
+    dsa_campaign.set_phase_num(int(campaign_entity['phase_num']))
 
     return dsa_campaign
 
@@ -197,6 +221,7 @@ def convert_campaign_to_entity(campaign):
     entity['domain'] = campaign.domain
     entity['targets'] = campaign.targets
     entity['ad_text'] = campaign.ad_text
+    entity['phase_num'] = campaign.phase_num
 
     # Returns the created entity
     return entity
@@ -213,13 +238,13 @@ def convert_entity_to_user(user_entity):
         parsed UserData object from entity
     """    
 
-    if entity == None: 
+    if user_entity == None: 
         return None
-    user_data = ActiveUser(entity['user'])
+    user_data = ActiveUser(user_entity['user'])
     
     user_data.set_accepting_text(user_entity['accepting_text'])
-    user_data.set_campaign_name(user_entity['campaign_name'])
-    user_data.set_phase_num(user_entity['phase_num'])
+    user_data.set_campaign_name(str(user_entity['campaign_name']))
+    user_data.set_phase_num(int(user_entity['phase_num']))
     user_data.set_editing(user_entity['editing'])
     return user_data
 
