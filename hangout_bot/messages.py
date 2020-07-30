@@ -187,7 +187,7 @@ def create_setting_list():
 
     campaign_list = ''
     for i in range(SUBMISSION):
-        campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, phase_map.get(i)[PHASE_NAME_INDEX])
+        campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, PHASE_DICTIONARY.get(i)[PHASE_NAME_INDEX])
 
     return {
               "actionResponse": {
@@ -292,7 +292,7 @@ def create_campaign_overview(campaign_data, submission):
     not_set = 'None'
     return {
       "actionResponse": {
-        "type": "UPDATE_MESSAGE"
+        "type": "UPDATE_MESSAGE" if submission else "NEW_MESSAGE"
       },
       "cards": [
         {
@@ -672,7 +672,7 @@ def start_user_campaign(event):
             }
 
 
-def create_configure_message(phase_num):
+def create_configure_message(phase_num, editing):
     """Determine what setting message to provide based on
       phase number.
     Args:
@@ -685,7 +685,7 @@ def create_configure_message(phase_num):
 
     return {
               "actionResponse": {
-                "type": "UPDATE_MESSAGE"
+                "type": "UPDATE_MESSAGE" if not editing else "NEW_MESSAGE"
               },
               "cards": [
                 {
@@ -695,7 +695,7 @@ def create_configure_message(phase_num):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": '<br>{}</b>'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
+                            "text": '<b>{}</b>'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
                           }
                         }
                       ]
@@ -703,18 +703,7 @@ def create_configure_message(phase_num):
                     {
                       "widgets": [
                         {
-                          "buttons": [
-                            {
-                              "textButton": {
-                                "text": "QUIT",
-                                "onClick": {
-                                  "action": {
-                                    "actionMethodName": "quit_campaign",
-                                  }
-                                }
-                              }
-                            }
-                          ]
+                          "buttons": add_configure_buttons(editing)
                         }
                       ]
                     }
@@ -722,6 +711,48 @@ def create_configure_message(phase_num):
                 }
               ]
             }
+
+def add_configure_buttons(editing):
+    """Returns a list of buttons to be used by
+    create_configure_message, adds additional
+    'BACK' button if user is editing a submission
+    Args:
+      editing: boolean for if user is editing
+    Returns:
+      list
+        containing the buttons to be used by the
+        create_configure_message function
+    """
+    
+    button_list = [
+      {
+        "textButton": {
+          "text": "QUIT",
+          "onClick": {
+            "action": {
+              "actionMethodName": "quit_campaign",
+            }
+          }
+        }
+      }   
+    ]
+
+    if editing:
+        button_list.append(
+          {
+            "textButton": {
+              "text": "BACK",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "back_submission",
+                }
+              }
+            }
+          }
+        )
+
+    return button_list  
+        
 
 def create_join_message(event):
     """Create a join message with content based on event data
@@ -808,8 +839,7 @@ def add_edit_button(user_id):
         list of dictionaries containing buttons
     """
 
-    button_list = []
-    button_list.append(
+    button_list = [
       {
         "textButton": {
           "text": "START NEW CAMPAIGN",
@@ -820,7 +850,7 @@ def add_edit_button(user_id):
           }
         }
       }
-    )
+    ]
     if (len(get_user_campaigns(user_id)) != 0):
       button_list.append(
         {
