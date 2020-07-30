@@ -172,6 +172,7 @@ def handle_button_click(event):
               user_value = ''
 
           # update and prepare the campaign data object to be put back in datastore
+
           user_campaign_data = update_campaign_data(user_campaign_data,
                                                     user_data.phase_num,
                                                     user_value)

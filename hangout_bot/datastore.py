@@ -45,8 +45,12 @@ def update_campaign_data(campaign_data, phase_num, value):
     if (phase_num == NAME):
         campaign_data.set_name(value)
     elif (phase_num == START_DATE):
+        entries = value.split('-')
+        value = entries[YEAR] + '-' + entries[MONTH] + '-' + entries[DAY]
         campaign_data.set_start_date(value)
     elif (phase_num == END_DATE):
+        entries = value.split('-')
+        value = entries[YEAR] + '-' + entries[MONTH] + '-' + entries[DAY]
         campaign_data.set_end_date(value)
     elif (phase_num == DAILY_BUDGET):
         campaign_data.set_daily_budget(value)
