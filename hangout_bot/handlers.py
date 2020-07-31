@@ -49,7 +49,7 @@ def handle_message(event):
         else:
             user_data.accepting_text = False
             update_user(user_data)
-            return get_campaign_overview(campaigns[int(message) - 1])
+            return get_campaign_overview(campaigns[int(message) - 1], True)
     
     # user is selecting a campaign to edit (home page prompt)
     elif user_data.phase_num == INACTIVE and user_data.editing:
@@ -197,7 +197,7 @@ def handle_button_click(event):
             add_campaign_data(user_campaign_data)
           user_data.campaign_name = user_value
           update_user(user_data)
-        elif user_data.user_id == DELETE_CAMPAIGN:
+        elif user_data.phase_num == DELETE_CAMPAIGN:
             campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
             status = delete_campaign(campaign_id)
             return create_campaign_deletion_confirmation(status != 200)
@@ -272,7 +272,7 @@ def handle_button_click(event):
                 if campaign.campaign_id == campaign_id:
                     user_data.phase_num = VIEWING_CAMPAIGNS
                     update_user(user_data)
-                    return get_campaign_overview(campaign)
+                    return get_campaign_overview(campaign, False)
             return error_message('An error occurred.', INVALID_INPUT)
 
         user_data.set_accepting_text(True)
@@ -348,4 +348,5 @@ def handle_button_click(event):
     elif event_action == 'delete_campaign':
         campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
         user_data.phase_num = DELETE_CAMPAIGN
+        update_user(user_data)
         return confirm_campaign_delete(user_data.user_id, campaign_id)

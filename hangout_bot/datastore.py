@@ -333,6 +333,8 @@ def convert_json_to_campaign(json_string):
     campaign_data.set_impressions(int(json_string['impressions']))
     campaign_data.set_clicks(int(json_string['clicks']))
     campaign_data.set_status(json_string['campaignStatus'])
+    campaign_data.set_campaign_id(json_string['DSACampaignId'])
+    print(campaign_data.campaign_id)
     return campaign_data
 
 def get_keyword_campaigns():

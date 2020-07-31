@@ -1073,7 +1073,7 @@ def add_edit_button(user_id):
 
     return button_list
 
-def get_campaign_overview(campaign_data):
+def get_campaign_overview(campaign_data, viewing):
     """Returns a campaign overview for users to view,
     Buttons on message vary based on submission boolean
 
@@ -1085,161 +1085,205 @@ def get_campaign_overview(campaign_data):
         dictionary containing overview message
     """    
 
+    print(campaign_data.campaign_id)
     not_set = 'None'
     return {
-      "actionResponse": {
-        "type": "UPDATE_MESSAGE"
-      },
-      "cards": [
-        {
-          "header": build_header(campaign_data.status),
-          "sections": [
-            {
-              "widgets": [
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE" if not viewing else "NEW_MESSAGE"
+              },
+              "cards": [
                 {
-                  "keyValue": {
-                    "topLabel": "Keyword Campaign ID",
-                    "content": campaign_data.keyword_campaign_id if campaign_data.keyword_campaign_id != '' else not_set,
-                    "icon": "STAR"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Campaign Name",
-                    "content": campaign_data.name if campaign_data.name != '' else not_set,
-                    "icon": "STAR"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Start Date",
-                    "content": campaign_data.start_date if campaign_data.start_date != '' else not_set,
-                    "icon": "INVITE"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "End Date",
-                    "content": campaign_data.end_date if campaign_data.end_date != '' else not_set,
-                    "icon": "INVITE"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Daily Budget",
-                    "content": '${}'.format(campaign_data.daily_budget) if campaign_data.daily_budget != 0.0 else not_set,
-                    "icon": "DOLLAR"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Cost Per Click",
-                    "content": '${}'.format(campaign_data.manual_CPC) if campaign_data.manual_CPC != 0.0 else not_set,
-                    "icon": "DOLLAR"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Domain",
-                    "content": campaign_data.domain if campaign_data.domain != '' else not_set,
-                    "icon": "BOOKMARK"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Target Pages",
-                    "content": campaign_data.targets if campaign_data.targets != '' else not_set,
-                    "icon": "BOOKMARK"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Locations",
-                    "content": campaign_data.locations if campaign_data.locations != '' else not_set,
-                    "icon": "MAP_PIN"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Negative Locations",
-                    "content": campaign_data.neg_locations if campaign_data.neg_locations != '' else not_set,
-                    "icon": "MAP_PIN"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Ad Text",
-                    "content": campaign_data.ad_text if campaign_data.ad_text != '' else not_set,
-                    "icon": "DESCRIPTION"
-                  }
-                }
-              ]
-            },
-            {
-              "widgets": [
-                 {
-                  "keyValue": {
-                    "topLabel": "Impressions",
-                    "content": campaign_data.impressions if campaign_data.impressions != '' else not_set,
-                    "icon": "PERSON"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Clicks",
-                    "content": campaign_data.clicks if campaign_data.clicks != '' else not_set,
-                    "icon": "CONFIRMATION_NUMBER_ICON"
-                  }
-                },
-                {
-                  "keyValue": {
-                    "topLabel": "Cost",
-                    "content": '${}'.format(campaign_data.cost) if campaign_data.cost != '' else not_set,
-                    "icon": "DOLLAR"
-                  }
-                }
-              ]
-            },
-            {
-              "widgets": [
-                {
-                  "buttons": [
+                  "header": build_header(campaign_data.status),
+                  "sections": [
                     {
-                      {
-                        "textButton": {
-                          "text": "BACK",
-                          "onClick": {
-                            "action": {
-                              "actionMethodName": "quit_campaign",
-                            }
+                      "widgets": [
+                        {
+                          "keyValue": {
+                            "topLabel": "Keyword Campaign ID",
+                            "content": campaign_data.keyword_campaign_id if campaign_data.keyword_campaign_id != '' else not_set,
+                            "icon": "STAR"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Campaign Name",
+                            "content": campaign_data.name if campaign_data.name != '' else not_set,
+                            "icon": "STAR"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Start Date",
+                            "content": campaign_data.start_date if campaign_data.start_date != '' else not_set,
+                            "icon": "INVITE"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "End Date",
+                            "content": campaign_data.end_date if campaign_data.end_date != '' else not_set,
+                            "icon": "INVITE"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Daily Budget",
+                            "content": '${}'.format(campaign_data.daily_budget) if campaign_data.daily_budget != 0.0 else not_set,
+                            "icon": "DOLLAR"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Cost Per Click",
+                            "content": '${}'.format(campaign_data.manual_CPC) if campaign_data.manual_CPC != 0.0 else not_set,
+                            "icon": "DOLLAR"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Domain",
+                            "content": campaign_data.domain if campaign_data.domain != '' else not_set,
+                            "icon": "BOOKMARK"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Target Pages",
+                            "content": campaign_data.targets if campaign_data.targets != '' else not_set,
+                            "icon": "BOOKMARK"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Locations",
+                            "content": campaign_data.locations if campaign_data.locations != '' else not_set,
+                            "icon": "MAP_PIN"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Negative Locations",
+                            "content": campaign_data.neg_locations if campaign_data.neg_locations != '' else not_set,
+                            "icon": "MAP_PIN"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Ad Text",
+                            "content": campaign_data.ad_text if campaign_data.ad_text != '' else not_set,
+                            "icon": "DESCRIPTION"
                           }
                         }
-                      },
-                      {
-                        "textButton": {
-                          "text": "DELETE CAMPAIGN",
-                          "onClick": {
-                            "action": {
-                              "actionMethodName": "delete_campaign",
-                            },
-                            "parameters": [
-                                {
-                                  "key": "campaign_id",
-                                  "value": campaign_data.campaign_id
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "keyValue": {
+                            "topLabel": "Impressions",
+                            "content": campaign_data.impressions if campaign_data.impressions != '' else not_set,
+                            "icon": "PERSON"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Clicks",
+                            "content": campaign_data.clicks if campaign_data.clicks != '' else not_set,
+                            "icon": "CONFIRMATION_NUMBER_ICON"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Cost",
+                            "content": '${}'.format(campaign_data.cost) if campaign_data.cost != '' else not_set,
+                            "icon": "DOLLAR"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "BACK",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "quit_campaign"
+                                  }
                                 }
-                              ]
-                          }
+                              }
+                            },
+                            {
+                              "textButton": {
+                                "text": "DELETE CAMPAIGN",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "delete_campaign",
+                                    "parameters": [
+                                      {
+                                        "key": "campaign_id",
+                                        "value": campaign_data.campaign_id
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ]
                         }
-                      }
+                      ]
                     }
                   ]
                 }
               ]
             }
-          ]
-        }
-      ]
-    }
+
+def create_campaign_deletion_confirmation(error):
+    message = 'Campaign successfully deleted.'
+    if error:
+        message = 'Campaign cannot be deleted right now, please try again.'
+
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header('Alert'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": message
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "QUIT",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "quit_campaign",
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
 
 
 def build_header(subtitle):
@@ -1260,7 +1304,7 @@ def build_header(subtitle):
 
     return header_dict
 
-def create_campaign_delete(user_id, campaign_id):
+def confirm_campaign_delete(user_id, campaign_id):
 
     campaigns = get_dsa_campaigns(user_id)
     campaign_to_delete = None
@@ -1268,6 +1312,7 @@ def create_campaign_delete(user_id, campaign_id):
         if campaign.campaign_id == campaign_id:
             campaign_to_delete = campaign
             break
+
     return {
               "cards": [
                 {
@@ -1277,7 +1322,7 @@ def create_campaign_delete(user_id, campaign_id):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "<font color=\"#ff0000\">WARNING:</font> Are you sure you would like to delete the campaign, <b>{}</b>?".format(campaign_to_delete.name)
+                            "text": "<font color=\"#ff0000\">ALERT:</font> Are you sure you would like to delete the campaign, <b>{}</b>?".format(campaign_to_delete.name)
                           }
                         }
                       ]
@@ -1291,7 +1336,13 @@ def create_campaign_delete(user_id, campaign_id):
                                 "text": "NO",
                                 "onClick": {
                                   "action": {
-                                    "actionMethodName": "no_action"
+                                    "actionMethodName": "no_action",
+                                    "parameters": [
+                                      {
+                                        "key": "campaign_id",
+                                        "value": campaign_id
+                                      }
+                                    ]
                                   }
                                 }
                               }
