@@ -78,7 +78,10 @@ public class DSACampaignsServlet extends HttpServlet {
                 0, 0, 0, null);
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            datastore.put(createEntityFromDSACampaign(DSACampaignObject));
+            Entity DSACampaignEntity = createEntityFromDSACampaign(DSACampaignObject);
+            datastore.put(DSACampaignEntity);
+
+            CampaignEstimationResultsServlet.estimationResults(DSACampaignEntity);
 
             response.sendRedirect("/Compare/compare.html");
         } else {
