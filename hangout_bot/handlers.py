@@ -38,6 +38,7 @@ def handle_message(event):
     if not user_data.accepting_text:
         return error_message('Unexpected input, please respond according to the prompts!', INVALID_INPUT)
 
+    # start phase num specific handling for yes_action
     if user_data.phase_num == VIEWING_CAMPAIGNS:
         campaigns = get_dsa_campaigns(user_data.user_id)
         message = event['message']['text']
@@ -49,8 +50,9 @@ def handle_message(event):
             user_data.accepting_text = False
             update_user(user_data)
             return get_campaign_overview(campaigns[int(message) - 1])
+    
     # user is selecting a campaign to edit (home page prompt)
-    if (user_data.editing and user_data.phase_num == INACTIVE):
+    elif user_data.phase_num == INACTIVE and user_data.editing:
         user_campaigns = get_user_campaigns(event['user']['email'])
         message = event['message']['text']
 
@@ -67,7 +69,7 @@ def handle_message(event):
             return create_campaign_overview(campaign, False)
 
     # user is selecting a setting to edit before submitting
-    elif (user_data.editing and user_data.phase_num == SUBMISSION):
+    elif user_data.phase_num == SUBMISSION and user_data.editing:
         # user is editing a specific setting of the campaign
         user_campaigns = get_user_campaigns(event['user']['email'])
         message = event['message']['text']
@@ -262,6 +264,17 @@ def handle_button_click(event):
     
     elif event_action == 'no_action':
         # user would like to re-enter setting value
+
+        # user has cancelled a delete prompt
+        if user_data.phase_num == DELETE_CAMPAIGN:
+            campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
+            for campaign in get_dsa_campaigns(event['user']['email']):
+                if campaign.campaign_id == campaign_id:
+                    user_data.phase_num = VIEWING_CAMPAIGNS
+                    update_user(user_data)
+                    return get_campaign_overview(campaign)
+            return error_message('An error occurred.', INVALID_INPUT)
+
         user_data.set_accepting_text(True)
         update_user(user_data)
         
@@ -269,7 +282,6 @@ def handle_button_click(event):
         return create_configure_message(user_data.phase_num, user_data.editing)
     
     elif event_action == 'submit':
-        print('submitting')
         status = submit_user_campaign(user_data.user_id)
         if (status != 200):
             return error_message('An error occurred while submitting your campaign, please try again.', INVALID_INPUT)
@@ -323,6 +335,8 @@ def handle_button_click(event):
         user_data.set_editing(True)
         user_data.set_accepting_text(True)
         update_user(user_data)
+
+        # setting list requires user input (to specify setting)
         return create_setting_list()
     
     elif event_action == 'view_campaigns':

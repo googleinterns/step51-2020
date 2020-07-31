@@ -283,6 +283,15 @@ def convert_user_to_entity(user_data):
     return user_entity
 
 def convert_campaign_to_encoded_dict(campaign_data):
+    """Returns campaign_data as encoded dictionary
+    Args:
+      campaign_data:
+        campaign data being converted
+    Yields:
+      dict
+        Converted encoded dict object from campaign_data
+    """ 
+
     return {
       'keywordCampaignId': campaign_data.keyword_campaign_id,
       'name': campaign_data.name,
@@ -299,6 +308,15 @@ def convert_campaign_to_encoded_dict(campaign_data):
     }
 
 def convert_json_to_campaign(json_string):
+    """Returns campaign specific to JSON string
+    Args:
+      json_string:
+        JSON being converted
+    Yields:
+      CampaignData
+        Converted campaignData object from JSON string
+    """ 
+
     campaign_data = CampaignData(json_string['userId'])
     campaign_data.set_name(json_string['name'])
     campaign_data.set_start_date(json_string['startDate'])
@@ -318,6 +336,14 @@ def convert_json_to_campaign(json_string):
     return campaign_data
 
 def get_keyword_campaigns():
+    """Returns all keyword campaigns in JSON format
+    Args:
+      None
+    Yields:
+      json_data:
+        JSON object containing keyword campaign data
+    """ 
+    
     response = requests.get(DSA_URL + '/keyword-campaigns')
     if response.status_code != 200:
         # empty list of length 0, used to handle errors
@@ -326,6 +352,15 @@ def get_keyword_campaigns():
     return json_data
 
 def get_dsa_campaigns(user_id):
+    """Returns user specific dsa campaigns in campaign data format
+    Args:
+      user_id:
+        user id used to request DSA campaigns
+    Yields:
+      campaign_data:
+        list of campaignData objects from DSA web app
+    """ 
+
     # get dsa campaigns of DSACampaign entity type from dsa main site
     response = requests.get(DSA_URL + '/DSA-campaigns-hangouts', {'userId': user_id})
     if response.status_code != 200:
@@ -340,6 +375,15 @@ def get_dsa_campaigns(user_id):
 
 
 def submit_user_campaign(user_id):
+    """Submits the campaign associated with the user id
+    Args:
+      user_id:
+        user id used to submit DSA campaigns
+    Yields:
+      int:
+        status code representing success of POST request
+    """ 
+    
     user_key = get_user_key(user_id)
     current_campaign = get_user_current_campaign(user_key)
     campaign_encode = convert_campaign_to_encoded_dict(current_campaign)
@@ -347,6 +391,15 @@ def submit_user_campaign(user_id):
     return response.status_code
 
 def delete_campaign(campaign_id):
+    """Deletes the campaign associated with the campaign id
+    Args:
+      campaign_id:
+        campaign id associated with DSA campaign being deleted
+    Yields:
+      int:
+        status code representing success of POST request
+    """
+    
     params = {
       "id": campaign_id,
       "delete": True
