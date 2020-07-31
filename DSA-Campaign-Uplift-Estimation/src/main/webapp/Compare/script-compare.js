@@ -46,7 +46,7 @@ function getDSACampaigns() {
 
             if (count == 0) {
                 // no complete DSA campaigns associated with the keyword campaign
-                DSACampaignsList.innerHTML += '<p>No completed DSA campaigns associated with this keyword campaign.</p>';
+                DSACampaignsList.innerHTML += '<p>No DSA campaigns associated with this keyword campaign.</p>';
             } else {
                 DSACampaignsList.innerHTML += '<input id="keyword-campaign-id-form" type=\"hidden\" name=\"keywordCampaignId\" value=' + keywordCampaignId + '>';
                 DSACampaignsList.innerHTML += '<input type=\"submit\" value=\"Submit\" style=\"margin-left: 15px;\">';
