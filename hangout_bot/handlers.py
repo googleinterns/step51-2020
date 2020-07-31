@@ -46,6 +46,8 @@ def handle_message(event):
         elif (int(message) < 1 or int(message) > len(campaigns)):
             return error_message('Selection is out of bounds!', INVALID_INPUT)
         else:
+            user_data.accepting_text = False
+            update_user(user_data)
             return get_campaign_overview(campaigns[int(message) - 1])
     # user is selecting a campaign to edit (home page prompt)
     if (user_data.editing and user_data.phase_num == INACTIVE):
@@ -161,15 +163,18 @@ def handle_button_click(event):
         # user is on name phase, ActiveUser is changed and new campaign is added to datastore
         if user_data.phase_num == KEYWORD_CAMPAIGN:
             user_data.keyword_campaign_id = get_keyword_campaigns()[int(user_value)]['keywordCampaignId']
-            user_data.accepting_text = True
             user_data.increment_phase_num()
+            user_data.accepting_text = True
             update_user(user_data)
 
             if user_data.editing:
                 campaign = get_user_current_campaign(get_user_key(user_data.user_id))
                 campaign.keyword_campaign_id = user_data.keyword_campaign_id
                 add_campaign_data(campaign)
+                user_data.accepting_text = False
+                update_user(user_data)
                 return create_campaign_overview(user_campaign_data, True)
+
             return create_configure_message(user_data.phase_num, user_data.editing)
         elif user_data.phase_num == NAME:
           # add new campaign with event id and name from confirmation event
@@ -190,6 +195,10 @@ def handle_button_click(event):
             add_campaign_data(user_campaign_data)
           user_data.campaign_name = user_value
           update_user(user_data)
+        elif user_data.user_id == DELETE_CAMPAIGN:
+            campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
+            status = delete_campaign(campaign_id)
+            return create_campaign_deletion_confirmation(status != 200)
         else:
           # get the user campaign being modified from datastore
           user_key = get_campaign_key(user_data.user_id,
@@ -248,8 +257,6 @@ def handle_button_click(event):
                                       user_data.campaign_name)
         user_campaign_data = get_campaign_data(user_key)
 
-        print('a {}'.format(user_data.phase_num))
-
         # send new configuration response 
         return (create_configure_message(user_data.phase_num, user_data.editing) if user_data.phase_num < SUBMISSION else create_campaign_overview(user_campaign_data, True))
     
@@ -262,7 +269,6 @@ def handle_button_click(event):
         return create_configure_message(user_data.phase_num, user_data.editing)
     
     elif event_action == 'submit':
-        # TODO: post request to web page
         print('submitting')
         status = submit_user_campaign(user_data.user_id)
         if (status != 200):
@@ -307,6 +313,8 @@ def handle_button_click(event):
     elif event_action == 'back_submission':
         # user cancelled editing a submission
         campaign = get_campaign_data(get_campaign_key(user_data.user_id, user_data.campaign_name))
+        user_data.set_accepting_text(False)
+        update_user(user_data)
         return create_campaign_overview(campaign, True)
     
     elif event_action == 'edit_campaign_settings':
@@ -325,4 +333,5 @@ def handle_button_click(event):
     
     elif event_action == 'delete_campaign':
         campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
+        user_data.phase_num = DELETE_CAMPAIGN
         return confirm_campaign_delete(user_data.user_id, campaign_id)

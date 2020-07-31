@@ -345,3 +345,11 @@ def submit_user_campaign(user_id):
     campaign_encode = convert_campaign_to_encoded_dict(current_campaign)
     response = requests.post(DSA_URL + '/DSA-campaigns-hangouts', data=campaign_encode)
     return response.status_code
+
+def delete_campaign(campaign_id):
+    params = {
+      "id": campaign_id,
+      "delete": True
+    }
+    response = requests.post(DSA_URL + '/DSA-campaigns-hangouts', params)
+    return response.status_code
