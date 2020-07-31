@@ -265,7 +265,7 @@ def handle_button_click(event):
     elif event_action == 'no_action':
         # user would like to re-enter setting value
 
-        # user has cancelled a delete prompt
+        # user cancelled a delete prompt
         if user_data.phase_num == DELETE_CAMPAIGN:
             campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
             for campaign in get_dsa_campaigns(event['user']['email']):
