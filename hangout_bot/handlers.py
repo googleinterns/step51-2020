@@ -197,10 +197,12 @@ def handle_button_click(event):
             add_campaign_data(user_campaign_data)
           user_data.campaign_name = user_value
           update_user(user_data)
+        
         elif user_data.phase_num == DELETE_CAMPAIGN:
             campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
             status = delete_campaign(campaign_id)
             return create_campaign_deletion_confirmation(status != 200)
+        
         else:
           # get the user campaign being modified from datastore
           user_key = get_campaign_key(user_data.user_id,
@@ -271,6 +273,7 @@ def handle_button_click(event):
             for campaign in get_dsa_campaigns(event['user']['email']):
                 if campaign.campaign_id == campaign_id:
                     user_data.phase_num = VIEWING_CAMPAIGNS
+                    user_data.accepting_text(False)
                     update_user(user_data)
                     return get_campaign_overview(campaign, False)
             return error_message('An error occurred.', INVALID_INPUT)

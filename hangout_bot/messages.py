@@ -1080,6 +1080,8 @@ def get_campaign_overview(campaign_data, viewing):
     Args:
       campaign_data:
         CampaignData used to populate campaign data
+      viewing:
+        bool representing if user is viewing a campaign from campaign list prompt, (determines if this updates previous message)
     Returns:
       dict
         dictionary containing overview message
