@@ -30,6 +30,7 @@ from decimal import Decimal
 from campaigndata import CampaignData
 from constant import *
 from handlers import *
+from datastore import *
 
 app = Flask(__name__)
 
@@ -50,6 +51,7 @@ def format_response(event):
     # Case: The bot was added to a DM
     if event_type == 'ADDED_TO_SPACE' and event['space']['type'] == 'DM':
         responseText = handle_join(event)
+        get_keyword_campaigns()
     elif event_type == 'MESSAGE':
         responseText = handle_message(event)
     elif event_type == 'CARD_CLICKED':
