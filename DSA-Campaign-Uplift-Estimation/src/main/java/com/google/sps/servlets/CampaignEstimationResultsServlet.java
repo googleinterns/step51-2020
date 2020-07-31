@@ -101,7 +101,7 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
     public static int getImpressionsEstimate(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) throws IOException {
         double manualCPCFactor = getManualCPCFactor(keywordCampaignEntity, DSACampaignEntity);
         double locationsFactor = getLocationsFactor(keywordCampaignEntity, DSACampaignEntity);
-        double upliftFactor = Math.min(.25*manualCPCFactor + .25*locationsFactor + .50*websiteFactor, 1.5);
+        double upliftFactor = Math.max(.25*manualCPCFactor + .25*locationsFactor + .50*websiteFactor, 1.5);
 
         return (int) Math.round(upliftFactor * ((int) ((long) keywordCampaignEntity.getProperty("impressions"))));
     }
