@@ -67,7 +67,7 @@ public class DSACampaignsServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        boolean hangoutsRequest = request.getParameter("hangouts") != null
+        boolean hangoutsRequest = request.getParameter("hangouts") != null;
         UserService userService = !hangoutsRequest ? UserServiceFactory.getUserService() : null;
 
         if (request.getParameter("delete") != null) {
