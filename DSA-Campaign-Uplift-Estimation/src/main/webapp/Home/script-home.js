@@ -73,9 +73,7 @@ function drawDsaCampaignCharts() {
       // DSA campaigns and hide any previously showing charts and tables.
       if (DSACampaigns.length == 0) {
         dsaCampaignsList.innerHTML = '<p>There are no DSA campaigns. ' +
-          'Please create one.</p>';
-        dsaCampaignsList.innerHTML += '<a href=\"../Create/create.html\" ' +
-          'style=\"text-decoration: none;\">Here</a>';
+          'Create one <a href=\"../Create/create.html\" style=\"text-decoration: none;\">here</a>.</p>';
 
         firstBarChart.style.visibility = 'hidden';
         secondBarChart.style.visibility = 'hidden';
@@ -129,11 +127,11 @@ function makePagination(numberOfPages, activePageNumber) {
   pagination.style.visibility = 'visible';
   let paginationString = '';
   paginationString += '<div class=\"pageCenter\"><input type=\"button\" ' +
-    'id=\"previous\" onclick=\"previousPage()\" value=\"previous\" />';
+    'id=\"previous\" onclick=\"previousPage()\" value=\"Previous\" />';
   paginationString += '<a id=\"activePageNumber\">  ' + (activePageNumber +
     1)  +'  </a>';
   paginationString += '<input type=\"button\" id=\"next\" ' +
-    'onclick=\"nextPage(' + numberOfPages + ')\" value=\"next\" /></div>';
+    'onclick=\"nextPage(' + numberOfPages + ')\" value=\"Next\" /></div>';
   pagination.innerHTML = paginationString;
 }
 
@@ -151,7 +149,7 @@ function nextPage(numberOfPages) {
     currentPage++;
     drawDsaCampaignCharts();
   }
-  activePage.innerText = increasePage;
+  activePage.innerText = ' ' + increasePage + ' ';
 }
 
 // Decreases the page backward by decreasing the active page by one and letting
@@ -168,7 +166,7 @@ function previousPage() {
     currentPage--;
     drawDsaCampaignCharts();
   }
-  activePage.innerText = decreasePage;
+  activePage.innerText = ' ' + decreasePage + ' ';
 }
 
 // This function draws the bar graph that displays the name, impressions,
@@ -190,10 +188,9 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
     },
     bars: 'horizontal', // Required for Material Bar Charts.
   };
-  
-  let barchart = document.getElementById('bar-chart' + chartNumber);
+
+  const barchart = document.getElementById('bar-chart' + chartNumber);
   barchart.innerHTML = '';
-  barchart.style.paddingTop = "40px";
   const chart = new google.charts.Bar(barchart);
   chart.draw(data, google.charts.Bar.convertOptions(options));
   console.log('Drew bar graph.');
@@ -204,72 +201,91 @@ function drawDSACampaignBarGraph(DSACampaign, chartNumber) {
 // table correlates with data2. At the end of the function a delete button is
 // also created to accompany the tables.
 function drawDSACampaignTable(DSACampaign, chartNumber) {
-  let table = document.getElementById('table' + chartNumber);
+    let table = document.getElementById('table' + chartNumber);
 
-  // create the table
-  let settingsTable = document.createElement("TABLE");
-  settingsTable.style.fontSize = "small";
+    // create the table
+    let settingsTable = document.createElement("TABLE");
+    settingsTable.style.fontSize = "small";
 
-  // create the row of headers
-  let headers = ["DSA Campaign", "Start Date", "End Date", "Manual CPC",
-    "Daily Budget", "Locations", "Negative Locations", "Domain", "Targets",
-    "Ad Text", "Impressions", "Clicks", "Cost (USD)"];
-  createRow(settingsTable, "TH", headers);
+    // create the row of headers
+    var headers = ["DSA Campaign", "Start Date", "End Date", "Manual CPC", "Daily Budget", "Locations", "Domain, Target Pages",
+                        "Ad Text", "Impressions", "Clicks", "Cost (USD)"];
+    createRow(settingsTable, "TH", headers);
 
-  let negLocations = DSACampaign.negativeLocations;
-  if (negLocations == '') {
-    negLocations = 'n/a';
-  }
-
-  let impressions;
-  let clicks;
-  let cost;
-  if (DSACampaign.campaignStatus == 'pending') {
-    impressions = 'n/a';
-    clicks = 'n/a';
-    cost = 'n/a';
-  } else {
-    impressions = DSACampaign.impressions;
-    clicks = DSACampaign.clicks;
-    cost = DSACampaign.cost;
+    // combine the locations and negative locations values
+    var locationsOutput = DSACampaign.locations;
+    if (DSACampaign.negativeLocations.length > 0) {
+        locationsOutput = "Entire US except " + DSACampaign.negativeLocations;
     }
 
-  let rowElements = [DSACampaign.name, DSACampaign.startDate,
-    DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget,
-    DSACampaign.locations, negLocations, DSACampaign.domain,
-    DSACampaign.targets, DSACampaign.adText, impressions, clicks, cost];
-  createRow(settingsTable, "TD", rowElements);
+    // deal with duplicate target pages, target page being the same as the domain
+    var webPages = new Set();
+    webPages.add(DSACampaign.domain.trim());
+    var targetsArr = DSACampaign.targets.split(",");
+    for (target of targetsArr) {
+        if (target.trim().length > 0) {
+            webPages.add(target.trim());
+        }
+    }
 
-  settingsTable.style.width = "75%";
+    var totalPages = "";
+    var curPage = 1;
+    for (let page of webPages) {
+        totalPages += page; 
+        if (curPage < webPages.size) {
+            totalPages += ", ";
+        }
+        curPage += 1;
+    }
 
-  table.innerHTML='';
-  table.appendChild(settingsTable);  
+    let impressions;
+    let clicks;
+    let cost;
+    if (DSACampaign.campaignStatus == 'pending') {
+        impressions = 'n/a';
+        clicks = 'n/a';
+        cost = 'n/a';
+    } else {
+        impressions = DSACampaign.impressions;
+        clicks = DSACampaign.clicks;
+        cost = DSACampaign.cost;
+    }
 
-  table.style.paddingTop = "35px";
-  table.style.paddingBottom = "15px";
+    var rowElements = [DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, 
+                            DSACampaign.dailyBudget, locationsOutput, totalPages, DSACampaign.adText, 
+                           impressions, clicks, cost];
+    createRow(settingsTable, "TD", rowElements);
 
-  // This marks the beginning of the delete button process. We define the html
-  // of the deletebutton id and link it to the deleteDSACampaign function when
-  // clicked.
-  const deleteElement = document.getElementById('deletebutton' +
-    chartNumber);
-  let deleteString = '';
-  deleteString += '<button onclick=\"deleteDSACampaign(' +
-    DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
-  deleteElement.innerHTML = deleteString;
-  deleteElement.style.paddingBottom = "40px";
+    settingsTable.style.width = "75%";
+
+    table.innerHTML = '';
+    table.appendChild(settingsTable);  
+
+    table.style.paddingTop = "35px";
+    table.style.paddingBottom = "15px";
+
+    // This marks the beginning of the delete button process. We define the html
+    // of the deletebutton id and link it to the deleteDSACampaign function when
+    // clicked.
+    const deleteElement = document.getElementById('deletebutton' +
+        chartNumber);
+    let deleteString = '';
+    deleteString += '<button onclick=\"deleteDSACampaign(' +
+        DSACampaign.DSACampaignId+')\" class=\"deleteCampaign\"> Delete </button>';
+    deleteElement.innerHTML = deleteString;
+    deleteElement.style.paddingBottom = '40px';
 }
 
 function createRow(container, elementType, textArr) {
-    var row = document.createElement("TR");
+  const row = document.createElement('TR');
 
-    textArr.forEach(text => {
-        var header = document.createElement(elementType);
-        header.appendChild(document.createTextNode(text));
-        row.appendChild(header);
-    });
+  textArr.forEach((text) => {
+    const header = document.createElement(elementType);
+    header.appendChild(document.createTextNode(text));
+    row.appendChild(header);
+  });
 
-    container.appendChild(row);
+  container.appendChild(row);
 }
 
 // Sends the id from related DSA campaigns to the DSACampaign servlet where
@@ -301,4 +317,14 @@ function drawPendingBlock(chartNumber) {
   blockString += '<div class=\"pendingblock\"><h3>' +
     'Campaign is still processing </h3></div>';
   pendingBlockElement.innerHTML = blockString;
+}
+
+function getPendingCampaignsExistStatus() {
+    fetch('/pending-campaigns-exist').then((response) => response.json()).then(status => {
+        console.log('status: ' + status);
+        if (status == 1) {
+            fetch('/estimation-results', {method: 'POST'});
+            fetch('/pending-campaigns-exist', {method: 'POST'});
+        }
+    });
 }

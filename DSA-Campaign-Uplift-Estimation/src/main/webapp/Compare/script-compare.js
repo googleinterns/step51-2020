@@ -46,7 +46,7 @@ function getDSACampaigns() {
 
             if (count == 0) {
                 // no complete DSA campaigns associated with the keyword campaign
-                DSACampaignsList.innerHTML += '<p>No completed DSA campaigns associated with this keyword campaign.</p>';
+                DSACampaignsList.innerHTML += '<p>No DSA campaigns associated with this keyword campaign.</p>';
             } else {
                 DSACampaignsList.innerHTML += '<input id="keyword-campaign-id-form" type=\"hidden\" name=\"keywordCampaignId\" value=' + keywordCampaignId + '>';
                 DSACampaignsList.innerHTML += '<input type=\"submit\" value=\"Submit\" style=\"margin-left: 15px;\">';
@@ -123,21 +123,41 @@ function drawTable(DSACampaignList, keywordCampaign) {
     settingsTable.style.fontSize = "small";
 
     // create the row of headers
-    var headers = ["DSA Campaign", "Start Date", "End Date", "Manual CPC", "Daily Budget", "Locations", "Negative Locations", "Domain", "Targets",
+    var headers = ["DSA Campaign", "Start Date", "End Date", "Manual CPC", "Daily Budget", "Locations", "Domain, Target Pages",
                       "Ad Text", "Impressions Uplift", "Clicks Uplift", "Cost Uplift (USD)"];
     createRow(settingsTable, "TH", headers);
 
     // create the rest of the rows
     DSACampaignList.forEach(DSACampaign => {
-        var campaignDuration = getCampaignDuration(DSACampaign.startDate, DSACampaign.endDate);
-
-        var negLocations = DSACampaign.negativeLocations;
-        if (negLocations == '') {
-            negLocations = 'n/a';
+        // combine the locations and negative locations values
+        var locationsOutput = DSACampaign.locations;
+        if (DSACampaign.negativeLocations.length > 0) {
+            locationsOutput = "Entire US except " + DSACampaign.negativeLocations;
         }
 
-        var rowElements = [DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, DSACampaign.dailyBudget,
-                               DSACampaign.locations, negLocations, DSACampaign.domain, DSACampaign.targets, DSACampaign.adText, 
+        // deal with duplicate target pages, target page being the same as the domain
+        var webPages = new Set();
+        webPages.add(DSACampaign.domain.trim());
+        var targetsArr = DSACampaign.targets.split(",");
+        for (target of targetsArr) {
+            if (target.trim().length > 0) {
+                webPages.add(target.trim());
+            }
+        }
+
+        var totalPages = "";
+        var curPage = 1;
+        for (let page of webPages) {
+            totalPages += page; 
+            if (curPage < webPages.size) {
+                totalPages += ", ";
+            }
+            curPage += 1;
+        }
+
+        var campaignDuration = getCampaignDuration(DSACampaign.startDate, DSACampaign.endDate);
+        var rowElements = [DSACampaign.name, DSACampaign.startDate, DSACampaign.endDate, DSACampaign.manualCPC, 
+                               DSACampaign.dailyBudget, locationsOutput, totalPages, DSACampaign.adText, 
                                calculateUplift(DSACampaign.impressions, keywordCampaign.impressions, campaignDuration),
                                calculateUplift(DSACampaign.clicks, keywordCampaign.clicks, campaignDuration),
                                calculateUplift(DSACampaign.cost, keywordCampaign.cost, campaignDuration)];
@@ -222,7 +242,7 @@ function getCampaignDuration(startDate, endDate) {
 }
 
 function calculateUplift(DSAStatistic, keywordCampaignStatistic, campaignDuration) {
-    var uplift = (DSAStatistic - keywordCampaignStatistic) * campaignDuration;
+    var uplift = Math.round(100 * ((DSAStatistic - keywordCampaignStatistic) * campaignDuration)) / 100;
     // uplift must be non-negative
     if (uplift < 0) {
         return 0;

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>About</title>
+    <link rel="stylesheet" href="../Resources/NavBar/navbar_style.css"></link>
+    <link rel="stylesheet" href="../Resources/Header/header.css"></link>
+    <script src="../Resources/NavBar/navbar_script.js"></script>
+    <link rel="stylesheet" href="style-about.css"></link>
+  </head>
+  <body onload="getLogsStatus();">
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <img src="../Resources/images/DSA-campaign-white.png" style="max-width: 50%; max-height: 50%; margin-left: auto; margin-right: auto; display: block;"/>
+      <a href="/Home/home.html">Home</a>
+      <a href="/Create/create.html">Create</a>
+      <a href="/Compare/compare.html">Compare</a>
+      <a href="/About/about.html">About</a>
+      <a id="loginout-link" href="#">Logout</a>
+    </div>
+
+    <header>
+      <div class="header">
+        <span style="font-size: 30px; cursor: pointer; float: left; color: #f2f2f2;" onclick="openNav()">&#9776;</span>
+        <a href="#default" class="title">About</a>
+      </div>
+    </header>
+	
+    <div class="content">
+        <h3>Project Overview</h3>
+        <p>This project aims to address two main problems with the current Dynamic Search Ads framework. The first
+            involves the lack of transparency associated with automated products and the limited predictability of DSA and 
+            machine learning in general. Users have no guarantee that using DSA will produce the results they intend,
+            creating some risk for users attempting to transition over from their traditional keyword campaigns
+            to DSA. The second issue involves the sometimes unnecessary complexity of DSA. Especially for newer advertisers and smaller
+            companies, incorporating DSA into their already confusing keyword campaigns only adds another layer of complexity.</p>
+        <p>This project aims to address both of these issues by allowing advertisers to run test DSA campaigns with
+            easy-to-use UIs, so they can estimate the uplift DSA can bring to their keyword campaigns. Users can
+            experiment with different DSA campaign settings when creating their DSA campaigns, and the results of the
+            campaigns are displayed on the home and compare pages in clear, efficient charts and graphs. By allowing 
+            users to clearly see the value DSA can bring to their ad campaigns, this project hopes to convince more 
+            users to incorporate DSA into their ad campaigns.</p>
+        <p>This project is a model of what DSA could eventually implement. Many changes would have to be made for this
+            project to be used in production, such as a more accurate estimation feature, a cleaner, simpler UI, and 
+            auto-generated campaign settings using AI.</p>
+        <h3>User Experience</h3>
+        <p>When users access the site, they first have to login in order to view their created DSA campaigns. When they
+            access the home page, they will see information on all of their previously created DSA campaigns in the form 
+            of charts and graphs. Three test keyword campaigns have been created so that all users can interact with the 
+            UI and experiment with creating their own DSA campaigns. If implemented in production, the tool would pull keyword
+            campaigns from a user's existing Google Ads account.</p> 
+        <p>The create page is where users create and run DSA campaigns. After a user inputs all the required settings and runs
+            the campaign, the estimation results will be able to be viewed on the home and compare pages.</p>
+        <p>The compare page allows users to easily compare the results of their different DSA campaigns. Users can select
+            any number of their created DSA campaigns to compare, and the uplift statistics will be displayed along with 
+            the inputted campaign settings and generated search query reports.</p>
+        <h3>Settings Explanations</h3>
+        <ul>
+            <li>Start/End Dates (Optional) - used to calculate the campaign duration for uplift estimations. The default values
+                 for the start and end dates are the present date and one year in the future, respectively.</li>
+            <li>Manual CPC - how much to spend for every ad click.</li>
+            <li>Daily Budget - maximum amount to spend in a day.</li>
+            <li>Locations - ads from the campaign will target users at the given locations. Currently only the US and US states are supported. 
+                Ex: display ads to users living in California and Texas.</li>
+            <li>Negative Locations - locations to not target. Negative locations can only be selected if the entire US is the
+                initial target. Ex: target every state in the US except for California and Texas.</li>
+            <li>Domain - main website link.</li>
+            <li>Target Pages - additional pages to direct users to in ads. The estimation process already generates a list of 
+                pages to direct users to, but the target pages allow advertisers to specifically include pages on the website
+                that may be missed.</li>
+            <li>Ad Text - custom description to display along with the ad.</li>
+        </ul>
+        <h3>Estimation Results Explanations</h3>
+        <ul>
+            <li>Impressions - number of times an ad is displayed on a search result page.</li>
+            <li>Clicks - number of times an ad link is clicked on.</li>
+            <li>Cost - total cost of the ad campaign.</li>
+            <li>Search Query Report (SQR) - contains the most likely queries that would cause an ad to be displayed and the 
+                corresponding landing pages.</li>
+            <li>Uplift - calculated by taking the difference between the estimation results of the DSA campaign and associated 
+                keyword campaign and multiplying by the campaign duration.</li>
+        </ul>
+        <h3>Estimation Algorithm</h3>
+        <p>The estimation process takes into account all of the factors inputted on the create page, as well as the settings of
+            the associated keyword campaign. The estimation process does not resemble the way DSA works in production - 
+            various formulas are used to factor in the settings to obtain the rough estimates. The parts of the process that
+            involve the most complexity are generating the locations and website factors. To obtain the locations factor, the
+            algorithm uses 2019 US Census data population estimates to analyze the number of people targeted in the DSA campaign 
+            versus that of the keyword campaign. This relative difference is used in the final estimation calculations.
+        <p>To create a website factor for the provided domain and target page links, the algorithm implements a web crawler to 
+            analyze the target pages and many of the pages linked to on the domain. The algorithm performs a keyword analysis on 
+            pages to search for a common theme or thread of ideas. While performing the keyword analyses, the algorithm also
+            generates the SQR as a by-product.
+        </p>
+        <h3>Hangouts Bot</h3>
+        <p>The Hangouts Bot provides an alternative way of creating DSA campaigns other than going through the webpage. Through a chat context,
+          users can configure DSA campaigns step by step, with help provided as needed.
+          <p>To access the bot:</p>
+          <ol>
+            <li>Navigate to <a href='https://chat.google.com/'>chat.google.com</a>.</li>
+            <li>At the top left corner, click search and select <b>Find a Bot</b>.</li>
+            <li>Search for <b>DSA Configuration Bot</b> and select the bot to begin creating your campaign.</li>
+          </ol> 
+          <img src='../Resources/images/hangouts-bot.png'
+        </p>
+        <h3>Contact</h3>
+        <p>For any questions/concerns or feedback on the website, please send an email to one of the following depending on the
+            nature of your inquiry: 
+        <ul>
+            <li>Nevin George (nevingeorge2000@gmail.com) - created the compare page and developed the estimation algorithm.</li>
+            <li>Neel Bagora (neelbagora@gmail.com) - created the create page and Hangouts Bot.</li>
+            <li>Erik Garcia (erikgarciam246@gmail.com) - created the login and home pages.</li>
+        </ul>
+        <p>GitHub: <a href="https://github.com/googleinterns/step51-2020">github.com/googleinterns/step51-2020</a></p>
+    </div>
+  </body>
+</html>
