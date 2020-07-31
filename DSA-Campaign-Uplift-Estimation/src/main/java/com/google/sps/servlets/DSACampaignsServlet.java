@@ -81,9 +81,9 @@ public class DSACampaignsServlet extends HttpServlet {
             Entity DSACampaignEntity = createEntityFromDSACampaign(DSACampaignObject);
             datastore.put(DSACampaignEntity);
 
-            CampaignEstimationResultsServlet.estimationResults(DSACampaignEntity);
+            PendingCampaignsExistServlet.changePendingCampaignsExistStatus(1);
 
-            response.sendRedirect("/Compare/compare.html");
+            response.sendRedirect("/Home/home.html");
         } else {
             response.sendRedirect("/index.html");
         }

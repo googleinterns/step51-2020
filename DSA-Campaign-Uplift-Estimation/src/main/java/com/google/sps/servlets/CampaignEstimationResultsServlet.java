@@ -80,13 +80,17 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
         double impressionsToClicksFactor = getImpressionsToClicksFactor(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int clicks = (int) Math.round(impressions * impressionsToClicksFactor);
-        double cost = (double) Math.round((clicks * Math.min((double) DSACampaignEntity.getProperty("manualCPC"), 1.5)) * 100) / 100;
+        double cost = (double) Math.round(clicks * Math.min((double) DSACampaignEntity.getProperty("manualCPC"), 1.5) * 100) / 100;
 
         // if exceeded the daily budget, must cap impressions, clicks, and cost
         if (cost > ((double) DSACampaignEntity.getProperty("dailyBudget"))) {
             cost = (double) DSACampaignEntity.getProperty("dailyBudget");
-            clicks = (int) Math.round(cost / ((double) DSACampaignEntity.getProperty("manualCPC")));
+            clicks = (int) Math.round(cost / Math.min((double) DSACampaignEntity.getProperty("manualCPC"), 1.5));
             impressions = (int) Math.round(clicks / impressionsToClicksFactor);
+        }
+
+        if (impressions < ((int) ((long) keywordCampaignEntity.getProperty("impressions")))) {
+            impressions = (int) Math.round(((int) ((long) keywordCampaignEntity.getProperty("impressions"))) * 1.5);
         }
 
         // update the DSA campaign entity in datastore with the estimation results and SQR
