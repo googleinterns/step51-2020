@@ -246,8 +246,8 @@ public class WebCrawler {
 
     // Checks if the word has meaningful content.
     public static boolean isSignificant(String word) {
-        // ignore empty and 1-letter strings
-        if (word.length() <= 1) {
+        // ignore empty and small strings
+        if (word.length() <= 2) {
             return false;
         }
         // common url elements
