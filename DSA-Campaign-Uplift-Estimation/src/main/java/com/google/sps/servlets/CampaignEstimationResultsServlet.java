@@ -80,7 +80,7 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
         double impressionsToClicksFactor = getImpressionsToClicksFactor(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int impressions = getImpressionsEstimate(keywordCampaignEntity, DSACampaignEntity, websiteFactor);
         int clicks = (int) Math.round(impressions * impressionsToClicksFactor);
-        double cost = clicks * ((double) DSACampaignEntity.getProperty("manualCPC"));
+        double cost = (double) Math.round((clicks * ((double) DSACampaignEntity.getProperty("manualCPC"))) * 100) / 100;
 
         // if exceeded the daily budget, must cap impressions, clicks, and cost
         if (cost > ((double) DSACampaignEntity.getProperty("dailyBudget"))) {
@@ -176,35 +176,39 @@ public class CampaignEstimationResultsServlet extends HttpServlet {
 
     // Returns the amount of people living in the specified locations, subtracting the amount of people living in the negative locations.
     public static double getTargetPopulationSize(String locations, String negativeLocations, HashMap<String, Integer> statePopulations) {
-        String refinedLocations = locations.trim().toLowerCase();
-        String refinedNegativeLocations = negativeLocations.trim().toLowerCase();
+        try {
+            String refinedLocations = locations.trim().toLowerCase();
+            String refinedNegativeLocations = negativeLocations.trim().toLowerCase();
 
-        // ensure that we don't subtract for negative locations if our initial target isn't the entire US
-        if (!refinedLocations.equals("usa")) {
-            refinedNegativeLocations = "";
-        }
-
-        /*
-         * In the front end, we ensure that
-         * 1) All of the locations are either US states or the US itself.
-         * 2) There is no overlap between locations and negative locations.
-         * 3) If the US is a location, no other states are given as locations as well.
-         * 4) At least one location is given.
-         */
-        double targetPopulationSize = 0;
-        String[] locationsArr = refinedLocations.split(",");
-        for (String location : locationsArr) {
-            targetPopulationSize += statePopulations.get(location.trim());
-        }
-
-        if (!refinedNegativeLocations.equals("")) {
-            String[] negativeLocationsArr = refinedNegativeLocations.split(",");
-            for (String negativeLocation : negativeLocationsArr) {
-                targetPopulationSize -= statePopulations.get(negativeLocation.trim());
+            // ensure that we don't subtract for negative locations if our initial target isn't the entire US
+            if (!refinedLocations.equals("usa")) {
+                refinedNegativeLocations = "";
             }
-        }
 
-        return targetPopulationSize;
+            /*
+            * In the front end, we ensure that
+            * 1) All of the locations are either US states or the US itself.
+            * 2) There is no overlap between locations and negative locations.
+            * 3) If the US is a location, no other states are given as locations as well.
+            * 4) At least one location is given.
+            */
+            double targetPopulationSize = 0;
+            String[] locationsArr = refinedLocations.split(",");
+            for (String location : locationsArr) {
+                targetPopulationSize += statePopulations.get(location.trim());
+            }
+
+            if (!refinedNegativeLocations.equals("")) {
+                String[] negativeLocationsArr = refinedNegativeLocations.split(",");
+                for (String negativeLocation : negativeLocationsArr) {
+                    targetPopulationSize -= statePopulations.get(negativeLocation.trim());
+                }
+            }
+
+            return targetPopulationSize;
+        } catch (Exception e) {
+            return 328239523;
+        }
     }
 
     public static double getImpressionsToClicksFactor(Entity keywordCampaignEntity, Entity DSACampaignEntity, double websiteFactor) {

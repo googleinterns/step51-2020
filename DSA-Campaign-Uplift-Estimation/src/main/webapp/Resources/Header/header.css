@@ -1,0 +1,28 @@
+.header {
+  overflow: hidden;
+  background-color: rgb(65, 65, 65);
+  padding: 20px 10px;
+}
+
+.header a {
+  float: left;
+  color: #ffffff;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px; 
+  line-height: 25px;
+  border-radius: 4px;
+}
+
+.header a.title {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.header a.title:hover {
+  font-size: 25px;
+  font-weight: bold;
+  color: #ffffff;
+  text-decoration: none;
+}
