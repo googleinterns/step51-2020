@@ -620,7 +620,38 @@ function determineValidity() {
       return false;
     }
   }
-  return true;
+
+  return checkDateValidity();
+}
+
+function checkDateValidity() {
+  startDate = document.getElementById('startDate').value.split('-');
+  endDate = document.getElementById('endDate').value.split('-');
+  const year = 0;
+  const month = 1;
+  const day = 2;
+
+  if (parseInt(startDate[year]) < parseInt(endDate[year])) {
+    return true;
+  } else if (parseInt(startDate[year]) == parseInt(endDate[year])) {
+    if (parseInt(startDate[month]) < parseInt(endDate[month])) {
+      return true;
+    } else if (parseInt(startDate[month]) == parseInt(endDate[month])) {
+      if (parseInt(startDate[day]) < parseInt(endDate[day])) {
+        return true;
+      } else {
+        return false;
+        alert('End date day cannot be before or the same day as the start date!')
+      }
+    } else {
+      alert('End date month cannot be before the start date!')
+      return false;
+    }
+
+  } else {
+    alert('End date year cannot be before start date!')
+    return false;
+  }
 }
 
 /**
