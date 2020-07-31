@@ -293,6 +293,7 @@ def convert_campaign_to_encoded_dict(campaign_data):
     """ 
 
     return {
+      'hangouts': True,
       'keywordCampaignId': campaign_data.keyword_campaign_id,
       'name': campaign_data.name,
       'startDate': campaign_data.start_date,
@@ -364,7 +365,12 @@ def get_dsa_campaigns(user_id):
     """ 
 
     # get dsa campaigns of DSACampaign entity type from dsa main site
-    response = requests.get(DSA_URL + '/DSA-campaigns-hangouts', {'userId': user_id})
+
+    get_params = {
+      'userId': user_id,
+      'hangouts': True
+    }
+    response = requests.get(DSA_URL + '/DSA-campaigns', get_params)
     if response.status_code != 200:
         # empty list of length 0, used to handle errors
         return []
@@ -389,7 +395,7 @@ def submit_user_campaign(user_id):
     user_key = get_user_key(user_id)
     current_campaign = get_user_current_campaign(user_key)
     campaign_encode = convert_campaign_to_encoded_dict(current_campaign)
-    response = requests.post(DSA_URL + '/DSA-campaigns-hangouts', data=campaign_encode)
+    response = requests.post(DSA_URL + '/DSA-campaigns', data=campaign_encode)
     return response.status_code
 
 def delete_campaign(campaign_id):
@@ -406,5 +412,5 @@ def delete_campaign(campaign_id):
       "id": campaign_id,
       "delete": True
     }
-    response = requests.post(DSA_URL + '/DSA-campaigns-hangouts', params)
+    response = requests.post(DSA_URL + '/DSA-campaigns', params)
     return response.status_code
