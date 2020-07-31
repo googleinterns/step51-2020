@@ -78,9 +78,12 @@ public class DSACampaignsServlet extends HttpServlet {
                 0, 0, 0, null);
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            datastore.put(createEntityFromDSACampaign(DSACampaignObject));
+            Entity DSACampaignEntity = createEntityFromDSACampaign(DSACampaignObject);
+            datastore.put(DSACampaignEntity);
 
-            response.sendRedirect("/Compare/compare.html");
+            PendingCampaignsExistServlet.changePendingCampaignsExistStatus(1);
+
+            response.sendRedirect("/Home/home.html");
         } else {
             response.sendRedirect("/index.html");
         }

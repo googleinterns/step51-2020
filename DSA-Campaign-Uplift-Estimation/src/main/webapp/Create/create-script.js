@@ -476,7 +476,7 @@ function addFormElements(keyvalPairs) {
         continue;
       }
       locationString = locationString == '' ? form.elements[i].value :
-                       locationString + ',' + form.elements[i].value;
+                       locationString + ', ' + form.elements[i].value;
     }
   }
   console.log(negLocationString)

@@ -63,13 +63,13 @@ public class WebCrawler {
             int numPagesCrawled = recommendedLinks.size();
             double avgPageFactor = sumOfPageFactors / numPagesCrawled;
             double logBase100 = Math.log10(numPagesCrawled) / 2;
-            return Math.max((logBase100 + 1) * avgPageFactor, 1.3);
+            return Math.max((logBase100 + 1) * avgPageFactor, 1.5);
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
 
         // failed to obtain the website factor
-        return 1;
+        return 1.5;
     }
 
     /*
@@ -140,7 +140,7 @@ public class WebCrawler {
             }
         }
 
-        return (((double) SQR.size()) / ((double) keywordsURLTitle.size())) + 1;
+        return Math.sqrt(((double) SQR.size()) / ((double) keywordsURLTitle.size())) + 1;
     }
 
     // Returns true if there is less than 1 character difference between strings str1 and str2.
@@ -246,8 +246,8 @@ public class WebCrawler {
 
     // Checks if the word has meaningful content.
     public static boolean isSignificant(String word) {
-        // ignore empty and 1-letter strings
-        if (word.length() <= 1) {
+        // ignore empty and small strings
+        if (word.length() <= 2) {
             return false;
         }
         // common url elements
