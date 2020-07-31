@@ -73,9 +73,7 @@ function drawDsaCampaignCharts() {
       // DSA campaigns and hide any previously showing charts and tables.
       if (DSACampaigns.length == 0) {
         dsaCampaignsList.innerHTML = '<p>There are no DSA campaigns. ' +
-          'Please create one.</p>';
-        dsaCampaignsList.innerHTML += '<a href=\"../Create/create.html\" ' +
-          'style=\"text-decoration: none;\">Here</a>';
+          'Create one <a href=\"../Create/create.html\" style=\"text-decoration: none;\">here</a>.</p>';
 
         firstBarChart.style.visibility = 'hidden';
         secondBarChart.style.visibility = 'hidden';
@@ -319,4 +317,14 @@ function drawPendingBlock(chartNumber) {
   blockString += '<div class=\"pendingblock\"><h3>' +
     'Campaign is still processing </h3></div>';
   pendingBlockElement.innerHTML = blockString;
+}
+
+function getPendingCampaignsExistStatus() {
+    fetch('/pending-campaigns-exist').then((response) => response.json()).then(status => {
+        console.log('status: ' + status);
+        if (status == 1) {
+            fetch('/estimation-results', {method: 'POST'});
+            fetch('/pending-campaigns-exist', {method: 'POST'});
+        }
+    });
 }
