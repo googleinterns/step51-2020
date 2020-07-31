@@ -42,10 +42,16 @@ public class DSACampaignsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String correspondingKeywordCampaignId = request.getParameter("keywordCampaignId");
+        String correspondingQueryId = request.getParameter("keywordCampaignId");
+        String queryName = "keywordCampaignId";
+
+        if (request.getParameter("hangouts") != null) {
+          correspondingQueryId = request.getParameter("userId");
+          queryName = "userId";
+        }
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, correspondingKeywordCampaignId)).addSort("DSACampaignId", SortDirection.ASCENDING);
+        Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate(queryName, Query.FilterOperator.EQUAL, correspondingQueryId)).addSort("DSACampaignId", SortDirection.ASCENDING);
     	PreparedQuery results = datastore.prepare(query);
 
         ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
@@ -61,16 +67,22 @@ public class DSACampaignsServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        UserService userService = UserServiceFactory.getUserService();
+        boolean hangoutsRequest = request.getParameter("hangouts") != null
+        UserService userService = !hangoutsRequest ? UserServiceFactory.getUserService() : null;
 
         if (request.getParameter("delete") != null) {
             System.err.println("Inside If Parameter");
             String campaignId = request.getParameter("id");
             deleteDSACampaign(campaignId);
             return;
-        } else if (userService.isUserLoggedIn()) {
+        } else if (hangoutsRequest || userService.isUserLoggedIn()) {
             // user ID represents user email
-            String userId = userService.getCurrentUser().getEmail();
+            String userId;
+            if (hangoutsRequest) {
+              userId = request.getParameter("userId");
+            } else {
+              userId = userService.getCurrentUser().getEmail();
+            }
             DSACampaign DSACampaignObject = new DSACampaign(KeywordCampaignsServlet.getNewCampaignId(false), userId, request.getParameter("keywordCampaignId"),
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
@@ -83,7 +95,9 @@ public class DSACampaignsServlet extends HttpServlet {
 
             PendingCampaignsExistServlet.changePendingCampaignsExistStatus(1);
 
-            response.sendRedirect("/Home/home.html");
+            if (!hangoutsRequest) {
+              response.sendRedirect("/Home/home.html");
+            }
         } else {
             response.sendRedirect("/index.html");
         }
