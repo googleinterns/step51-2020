@@ -370,6 +370,7 @@ def get_dsa_campaigns(user_id):
       'userId': user_id,
       'hangouts': True
     }
+
     response = requests.get(DSA_URL + '/DSA-campaigns', get_params)
     if response.status_code != 200:
         # empty list of length 0, used to handle errors
@@ -410,7 +411,8 @@ def delete_campaign(campaign_id):
     
     params = {
       "id": campaign_id,
-      "delete": True
+      "delete": True,
+      "hangouts": True
     }
     response = requests.post(DSA_URL + '/DSA-campaigns', params)
     return response.status_code
