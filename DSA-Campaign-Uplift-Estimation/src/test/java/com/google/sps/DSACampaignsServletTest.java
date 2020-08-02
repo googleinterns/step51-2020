@@ -68,32 +68,6 @@ public final class DSACampaignsServletTest {
     }
 
     @Test
-    public void DSACampaignsServletDoGet() throws IOException, ServletException {
-        when(request.getParameter("keywordCampaignId")).thenReturn("1");
-
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        when(response.getWriter()).thenReturn(pw);
-
-        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        DSACampaign DSACampaignObject = new DSACampaign("1", "2", "1", "entity 1", "pending", "1/1/1", "2/2/2", 23.1, 123.2, "United States of America", "California, Texas", "google.com",
-            "test1.com, test2.com", "sample ad text", 432, 123, 42.51, null);
-        ds.put(DSACampaignsServlet.createEntityFromDSACampaign(DSACampaignObject));
-        assertEquals(1, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
-
-        DSACampaignsServlet servlet = new DSACampaignsServlet();
-        servlet.doGet(request, response);
-        String result = sw.getBuffer().toString().trim();
-
-        ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
-        DSACampaigns.add(DSACampaignObject);
-        Gson gson = new Gson();
-        String expectedStr = gson.toJson(DSACampaigns);
-
-        assertEquals(expectedStr, result);
-    }
-
-    @Test
     public void DSACampaignsServletDoPost() throws IOException, ServletException {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         assertEquals(0, ds.prepare(new Query("DSACampaign")).countEntities(withLimit(10)));
