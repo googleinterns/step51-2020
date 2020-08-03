@@ -68,21 +68,17 @@ public class DSACampaignsServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         boolean hangoutsRequest = request.getParameter("hangouts") != null;
-        UserService userService = !hangoutsRequest ? UserServiceFactory.getUserService() : null;
+        UserService userService = UserServiceFactory.getUserService();
 
         if (request.getParameter("delete") != null) {
             System.err.println("Inside If Parameter");
             String campaignId = request.getParameter("id");
             deleteDSACampaign(campaignId);
             return;
-        } else if (hangoutsRequest || userService.isUserLoggedIn()) {
+        } else if (userService.isUserLoggedIn()) {
             // user ID represents user email
-            String userId;
-            if (hangoutsRequest) {
-              userId = request.getParameter("userId");
-            } else {
-              userId = userService.getCurrentUser().getEmail();
-            }
+            String userId = userService.getCurrentUser().getEmail();
+            
             DSACampaign DSACampaignObject = new DSACampaign(KeywordCampaignsServlet.getNewCampaignId(false), userId, request.getParameter("keywordCampaignId"),
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
                 Double.parseDouble(request.getParameter("manualCPC")), Double.parseDouble(request.getParameter("dailyBudget")), request.getParameter("locations"),
