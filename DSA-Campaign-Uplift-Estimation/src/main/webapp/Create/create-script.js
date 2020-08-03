@@ -579,7 +579,7 @@ function addRegion(negativeRegion, submission) {
       regionId + first_element_idx).cloneNode(true);
   regionSelect.id = regionId + locationCounter;
 
-  regionSelect.setAttribute('onchange', 'regionSelection()');
+  regionSelect.setAttribute('onchange', 'regionSelection();');
 
   regionSelect.value = '';
 
@@ -610,6 +610,7 @@ function addRegion(negativeRegion, submission) {
   location_section = negativeRegion ? 'new_neg_locations' : 'new_locations';
   location_section = document.getElementById(location_section)
   location_section.appendChild(locationDiv);
+  regionSelection();
 }
 
 /**

@@ -99,7 +99,7 @@ function drawBarGraph() {
 
                 var options = {
                     chart: {
-                        title: 'Statistics',
+                        title: 'DSA Campaign Metrics',
                         subtitle: 'Impressions, Clicks, and Cost Uplift',
                     },
                     bars: 'horizontal' // Required for Material Bar Charts.

@@ -1,10 +1,4 @@
 indexes:
-- kind: "DSACampaign"
-  properties:
-  - name: "userId"
-    direction: asc
-  - name: "DSACampaignId"
-    direction: asc
 - kind: "PresetData"
   properties:
   - name: "userId"
