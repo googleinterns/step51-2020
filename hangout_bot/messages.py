@@ -195,7 +195,7 @@ def create_keyword_campaign_list(editing):
     
     for i in range(len(keyword_json)):
         keyword_campaign_list = keyword_campaign_list + '<b>{}.</b> {}<br>'.format((i + 1), keyword_json[i]['name'])
-    message = "Please send a number corresponding to the keyword campaign you would like to use.<br>{}".format(keyword_campaign_list)
+    message = "Please send a number corresponding to the desired keyword campaign.<br>{}".format(keyword_campaign_list)
     if len(keyword_json) == 0:
         message = "There are no active keyword campaigns, please create a campaign when a valid keyword campaign exists."
     return {
@@ -238,7 +238,7 @@ def create_keyword_campaign_list(editing):
               ]
             }
 
-def create_campaign_list(user_id):
+def create_campaign_list(user_id, keyword_campaign_id):
     """Shows list of campaigns belonging to current user
     Args:
       None
@@ -246,7 +246,7 @@ def create_campaign_list(user_id):
       dict
         dictionary contains start campaign config message
     """
-    campaigns = get_dsa_campaigns(user_id)
+    campaigns = get_dsa_campaigns(user_id, keyword_campaign_id, editing)
     campaign_list = ''
     for i in range(len(campaigns)):
         campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, campaigns[i].name)
@@ -278,7 +278,7 @@ def create_campaign_list(user_id):
                                 "text": "BACK",
                                 "onClick": {
                                   "action": {
-                                    "actionMethodName": "back_submission",
+                                    "actionMethodName": "back_submission" if editing else "quit_campaign",
                                   }
                                 }
                               }
@@ -873,7 +873,7 @@ def create_configure_message(phase_num, editing):
     
     if phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
         return create_keyword_campaign_list(editing)
-    configure_str = '<b>{}</b>'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
+    configure_str = '{}'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
 
     return {
               "actionResponse": {

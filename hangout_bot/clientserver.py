@@ -353,11 +353,13 @@ def get_keyword_campaigns():
     json_data = json_module.loads(response.text)
     return json_data
 
-def get_dsa_campaigns(user_id):
+def get_dsa_campaigns(user_id, keyword_campaign_id):
     """Returns user specific dsa campaigns in campaign data format
     Args:
       user_id:
         user id used to request DSA campaigns
+      keyword_campaign_id:
+        Keyword campaign id used to request DSA campaigns
     Yields:
       campaign_data:
         list of campaignData objects from DSA web app
@@ -367,7 +369,8 @@ def get_dsa_campaigns(user_id):
 
     get_params = {
       'userId': user_id,
-      'hangouts': True
+      'hangouts': True,
+      'keywordCampaignId': keyword_campaign_id
     }
 
     response = requests.get(DSA_URL + '/DSA-campaigns', get_params)
