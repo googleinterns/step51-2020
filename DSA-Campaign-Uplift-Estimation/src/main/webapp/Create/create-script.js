@@ -576,13 +576,6 @@ function addRegion(negativeRegion, submission) {
   locationDiv.id = negativeRegion ? NEG_LOCATION_ID + locationCounter :
                                     LOCATION_ID + locationCounter;
 
-  const locationTag = document.createElement('h3');
-  const locationTagString = negativeRegion ?
-                            `Negative Location ${locationCounter}` :
-                            `Location ${locationCounter}`;
-  locationTag.innerText = locationTagString;
-  locationDiv.appendChild(locationTag);
-
   const countryLabel = document.createElement('label');
   countryLabel.className = 'control-label';
   countryLabel.innerText = negativeRegion ?
