@@ -132,6 +132,11 @@ h3.keyword_campaign {
 hr.header_tag {
   border: 1.5px solid grey;
   border-radius: 13px;
+  margin-top: 0px;
+}
+
+.header-margin {
+    margin-bottom: 30px;
 }
 
 

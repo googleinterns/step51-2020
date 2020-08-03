@@ -1,11 +1,11 @@
 indexes:
-- kind: "PresetData"
+- kind: "DSACampaign"
   properties:
   - name: "userId"
     direction: asc
-  - name: "timestamp"
+  - name: "DSACampaignId"
     direction: asc
-- kind: "DSACampaign"
+- kind: "PresetData"
   properties:
   - name: "userId"
     direction: asc
