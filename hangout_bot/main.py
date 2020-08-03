@@ -30,7 +30,7 @@ from decimal import Decimal
 from campaigndata import CampaignData
 from constant import *
 from handlers import *
-from datastore import *
+from clientserver import *
 
 app = Flask(__name__)
 

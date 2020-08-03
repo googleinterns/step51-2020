@@ -29,7 +29,7 @@ def add_new_campaign(user_id, campaign_name, keyword_campaign_id):
     new_campaign.set_keyword_campaign_id(keyword_campaign_id)
     
     # campaign name and keyword campaign ID have been set already, jump to phase num after NAME
-    new_campaign.set_phase_num(NAME + 1)
+    new_campaign.set_phase_num(PHASE_NUM.NAME + 1)
     new_campaign = convert_campaign_to_entity(new_campaign)
     put_entity_in_datastore(new_campaign)
 
@@ -48,31 +48,31 @@ def update_campaign_data(campaign_data, phase_num, value):
         Modified version of class
     """
 
-    if (phase_num == KEYWORD_CAMPAIGN):
+    if (phase_num == PHASE_NUM.KEYWORD_CAMPAIGN):
         campaign_data.set_keyword_campaign_id(value)
-    elif (phase_num == NAME):
+    elif (phase_num == PHASE_NUM.NAME):
         campaign_data.set_name(value)
-    elif (phase_num == START_DATE):
+    elif (phase_num == PHASE_NUM.START_DATE):
         entries = value.split('-')
         value = entries[YEAR] + '-' + entries[MONTH] + '-' + entries[DAY]
         campaign_data.set_start_date(value)
-    elif (phase_num == END_DATE):
+    elif (phase_num == PHASE_NUM.END_DATE):
         entries = value.split('-')
         value = entries[YEAR] + '-' + entries[MONTH] + '-' + entries[DAY]
         campaign_data.set_end_date(value)
-    elif (phase_num == DAILY_BUDGET):
+    elif (phase_num == PHASE_NUM.DAILY_BUDGET):
         campaign_data.set_daily_budget(value)
-    elif (phase_num == LOCATIONS):
+    elif (phase_num == PHASE_NUM.LOCATIONS):
         campaign_data.set_locations(value)
-    elif (phase_num == NEG_LOCATIONS):
+    elif (phase_num == PHASE_NUM.NEG_LOCATIONS):
         campaign_data.set_neg_locations(value)
-    elif (phase_num == DOMAIN):
+    elif (phase_num == PHASE_NUM.DOMAIN):
         campaign_data.set_domain(value)
-    elif (phase_num == TARGETS):
+    elif (phase_num == PHASE_NUM.TARGETS):
         campaign_data.set_targets(value)
-    elif (phase_num == MANUAL_CPC):
+    elif (phase_num == PHASE_NUM.MANUAL_CPC):
         campaign_data.set_manual_CPC(value)
-    elif (phase_num == AD_TEXT):
+    elif (phase_num == PHASE_NUM.AD_TEXT):
         campaign_data.set_ad_text(value)
     return campaign_data
 
@@ -335,7 +335,6 @@ def convert_json_to_campaign(json_string):
     campaign_data.set_clicks(int(json_string['clicks']))
     campaign_data.set_status(json_string['campaignStatus'])
     campaign_data.set_campaign_id(json_string['DSACampaignId'])
-    print(campaign_data.campaign_id)
     return campaign_data
 
 def get_keyword_campaigns():
@@ -373,8 +372,10 @@ def get_dsa_campaigns(user_id):
 
     response = requests.get(DSA_URL + '/DSA-campaigns', get_params)
     if response.status_code != 200:
-        # empty list of length 0, used to handle errors
+        # list of length 0, used to handle errors
         return []
+    print(response.text)
+    print(response.status_code)
     campaign_data = response.json()
     for i in range(len(campaign_data)):
         print(campaign_data[i])
@@ -414,5 +415,6 @@ def delete_campaign(campaign_id):
       "delete": True,
       "hangouts": True
     }
+    
     response = requests.post(DSA_URL + '/DSA-campaigns', params)
     return response.status_code

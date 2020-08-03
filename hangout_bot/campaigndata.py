@@ -17,7 +17,7 @@ class CampaignData:
       self.cost = 0
       self.clicks = 0
       self.status = 'pending'
-      self.campaign_id = 0
+      self.campaign_id = ''
 
     def set_keyword_campaign_id(self, keyword_campaign_id):
         self.keyword_campaign_id = keyword_campaign_id

@@ -1,5 +1,5 @@
 from constant import *
-from datastore import *
+from clientserver import *
 from decimal import *
 import re
 
@@ -7,36 +7,36 @@ import re
 # used to generate phase specific messages
 
 PHASE_DICTIONARY = {
-  KEYWORD_CAMPAIGN: ['keyword campaign', 'Please select the number corresponding ' +
+  PHASE_NUM.KEYWORD_CAMPAIGN: ['keyword campaign', 'Please select the number corresponding ' +
   'to the desired keyword campaign being associated with your campaign.'],
-  NAME: ['name',
+  PHASE_NUM.NAME: ['name',
       'Please input the name that will be associated with your dynamic ' +
       'search ad campaign estimate.'],
-  START_DATE: ['start date',
+  PHASE_NUM.START_DATE: ['start date',
       'Please input the date that your campaign estimate starts. <b>Must ' +
       'be in the form mm-dd-yyyy.</b>'],
-  END_DATE: ['end date',
+  PHASE_NUM.END_DATE: ['end date',
       'Please input the date that your campaign estimate will end. <b>Must ' +
       'be in the form mm-dd-yyyy.</b>'],
-  DAILY_BUDGET: ['daily budget', 'Please input the amount you are willing ' +
+  PHASE_NUM.DAILY_BUDGET: ['daily budget', 'Please input the amount you are willing ' +
       'to spend on the campaign each day.'],
-  LOCATIONS: ['locations', 'Please enter a comma separated list of state ' +
+  PHASE_NUM.LOCATIONS: ['locations', 'Please enter a comma separated list of state ' +
       'codes that your ad will target. Must be in the form of a valid US ' +
       'State abbreviation (Ex: \"CA, TX, MN\") (Must follow this form!). ' +
       'Enter \"USA\" if you would like to target the entire US.'],
-  NEG_LOCATIONS: ['negative locations', 'Are there any locations that your ' +
+  PHASE_NUM.NEG_LOCATIONS: ['negative locations', 'Are there any locations that your ' +
       'ad will not target? Ex: CA, USA (Must follow this format!' + 
       '). Input N/A if not applicable.'],
-  DOMAIN: ['domain', 'What is the domain of the webpage being advertised? ' +
+  PHASE_NUM.DOMAIN: ['domain', 'What is the domain of the webpage being advertised? ' +
       '(Ex: http://google.com)'],
-  TARGETS: ['targets', 'What are specific target pages of your domain ' +
+  PHASE_NUM.TARGETS: ['targets', 'What are specific target pages of your domain ' +
       'that you would like to specifically advertise? Multiple ' +
       'target pages can be input as a comma separated list. ' +
       '(Ex: http://google.com/page1, http://google.com/page2)'],
-  MANUAL_CPC: ['cost per click', 'What is the desired click per click? ' +
+  PHASE_NUM.MANUAL_CPC: ['cost per click', 'What is the desired click per click? ' +
       'The amount specified here will be how much you pay everytime an ' +
       'ad is clicked.'],
-  AD_TEXT: ['ad text', 'What text should appear on your ad.']
+  PHASE_NUM.AD_TEXT: ['ad text', 'What text should appear on your ad.']
 }
 
 
@@ -60,14 +60,14 @@ def error_handler(event, phase_num):
 
     # error map (PHASE_DICTIONARY key) : error handling reference
     ERROR_DICTIONARY = {
-      NAME: '',  # name cannot be an empty string or length 0
-      START_DATE: 'mm-dd-yyyy',   # start date must be in the form mm-dd-yyyy
-      END_DATE: 'mm-dd-yyyy',   # end date must be in the form mm-dd-yyyy
-      DAILY_BUDGET: 0.01,   # daily budget must be at least 1 cent.
+      PHASE_NUM.NAME: '',  # name cannot be an empty string or length 0
+      PHASE_NUM.START_DATE: 'mm-dd-yyyy',   # start date must be in the form mm-dd-yyyy
+      PHASE_NUM.END_DATE: 'mm-dd-yyyy',   # end date must be in the form mm-dd-yyyy
+      PHASE_NUM.DAILY_BUDGET: 0.01,   # daily budget must be at least 1 cent.
       # 6/7 will be validated using python URL validator
-      MANUAL_CPC: 0.01,   # manual CPC must be at least 1 cent.
-      AD_TEXT: '',
-      LOCATIONS: ''
+      PHASE_NUM.MANUAL_CPC: 0.01,   # manual CPC must be at least 1 cent.
+      PHASE_NUM.AD_TEXT: '',
+      PHASE_NUM.LOCATIONS: ''
     }
 
     # allows each success message to be changed at once, if necessary
@@ -75,7 +75,7 @@ def error_handler(event, phase_num):
     message = event['message']['text']
 
     # phase 0: name
-    if phase_num == KEYWORD_CAMPAIGN:
+    if phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
         kc_campaigns = get_keyword_campaigns()
         try:
           selection = int(message)
@@ -85,8 +85,8 @@ def error_handler(event, phase_num):
               return success
         except ValueError:
           return 'Selection is not a numeric value! Please enter a valid number corresponding to the keyword campaign of interest.'
-    elif phase_num == NAME:
-        if (len(message) > 0 and message != ERROR_DICTIONARY[NAME]):
+    elif phase_num == PHASE_NUM.NAME:
+        if (len(message) > 0 and message != ERROR_DICTIONARY[PHASE_NUM.NAME]):
             user_key = get_campaign_key(event['user']['email'], message)
             if (get_campaign_data(user_key) == None):
                 return success
@@ -96,7 +96,7 @@ def error_handler(event, phase_num):
           return 'Name is not valid!'
 
     # phase 1: start date, phase 2: end date
-    elif phase_num == START_DATE or phase_num == END_DATE:
+    elif phase_num == PHASE_NUM.START_DATE or phase_num == PHASE_NUM.END_DATE:
         date_parameters = message.split('-')
 
         # Expected date_parameters [mm, dd, yyyy]
@@ -115,12 +115,12 @@ def error_handler(event, phase_num):
         return 'Date is not in the right format! Must be in the form mm-dd-yyyy!'
 
     # phase 3: daily budget, phase 8: manual CPC
-    elif phase_num == DAILY_BUDGET or phase_num == MANUAL_CPC:
-        attribute_name = 'Daily budget' if phase_num == DAILY_BUDGET else 'Manual CPC (Cost Per Click)'
+    elif phase_num == PHASE_NUM.DAILY_BUDGET or phase_num == PHASE_NUM.MANUAL_CPC:
+        attribute_name = 'Daily budget' if phase_num == PHASE_NUM.DAILY_BUDGET else 'Manual CPC (Cost Per Click)'
         message = message[0:].strip()
         try:
           float(message)
-          if (Decimal(message) >= ERROR_DICTIONARY[DAILY_BUDGET]): 
+          if (Decimal(message) >= ERROR_DICTIONARY[PHASE_NUM.DAILY_BUDGET]): 
             return success
           else:
             return '{} must be at least $0.01!'.format(attribute_name)
@@ -128,14 +128,14 @@ def error_handler(event, phase_num):
            return '{} must be a valid decimal value! Ex: 34.00'.format(attribute_name)
     
     # phase 4: locations, phase 5: negative locations
-    elif phase_num == LOCATIONS or phase_num == NEG_LOCATIONS:
-        if (phase_num == NEG_LOCATIONS and message.lower() == 'n/a'):
+    elif phase_num == PHASE_NUM.LOCATIONS or phase_num == PHASE_NUM.NEG_LOCATIONS:
+        if (phase_num == PHASE_NUM.NEG_LOCATIONS and message.lower() == 'n/a'):
             return success
         locations = message.split(',')
         for idx in range(len(locations)):
             # trim white space
             locations[idx] = locations[idx].strip()
-            if phase_num == NEG_LOCATIONS:
+            if phase_num == PHASE_NUM.NEG_LOCATIONS:
                 campaign_name = get_user_data(get_user_key(event['user']['email'])).campaign_name
                 campaign_key = get_campaign_key(event['user']['email'], campaign_name)
                 location_data = get_campaign_data(campaign_key).locations.split(',')
@@ -159,7 +159,7 @@ def error_handler(event, phase_num):
             return 'Locations must be a comma separated list of state codes. Ex: CA, TX, MN, PA'
         return success
     # phase 6: domain, phase 7: target page(s)
-    elif phase_num == DOMAIN or phase_num == TARGETS:
+    elif phase_num == PHASE_NUM.DOMAIN or phase_num == PHASE_NUM.TARGETS:
         # regex string being used to validate the URL
         url_regex = re.compile(
             r'^(?:http|ftp)s?://' # http:// or https://
@@ -173,7 +173,7 @@ def error_handler(event, phase_num):
         attribute_name = 'domain' if phase_num == 6 else 'target pages'
         failed = 'URL is not valid, please ensure that you specified the correct {}!'.format(attribute_name)
         # TARGETS can be a comma separated list
-        if (phase_num == TARGETS):
+        if (phase_num == PHASE_NUM.TARGETS):
             domains = message.split(',')
             for idx in range(len(domains)):
                 # trim white space
@@ -183,8 +183,8 @@ def error_handler(event, phase_num):
             return success
         
         return success if re.match(url_regex, message) else failed
-    elif phase_num == AD_TEXT:
-        if (len(message) > 0 and message != ERROR_DICTIONARY[NAME]):
+    elif phase_num == PHASE_NUM.AD_TEXT:
+        if (len(message) > 0 and message != ERROR_DICTIONARY[PHASE_NUM.NAME]):
             return success
         else:
           return 'Ad text is not valid! Cannot be an empty value!'
@@ -302,7 +302,7 @@ def create_setting_list():
     """
 
     campaign_list = ''
-    for i in range(SUBMISSION):
+    for i in range(PHASE_NUM.SUBMISSION):
         campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, PHASE_DICTIONARY.get(i)[PHASE_NAME_INDEX])
 
     return {
@@ -371,7 +371,7 @@ def error_message(error_msg, phase_num):
         dictionary contains error response message
     """
 
-    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != INACTIVE else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
+    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != PHASE_NUM.INACTIVE else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
     return {
               "cards": [
                 {
@@ -609,7 +609,7 @@ def create_confirmation_message(message, phase_num, editing):
     """
 
     message_value = message
-    if (phase_num == KEYWORD_CAMPAIGN):
+    if (phase_num == PHASE_NUM.KEYWORD_CAMPAIGN):
         message_value = get_keyword_campaigns()[int(message) - 1]['name']
 
         # store the index of the keyword campaign being chosen
@@ -871,7 +871,7 @@ def create_configure_message(phase_num, editing):
       specified phase number
     """
     
-    if phase_num == KEYWORD_CAMPAIGN:
+    if phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
         return create_keyword_campaign_list(editing)
     configure_str = '<b>{}</b>'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
 
@@ -1373,3 +1373,4 @@ def confirm_campaign_delete(user_id, campaign_id):
                 }
               ]
             }
+

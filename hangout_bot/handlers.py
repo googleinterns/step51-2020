@@ -1,5 +1,5 @@
 from messages import *
-from datastore import *
+from clientserver import *
 from activeuser import *
 from constant import *
 
@@ -39,7 +39,7 @@ def handle_message(event):
         return error_message('Unexpected input, please respond according to the prompts!', INVALID_INPUT)
 
     # start phase num specific handling for yes_action
-    if user_data.phase_num == VIEWING_CAMPAIGNS:
+    if user_data.phase_num == PHASE_NUM.VIEWING_CAMPAIGNS:
         campaigns = get_dsa_campaigns(user_data.user_id)
         message = event['message']['text']
         if (not message.isnumeric()):
@@ -52,7 +52,7 @@ def handle_message(event):
             return get_campaign_overview(campaigns[int(message) - 1], True)
     
     # user is selecting a campaign to edit (home page prompt)
-    elif user_data.phase_num == INACTIVE and user_data.editing:
+    elif user_data.phase_num == PHASE_NUM.INACTIVE and user_data.editing:
         user_campaigns = get_user_campaigns(event['user']['email'])
         message = event['message']['text']
 
@@ -69,7 +69,7 @@ def handle_message(event):
             return create_campaign_overview(campaign, False)
 
     # user is selecting a setting to edit before submitting
-    elif user_data.phase_num == SUBMISSION and user_data.editing:
+    elif user_data.phase_num == PHASE_NUM.SUBMISSION and user_data.editing:
         # user is editing a specific setting of the campaign
         user_campaigns = get_user_campaigns(event['user']['email'])
         message = event['message']['text']
@@ -79,7 +79,7 @@ def handle_message(event):
             return error_message('Selection is not a valid number! Please input a number indicating what setting you would like to edit.', INVALID_INPUT)
         
         # selection is out of bounds
-        elif ((int(message) - 1) < KEYWORD_CAMPAIGN or (int(message) - 1) > SUBMISSION - 1):
+        elif ((int(message) - 1) < PHASE_NUM.KEYWORD_CAMPAIGN or (int(message) - 1) > PHASE_NUM.SUBMISSION - 1):
             return error_message('Selection is out of bounds!', INVALID_INPUT)
 
         else:
@@ -137,7 +137,7 @@ def handle_button_click(event):
 
         # allow text input(so user can specify which campaign they would like to edit)
         user_data.set_accepting_text(True)
-        user_data.set_phase_num(INACTIVE)
+        user_data.set_phase_num(PHASE_NUM.INACTIVE)
         user_data.set_editing(True)
         update_user(user_data)
 
@@ -147,7 +147,7 @@ def handle_button_click(event):
         # user has chosen to quit campaign configuration
 
         # Reset user data to new user status
-        user_data.set_phase_num(INACTIVE)
+        user_data.set_phase_num(PHASE_NUM.INACTIVE)
         user_data.set_editing(False)
         user_data.set_keyword_campaign_id(None)
         user_data.set_accepting_text(False)
@@ -163,7 +163,7 @@ def handle_button_click(event):
         user_value = event['action']['parameters'][VALUE_INDEX]['value']
 
         # user is on name phase, ActiveUser is changed and new campaign is added to datastore
-        if user_data.phase_num == KEYWORD_CAMPAIGN:
+        if user_data.phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
             user_data.keyword_campaign_id = get_keyword_campaigns()[int(user_value)]['keywordCampaignId']
             user_data.increment_phase_num()
             user_data.accepting_text = True
@@ -178,7 +178,7 @@ def handle_button_click(event):
                 return create_campaign_overview(user_campaign_data, True)
 
             return create_configure_message(user_data.phase_num, user_data.editing)
-        elif user_data.phase_num == NAME:
+        elif user_data.phase_num == PHASE_NUM.NAME:
           # add new campaign with event id and name from confirmation event
           if not user_data.editing:
             # user is not editing and this is a new campaign
@@ -198,7 +198,7 @@ def handle_button_click(event):
           user_data.campaign_name = user_value
           update_user(user_data)
         
-        elif user_data.phase_num == DELETE_CAMPAIGN:
+        elif user_data.phase_num == PHASE_NUM.DELETE_CAMPAIGN:
             campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
             status = delete_campaign(campaign_id)
             return create_campaign_deletion_confirmation(status != 200)
@@ -209,7 +209,7 @@ def handle_button_click(event):
                                       user_data.campaign_name)
           user_campaign_data = get_campaign_data(user_key)
 
-          if (user_data.phase_num == NEG_LOCATIONS and user_value.lower() == 'n/a'):
+          if (user_data.phase_num == PHASE_NUM.NEG_LOCATIONS and user_value.lower() == 'n/a'):
               user_value = ''
 
           # update and prepare the campaign data object to be put back in datastore
@@ -229,10 +229,10 @@ def handle_button_click(event):
         campaigns = get_user_current_campaign(user_key)
 
         if (user_data.editing):
-            user_data.phase_num = SUBMISSION
+            user_data.phase_num = PHASE_NUM.SUBMISSION
 
         # User is on the submission phase
-        if (user_data.phase_num == SUBMISSION):
+        if (user_data.phase_num == PHASE_NUM.SUBMISSION):
             user_data.set_accepting_text(False)
             update_user(user_data)
             return create_campaign_overview(campaigns, True)
@@ -240,7 +240,7 @@ def handle_button_click(event):
         user_data.set_accepting_text(True)
 
          # check if user is allowed to input negative locations (Can only put in negative locations if USA is a target)
-        if (user_data.phase_num == NEG_LOCATIONS and "USA" not in campaigns.locations):
+        if (user_data.phase_num == PHASE_NUM.NEG_LOCATIONS and "USA" not in campaigns.locations):
             # user is not allowed to add negative locations
 
             # skip negative locations
@@ -262,17 +262,17 @@ def handle_button_click(event):
         user_campaign_data = get_campaign_data(user_key)
 
         # send new configuration response 
-        return (create_configure_message(user_data.phase_num, user_data.editing) if user_data.phase_num < SUBMISSION else create_campaign_overview(user_campaign_data, True))
+        return (create_configure_message(user_data.phase_num, user_data.editing) if user_data.phase_num < PHASE_NUM.SUBMISSION else create_campaign_overview(user_campaign_data, True))
     
     elif event_action == 'no_action':
         # user would like to re-enter setting value
 
         # user cancelled a delete prompt
-        if user_data.phase_num == DELETE_CAMPAIGN:
+        if user_data.phase_num == PHASE_NUM.DELETE_CAMPAIGN:
             campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
             for campaign in get_dsa_campaigns(event['user']['email']):
                 if campaign.campaign_id == campaign_id:
-                    user_data.phase_num = VIEWING_CAMPAIGNS
+                    user_data.phase_num = PHASE_NUM.VIEWING_CAMPAIGNS
                     user_data.accepting_text(False)
                     update_user(user_data)
                     return get_campaign_overview(campaign, False)
@@ -311,7 +311,7 @@ def handle_button_click(event):
         user_data.phase_num = campaign.phase_num
         user_data.set_editing(False)
         # If campaign is complete, show overview message
-        if (user_data.phase_num == SUBMISSION):
+        if (user_data.phase_num == PHASE_NUM.SUBMISSION):
             user_data.set_accepting_text(False)
             update_user(user_data)
             return create_campaign_overview(campaign, True)
@@ -343,13 +343,13 @@ def handle_button_click(event):
         return create_setting_list()
     
     elif event_action == 'view_campaigns':
-        user_data.phase_num = VIEWING_CAMPAIGNS
+        user_data.phase_num = PHASE_NUM.VIEWING_CAMPAIGNS
         user_data.set_accepting_text(True)
         update_user(user_data)
         return create_campaign_list(event['user']['email'])
     
     elif event_action == 'delete_campaign':
         campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
-        user_data.phase_num = DELETE_CAMPAIGN
+        user_data.phase_num = PHASE_NUM.DELETE_CAMPAIGN
         update_user(user_data)
         return confirm_campaign_delete(user_data.user_id, campaign_id)
