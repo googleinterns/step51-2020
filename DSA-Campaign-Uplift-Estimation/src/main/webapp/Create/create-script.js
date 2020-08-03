@@ -638,9 +638,11 @@ function checkDateValidity() {
   startDate.setMonth(parseInt(startDate[month]));
   startDate.setDate(parseInt(startDate[day]));
 
-  startDate.setFullYear(parseInt(startDate[year]));
-  startDate.setMonth(parseInt(startDate[month]));
-  startDate.setDate(parseInt(startDate[day]));
+  endDate.setFullYear(parseInt(endDate[year]));
+  endDate.setMonth(parseInt(endDate[month]));
+  endDate.setDate(parseInt(endDate[day]));
+
+  return endDate > startDate;
 }
 
 /**
