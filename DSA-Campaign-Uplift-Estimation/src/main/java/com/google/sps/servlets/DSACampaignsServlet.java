@@ -56,9 +56,9 @@ public class DSACampaignsServlet extends HttpServlet {
             }
    
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-             Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate(queryName, Query.FilterOperator.EQUAL, correspondingQueryValue)).
-                setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId)).addSort("DSACampaignId", SortDirection.ASCENDING);
-            PreparedQuery results = datastore.prepare(query);PreparedQuery results = datastore.prepare(query);
+             Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate(queryName, Query.FilterOperator.EQUAL, correspondingQueryValue))
+                .setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId)).addSort("DSACampaignId", SortDirection.ASCENDING);
+            PreparedQuery results = datastore.prepare(query);
 
             ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
             for (Entity entity : results.asIterable()) {
