@@ -110,6 +110,11 @@ label {
 hr.header_tag {
   border: 1.5px solid grey;
   border-radius: 13px;
+  margin-top: 0px;
+}
+
+.header-margin {
+    margin-bottom: 30px;
 }
 
 
@@ -148,4 +153,10 @@ hr.header_tag {
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+.form-style {
+    background-color: white;
+    display: none;
+    margin-top: 20px;
 }
