@@ -56,8 +56,9 @@ function setDate() {
   let today = new Date();
   let startYear = today.getFullYear();
   let endYear = today.getFullYear() + 1;
-  let day = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
-  let dateString  = '-' + day + '-' + today.getDate();
+  let month = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
+  let day = (today.getDate() < 10) ? '0' + (today.getDate()) : (today.getDate())
+  let dateString  = '-' + month + '-' + day;
   document.getElementById('startDate').value = startYear + dateString
   document.getElementById('endDate').value = endYear + dateString
   console.log(startYear + dateString)
@@ -630,28 +631,16 @@ function checkDateValidity() {
   const year = 0;
   const month = 1;
   const day = 2;
+  let startDate = new Date();
+  let endDate = new Date();
 
-  if (parseInt(startDate[year]) < parseInt(endDate[year])) {
-    return true;
-  } else if (parseInt(startDate[year]) == parseInt(endDate[year])) {
-    if (parseInt(startDate[month]) < parseInt(endDate[month])) {
-      return true;
-    } else if (parseInt(startDate[month]) == parseInt(endDate[month])) {
-      if (parseInt(startDate[day]) < parseInt(endDate[day])) {
-        return true;
-      } else {
-        return false;
-        alert('End date day cannot be before or the same day as the start date!')
-      }
-    } else {
-      alert('End date month cannot be before the start date!')
-      return false;
-    }
+  startDate.setFullYear(parseInt(startDate[year]));
+  startDate.setMonth(parseInt(startDate[month]));
+  startDate.setDate(parseInt(startDate[day]));
 
-  } else {
-    alert('End date year cannot be before start date!')
-    return false;
-  }
+  startDate.setFullYear(parseInt(startDate[year]));
+  startDate.setMonth(parseInt(startDate[month]));
+  startDate.setDate(parseInt(startDate[day]));
 }
 
 /**
