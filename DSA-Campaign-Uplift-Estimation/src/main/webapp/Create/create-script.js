@@ -649,14 +649,19 @@ function resetCampaignForm() {
 }
 
 function regionSelection() {
+    let usaRegion = false;
     for (let i = 1; i <= locationCount; i++) {
       // USA index = 1
-      if (document.getElementById(`gds-cr-${i}`).selectedIndex != 1) {
-        document.getElementById('negativeLocations').style.display = 'none'
-        document.getElementById('add_region').style.display = 'inline-block'
-      } else {
-        document.getElementById('negativeLocations').style.display = 'block'
-        document.getElementById('add_region').style.display = 'none'
+      if (document.getElementById(`gds-cr-${i}`).selectedIndex == 1) {
+        usaRegion = true;
       }
+    }
+
+    if (!usaRegion) {
+      document.getElementById('negativeLocations').style.display = 'none'
+      document.getElementById('add_region').style.display = 'inline-block'
+    } else {
+      document.getElementById('negativeLocations').style.display = 'block'
+      document.getElementById('add_region').style.display = 'none'
     }
 }
