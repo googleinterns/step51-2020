@@ -42,27 +42,35 @@ public class DSACampaignsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String correspondingQueryId = request.getParameter("keywordCampaignId");
-        String queryName = "keywordCampaignId";
+        UserService userService = UserServiceFactory.getUserService();
 
-        if (request.getParameter("hangouts") != null) {
-          correspondingQueryId = request.getParameter("userId");
-          queryName = "userId";
+        if (userService.isUserLoggedIn()) {
+            String userId = userService.getCurrentUser().getEmail();
+
+            String correspondingQueryId = request.getParameter("keywordCampaignId");
+            String queryName = "keywordCampaignId";
+
+            if (request.getParameter("hangouts") != null) {
+              correspondingQueryId = userId;
+              queryName = "userId";
+            }
+   
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate(queryName, Query.FilterOperator.EQUAL, correspondingQueryId)).addSort("DSACampaignId", SortDirection.ASCENDING);
+    	      PreparedQuery results = datastore.prepare(query);
+
+            ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
+            for (Entity entity : results.asIterable()) {
+                DSACampaigns.add(createDSACampaignFromEntity(entity));
+            }
+
+            Gson gson = new Gson();
+            String json = gson.toJson(DSACampaigns);
+            response.setContentType("application/json;");
+            response.getWriter().println(json);
+        } else {
+            response.sendRedirect("/index.html");
         }
-
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate(queryName, Query.FilterOperator.EQUAL, correspondingQueryId)).addSort("DSACampaignId", SortDirection.ASCENDING);
-    	PreparedQuery results = datastore.prepare(query);
-
-        ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
-        for (Entity entity : results.asIterable()) {
-            DSACampaigns.add(createDSACampaignFromEntity(entity));
-        }
-
-        Gson gson = new Gson();
-        String json = gson.toJson(DSACampaigns);
-        response.setContentType("application/json;");
-        response.getWriter().println(json);
     }
 
     @Override
