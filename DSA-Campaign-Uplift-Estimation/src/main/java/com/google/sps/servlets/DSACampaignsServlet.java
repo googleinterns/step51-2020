@@ -26,6 +26,11 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.FetchOptions;
 import java.io.IOException;
 import com.google.gson.Gson;
@@ -46,12 +51,15 @@ public class DSACampaignsServlet extends HttpServlet {
         boolean hangoutsRequest = request.getParameter("hangouts") != null;
         
         if (userService.isUserLoggedIn() || hangoutsRequest) {
-            String userId = userService.getCurrentUser().getEmail();
+            String userId = hangoutsRequest ? request.getParameter("userId") : userService.getCurrentUser().getEmail();
             String correspondingKeywordCampaignId = request.getParameter("keywordCampaignId");
-            
+
+            Filter keywordCampaignFilter = new FilterPredicate("keywordCampaignId", FilterOperator.EQUAL, correspondingKeywordCampaignId);
+            Filter userIdFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
+            CompositeFilter filters = CompositeFilterOperator.and(keywordCampaignFilter, userIdFilter);
+
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, correspondingKeywordCampaignId))
-                .setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId)).addSort("DSACampaignId", SortDirection.ASCENDING);
+            Query query = new Query("DSACampaign").setFilter(filters).addSort("DSACampaignId", SortDirection.ASCENDING);
             PreparedQuery results = datastore.prepare(query);
 
             ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
@@ -176,9 +184,7 @@ public class DSACampaignsServlet extends HttpServlet {
     public void deleteDSACampaign(String campaignId) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-        Query query =
-            new Query("DSACampaign")
-                .setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, campaignId));
+        Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("DSACampaignId", Query.FilterOperator.EQUAL, campaignId));
         Entity entity = datastore.prepare(query).asSingleEntity();
 
         long entityId = entity.getKey().getId();

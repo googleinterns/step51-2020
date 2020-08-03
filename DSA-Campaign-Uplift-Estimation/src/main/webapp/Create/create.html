@@ -10,15 +10,15 @@
     <!-- drop down box styling -->
     <link rel="stylesheet" href="../Resources/dropdown.css"></link>
 
-    <!-- create page source files -->
-    <link rel="stylesheet" href="create-style.css"></link>
-    <script src="create-script.js"></script>
-
     <!-- Google charts -->
     <script src="https://www.gstatic.com/charts/loader.js"></script>
 
     <!-- compare page source files (for drop down menus) -->
     <script src="../Compare/script-compare.js"></script>
+
+    <!-- create page source files -->
+    <link rel="stylesheet" href="create-style.css"></link>
+    <script src="create-script.js"></script>
 
     <!-- location drop down styling -->
     <link rel="gettext" type="application/x-po" href="../Resources/LocationDropdown/languages/en/LC_MESSAGES/en.po" />
@@ -34,7 +34,6 @@
     <!-- Bootstrap integration -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
     <!-- header styling -->
     <link rel="stylesheet" href="../Resources/Header/header.css"></link>
   </head>
@@ -77,6 +76,16 @@
                 <h2 class="header-margin">DSA Campaign Configuration</h2>
                 <label for="name"><span style="color:red">&#42;</span> Campaign Name:</label>
                 <input type="text" id="name" name="name" placeholder="DSA Campaign Name" required>
+                <label for="domain"><span style="color:red">&#42;</span> Domain:</label>
+                <input type="url" id="domain" name="domain" placeholder="https://www.google.com/" required>
+                <br>
+                <br>
+                <label for="targets"> Target Pages (Comma separated List):</label>
+                <input type="url" id="targets" name="targets" placeholder="">
+                <br>
+                <br>
+                <label for="adText"><span style="color:red">&#42;</span> Ad Text:</label>
+                <input type="text" id="adTextDescription" name="adText" placeholder="Some ad text." required>
                 <div class="row">
                   <div class="col-50">
                     <label for="startDate">Start Date:</label>
@@ -245,6 +254,7 @@
                 <br>
                 <label for="adText"> Ad Text:</label>
                 <input type="text" id="adInformationText" name="adText" placeholder="Some ad text." value=''>
+
               </div> 
 
               <!-- Preset Data -->
