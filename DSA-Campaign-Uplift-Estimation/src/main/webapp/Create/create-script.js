@@ -57,7 +57,7 @@ function setDate() {
   let startYear = today.getFullYear();
   let endYear = today.getFullYear() + 1;
   let month = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
-  let day = (today.getDate() < 10) ? '0' + (today.getDate()) : (today.getDate())
+  let day = (today.getDate() < 10) ? '0' + (today.getDate()) : (today.getDate());
   let dateString  = '-' + month + '-' + day;
   document.getElementById('startDate').value = startYear + dateString
   document.getElementById('endDate').value = endYear + dateString
