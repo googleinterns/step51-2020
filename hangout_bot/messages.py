@@ -74,6 +74,13 @@ def error_handler(event, phase_num):
     success = True
     message = event['message']['text']
 
+    if phase_num == VIEWING_KEYWORD_CAMPAIGNS:
+        campaigns = get_keyword_campaigns()
+        if (not message.isdigit()):
+            return error_message('Selection is not a valid number! Please input a number indicating what campaign you would like to view.', INVALID_INPUT)
+        elif (int(message) < 1 or int(message) > len(campaigns)):
+            return error_message('Selection is out of bounds!', INVALID_INPUT)
+        return success  
     # phase 0: name
     if phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
         kc_campaigns = get_keyword_campaigns()

@@ -38,20 +38,18 @@ def handle_message(event):
     if not user_data.accepting_text:
         return error_message('Unexpected input, please respond according to the prompts!', INVALID_INPUT)
 
+    # start phase num specific handling for messages
     if user_data.phase_num == VIEWING_KEYWORD_CAMPAIGNS:
         campaigns = get_keyword_campaigns()
         message = event['message']['text']
-        if (not message.isnumeric()):
-            return error_message('Selection is not a valid number! Please input a number indicating what campaign you would like to view.', INVALID_INPUT)
-        elif (int(message) < 1 or int(message) > len(campaigns)):
-            return error_message('Selection is out of bounds!', INVALID_INPUT)
-        else:
+        success = error_handler(event, user_data.phase_num)
+        if success == True:
             user_data.phase_num = PHASE_NUM.VIEWING_CAMPAIGNS
             user_data.keyword_campaign_id = campaigns[int(message) - 1]['keywordCampaignId']
             update_user(user_data)
             return create_campaign_list(event['user']['email'], user_data.keyword_campaign_id, False)
-    
-    # start phase num specific handling for yes_action
+        else:
+            return error_message(success, INVALID_INPUT)
     elif user_data.phase_num == PHASE_NUM.VIEWING_CAMPAIGNS:
         campaigns = get_dsa_campaigns(user_data.user_id, user_data.keyword_campaign_id)
         message = event['message']['text']
