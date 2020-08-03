@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Create Estimates</title>
+    <title>Create</title>
     <!-- nav bar source files -->
     <link rel="stylesheet" href="../Resources/NavBar/navbar_style.css"></link>
     <script src="../Resources/NavBar/navbar_script.js"></script>
@@ -34,7 +34,8 @@
     <!-- Bootstrap integration -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
+    <!-- header styling -->
+    <link rel="stylesheet" href="../Resources/Header/header.css"></link>
   </head>
   <!-- on page load, login status is verified, preset data is fetched, and date is set -->
   <body onload="getLogsStatus(); verifyLoginStatus(); getKeywordCampaigns(); setDate();">
@@ -45,15 +46,15 @@
       <a class="navBar" href="/Home/home.html">Home</a>
       <a class="navBar" href="/Create/create.html">Create</a>
       <a class="navBar" href="/Compare/compare.html">Compare</a>
-      <a class="navBar" href="#">Contact</a>
+      <a class="navBar" href="/About/about.html">About</a>
       <a class="navBar" id="loginout-link" href="#">Logout</a>
     </div>
 
     <header>
       <!-- page header content -->
       <div class="header">
-        <span style="font-size: 30px; cursor: pointer; float: left; color: #f2f2f2;" onclick="openNav()">&#9776;</span>
-        <a class="title">Create a DSA Estimate</a>
+        <span class="span-header" onclick="openNav()">&#9776;</span>
+        <a class="title">Create a DSA Campaign</a>
       </div>
     </header>
     <div class="row">
@@ -68,12 +69,11 @@
           </div>
 
           <!-- settings form -->
-          <form id="campaign-form" style="background-color: white; display: none;" onsubmit="return false;">
+          <form id="campaign-form" class="form-style" onsubmit="return false;">
             <div class="row">
               <!-- Main form -->
               <div class="col-50">
-                <h2>DSA Campaign Configuration</h2>
-                <p>Please input the settings you would like and submit. <span style="color:red">&#42;</span> - required</p>
+                <h2 class="header-margin">DSA Campaign Configuration</h2>
                 <label for="name"><span style="color:red">&#42;</span> Campaign Name:</label>
                 <input type="text" id="name" name="name" placeholder="DSA Campaign Name" required>
                 <div class="row">
@@ -159,7 +159,7 @@
                     <br>
                     <div id='new_locations'>
                     </div>
-                    <button  id='add_region' class="button" onclick="addRegion(false, true);" style="float: right; display: none;" type="button">Add another location</button>
+                    <button id='add_region' class="button" onclick="addRegion(false, true);" style="float: right; display: none;" type="button">Add another location</button>
                   </div>
                   <br>
                 </div>
@@ -246,7 +246,6 @@
               <!-- Preset Data -->
               <div class="col-50">
                 <h3>Available Presets</h3>
-                <p><a href="#">Google Recommended Settings</a></p>
                 <hr class="header_tag">
                 <ol id="preset-container">
                   

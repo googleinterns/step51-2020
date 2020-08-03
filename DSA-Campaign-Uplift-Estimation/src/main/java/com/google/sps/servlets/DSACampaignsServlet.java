@@ -42,21 +42,29 @@ public class DSACampaignsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String correspondingKeywordCampaignId = request.getParameter("keywordCampaignId");
+        UserService userService = UserServiceFactory.getUserService();
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, correspondingKeywordCampaignId)).addSort("DSACampaignId", SortDirection.ASCENDING);
-    	PreparedQuery results = datastore.prepare(query);
+        if (userService.isUserLoggedIn()) {
+            String userId = userService.getCurrentUser().getEmail();
+            String correspondingKeywordCampaignId = request.getParameter("keywordCampaignId");
 
-        ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
-        for (Entity entity : results.asIterable()) {
-            DSACampaigns.add(createDSACampaignFromEntity(entity));
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, correspondingKeywordCampaignId)).
+                setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId)).addSort("DSACampaignId", SortDirection.ASCENDING);
+            PreparedQuery results = datastore.prepare(query);
+
+            ArrayList<DSACampaign> DSACampaigns = new ArrayList<DSACampaign>();
+            for (Entity entity : results.asIterable()) {
+                DSACampaigns.add(createDSACampaignFromEntity(entity));
+            }
+
+            Gson gson = new Gson();
+            String json = gson.toJson(DSACampaigns);
+            response.setContentType("application/json;");
+            response.getWriter().println(json);
+        } else {
+            response.sendRedirect("/index.html");
         }
-
-        Gson gson = new Gson();
-        String json = gson.toJson(DSACampaigns);
-        response.setContentType("application/json;");
-        response.getWriter().println(json);
     }
 
     @Override
@@ -78,9 +86,12 @@ public class DSACampaignsServlet extends HttpServlet {
                 0, 0, 0, null);
 
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            datastore.put(createEntityFromDSACampaign(DSACampaignObject));
+            Entity DSACampaignEntity = createEntityFromDSACampaign(DSACampaignObject);
+            datastore.put(DSACampaignEntity);
 
-            response.sendRedirect("/Compare/compare.html");
+            PendingCampaignsExistServlet.changePendingCampaignsExistStatus(1);
+
+            response.sendRedirect("/Home/home.html");
         } else {
             response.sendRedirect("/index.html");
         }

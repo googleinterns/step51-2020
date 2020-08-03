@@ -19,37 +19,6 @@ limitations under the License.
   box-sizing: border-box;
 }
 
-
-/* header styling */
-.header {
-  overflow: hidden;
-  background-color: #333;
-  padding: 20px 10px;
-}
-
-.header a {
-  float: left;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 12px;
-  text-decoration: none;
-  font-size: 18px; 
-  line-height: 25px;
-  border-radius: 4px;
-}
-
-.header a.title {
-  font-size: 25px;
-  font-weight: bold;
-}
-
-.header a.title:hover {
-  font-size: 25px;
-  font-weight: bold;
-  color: #f2f2f2;
-  text-decoration: none;
-}
-
 body {
   font-family: Arial;
   font-size: 17px;
@@ -155,6 +124,11 @@ label {
 hr.header_tag {
   border: 1.5px solid grey;
   border-radius: 13px;
+  margin-top: 0px;
+}
+
+.header-margin {
+    margin-bottom: 30px;
 }
 
 
@@ -193,4 +167,10 @@ hr.header_tag {
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+.form-style {
+    background-color: white;
+    display: none;
+    margin-top: 20px;
 }
