@@ -426,9 +426,8 @@ function addFormElements(keyvalPairs) {
                    encodeURIComponent(keywordCampaignId));
   // get the comment form  
   const form = document.getElementById('campaign-form');
-  let locationString = '';
-  let negLocationString = '';
-  let specific_region = true;
+  let locationArray = [];
+  let negLocationArray = [];
 
   for (let i = 0; i < form.elements.length; i++) {
     /*
@@ -467,19 +466,28 @@ function addFormElements(keyvalPairs) {
       keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' +
                        encodeURIComponent(value));
     } else if (form.elements[i].name.includes('n' + formRegion)) {
-      console.log(negLocationString)
-      negLocationString = negLocationString == '' ? form.elements[i].value :
-                          negLocationString + ', ' + form.elements[i].value;
-    } else if (form.elements[i].name.includes(formRegion) && specific_region) {
-      if (form.elements[i].value == 'USA') {
-        specific_region = false;
-        locationString = 'USA'
-        continue;
-      }
-      locationString = locationString == '' ? form.elements[i].value :
-                       locationString + ', ' + form.elements[i].value;
+      negLocationArray.push(form.elements[i].value);
+    } else if (form.elements[i].name.includes(formRegion)) {
+      locationArray.push(form.elements[i].value);
     }
   }
+
+  filterDuplicates = function(locationArray) {
+    let unique = [];
+    for (let i = locationArray.length - 1; i >= 0; i--) {
+      if (locationArray[i] === 'USA') {
+        return [USA];
+      }
+      if (unique.indexOf(locationArray[i]) == -1) {
+        unique.push(locationArray[i]);
+      }
+    }
+    return unique;
+  }
+
+  let locationString = filterDuplicates(locationArray).join(',');
+  let negLocationString = filterDuplicates(negativeLocationArray).join(',');
+
   console.log(negLocationString)
   keyvalPairs.push(encodeURIComponent(LOCATION_SECTION_ID) + '=' +
                    encodeURIComponent(locationString));
@@ -579,13 +587,6 @@ function addRegion(negativeRegion, submission) {
   locationDiv.id = negativeRegion ? NEG_LOCATION_ID + locationCounter :
                                     LOCATION_ID + locationCounter;
 
-  const locationTag = document.createElement('h3');
-  const locationTagString = negativeRegion ?
-                            `Negative Location ${locationCounter}` :
-                            `Location ${locationCounter}`;
-  locationTag.innerText = locationTagString;
-  locationDiv.appendChild(locationTag);
-
   const countryLabel = document.createElement('label');
   countryLabel.className = 'control-label';
   countryLabel.innerText = negativeRegion ?
@@ -644,6 +645,10 @@ function checkDateValidity() {
   endDate.setMonth(parseInt(endDate[month]));
   endDate.setDate(parseInt(endDate[day]));
 
+  if (endDate <= startDate) {
+    alert('End date cannot be before or equal to the start date!');
+  }
+
   return endDate > startDate;
 }
 
@@ -685,16 +690,20 @@ function regionSelection() {
       // USA index = 1
       if (document.getElementById(`gds-cr-${i}`).value == 'USA') {
         usaRegion = true;
+        document.getElementById(`gds-cr-${i}`).value = '';
       }
     }
+
     // USA index = 1
     if (!usaRegion) {
-      document.getElementById('negativeLocations').style.display = 'none'
-      document.getElementById('add_region').style.display = 'inline-block'
+      document.getElementById('negativeLocations').style.display = 'none';
+      document.getElementById('add_region').style.display = 'inline-block';
       document.getElementById('new_locations').style.display = 'block';
+      document.getElementById('location_breakpoints').style.display = 'block';
     } else {
-      document.getElementById('negativeLocations').style.display = 'block'
-      document.getElementById('add_region').style.display = 'none'
+      document.getElementById('negativeLocations').style.display = 'block';
+      document.getElementById('add_region').style.display = 'none';
+      document.getElementById('location_breakpoints').style.display = 'none';
       
       // get rid of new locations and set the first location to USA
       document.getElementById('new_locations').style.display = 'none';

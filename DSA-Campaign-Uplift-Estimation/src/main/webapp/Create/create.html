@@ -70,7 +70,7 @@
           </div>
 
           <!-- settings form -->
-          <form id="campaign-form" class="form-style" onsubmit="return false;">
+          <form id="campaign-form" class="form-style" style="display: none;" onsubmit="return false;">
             <div class="row">
               <!-- Main form -->
               <div class="col-50">
@@ -99,7 +99,7 @@
                 <br>
                 <div id="locations">
                   <div class="form-group" id="location1">
-                    <h3>Location 1</h3>
+                    <h3>Locations</h3>
                     <br>
                     <label id="gds-cr-1-label" for="gds-cr-1" class="control-label"><span style="color:red">&#42;</span> Region 1</label>
                     <select class="form-control" id="gds-cr-1" name="region1" onchange="regionSelection()">
@@ -157,16 +157,20 @@
                       <option value="WI">Wisconsin</option>
                       <option value="WY">Wyoming</option>
                     </select>
+                    <br>
                     <div id='new_locations'>
                     </div>
                     <button id='add_region' class="button" onclick="addRegion(false, true);" style="float: right; display: none;" type="button">Add another location</button>
+                    <div id="location_breakpoints" style="display: none;">
+                      <br>
+                      <br>
+                    </div>
                   </div>
-                  <br>
                 </div>
 
                 <div id="negativeLocations" style="display: block;">
                   <div class="form-group" id='nlocation1'>
-                    <h3>Negative Location 1</h3>
+                    <h3>Negative Locations</h3>
                     <br>
                     <label for="gds-ncr-1" class="control-label">Negative Region 1</label>
                     <select class="form-control" id="gds-ncr-1" name="nregion1">
@@ -223,6 +227,7 @@
                       <option value="WI">Wisconsin</option>
                       <option value="WY">Wyoming</option>
                     </select>
+                    <br>
                     <div id='new_neg_locations'>
                     </div>
                     <button id='add_neg_region' class="button" onclick="addRegion(true, true);" style="float: right;" type="button">Add another negative location</button>
