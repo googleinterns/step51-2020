@@ -43,8 +43,9 @@ public class DSACampaignsServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
-
-        if (userService.isUserLoggedIn()) {
+        boolean hangoutsRequest = request.getParameter("hangouts") != null;
+        
+        if (userService.isUserLoggedIn() || hangoutsRequest) {
             String userId = userService.getCurrentUser().getEmail();
             String correspondingKeywordCampaignId = request.getParameter("keywordCampaignId");
             
@@ -77,9 +78,9 @@ public class DSACampaignsServlet extends HttpServlet {
             String campaignId = request.getParameter("id");
             deleteDSACampaign(campaignId);
             return;
-        } else if (userService.isUserLoggedIn()) {
+        } else if (userService.isUserLoggedIn() || hangoutsRequest) {
             // user ID represents user email
-            String userId = userService.getCurrentUser().getEmail();
+            String userId = hangoutsRequest ? request.getParameter("userId") : userService.getCurrentUser().getEmail();
             
             DSACampaign DSACampaignObject = new DSACampaign(KeywordCampaignsServlet.getNewCampaignId(false), userId, request.getParameter("keywordCampaignId"),
                 request.getParameter("name"), "pending", request.getParameter("startDate"), request.getParameter("endDate"), 
