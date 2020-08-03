@@ -46,17 +46,10 @@ public class DSACampaignsServlet extends HttpServlet {
 
         if (userService.isUserLoggedIn()) {
             String userId = userService.getCurrentUser().getEmail();
-
-            String queryName = "keywordCampaignId";
-            String correspondingQueryValue = request.getParameter("keywordCampaignId");
-
-            if (request.getParameter("hangouts") != null) {
-              queryName = "userId";
-              correspondingQueryValue = userId;
-            }
-   
+            String correspondingKeywordCampaignId = request.getParameter("keywordCampaignId");
+            
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-             Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate(queryName, Query.FilterOperator.EQUAL, correspondingQueryValue))
+            Query query = new Query("DSACampaign").setFilter(new Query.FilterPredicate("keywordCampaignId", Query.FilterOperator.EQUAL, correspondingKeywordCampaignId))
                 .setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId)).addSort("DSACampaignId", SortDirection.ASCENDING);
             PreparedQuery results = datastore.prepare(query);
 
