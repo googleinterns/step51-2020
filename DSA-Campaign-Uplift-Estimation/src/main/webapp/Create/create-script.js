@@ -570,6 +570,8 @@ function addRegion(negativeRegion, submission) {
 
   regionSelect.setAttribute('onchange', 'regionSelection()');
 
+  regionSelect.value = '';
+
   const locations = document.getElementById(locationId);
 
   const locationDiv = document.createElement('div');
@@ -678,14 +680,24 @@ function resetCampaignForm() {
 }
 
 function regionSelection() {
+  let usaRegion = false
     for (let i = 1; i <= locationCount; i++) {
       // USA index = 1
-      if (document.getElementById(`gds-cr-${i}`).selectedIndex != 1) {
-        document.getElementById('negativeLocations').style.display = 'none'
-        document.getElementById('add_region').style.display = 'inline-block'
-      } else {
-        document.getElementById('negativeLocations').style.display = 'block'
-        document.getElementById('add_region').style.display = 'none'
+      if (document.getElementById(`gds-cr-${i}`).value == 'USA') {
+        usaRegion = true;
       }
+    }
+    // USA index = 1
+    if (!usaRegion) {
+      document.getElementById('negativeLocations').style.display = 'none'
+      document.getElementById('add_region').style.display = 'inline-block'
+      document.getElementById('new_locations').style.display = 'block';
+    } else {
+      document.getElementById('negativeLocations').style.display = 'block'
+      document.getElementById('add_region').style.display = 'none'
+      
+      // get rid of new locations and set the first location to USA
+      document.getElementById('new_locations').style.display = 'none';
+      document.getElementById('gds-cr-1').value = 'USA';
     }
 }
