@@ -19,11 +19,18 @@ limitations under the License.
   box-sizing: border-box;
 }
 
-body {
-  font-family: Arial;
-  font-size: 17px;
+.button_override:focus {
+  color: #818181;
+  text-decoration: none;
+}
+
+.body_class {
   margin: 0;
   background-color: white;
+  font-family: "Helvetica Neue",
+      Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  line-height: normal;
 }
 
 .row {
