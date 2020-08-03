@@ -567,7 +567,7 @@ function addRegion(negativeRegion, submission) {
       regionId + first_element_idx).cloneNode(true);
   regionSelect.id = regionId + locationCounter;
 
-  regionSelect.setAttribute('onchange', 'regionSelection()');
+  regionSelect.setAttribute('onchange', 'regionSelection();');
 
   const locations = document.getElementById(locationId);
 
@@ -596,6 +596,7 @@ function addRegion(negativeRegion, submission) {
   location_section = negativeRegion ? 'new_neg_locations' : 'new_locations';
   location_section = document.getElementById(location_section)
   location_section.appendChild(locationDiv);
+  regionSelection();
 }
 
 /**
@@ -652,7 +653,7 @@ function regionSelection() {
     let usaRegion = false;
     for (let i = 1; i <= locationCount; i++) {
       // USA index = 1
-      if (document.getElementById(`gds-cr-${i}`).selectedIndex == 1) {
+      if (document.getElementById(`gds-cr-${i}`).value == 'USA') {
         usaRegion = true;
       }
     }
