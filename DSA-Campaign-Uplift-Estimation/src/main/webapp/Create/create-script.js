@@ -567,7 +567,7 @@ function addRegion(negativeRegion, submission) {
       regionId + first_element_idx).cloneNode(true);
   regionSelect.id = regionId + locationCounter;
 
-  regionSelect.setAttribute('onchange', 'regionSelection()');
+  regionSelect.setAttribute('onchange', 'regionSelection();');
 
   const locations = document.getElementById(locationId);
 
@@ -575,13 +575,6 @@ function addRegion(negativeRegion, submission) {
   locationDiv.className = 'form-group';
   locationDiv.id = negativeRegion ? NEG_LOCATION_ID + locationCounter :
                                     LOCATION_ID + locationCounter;
-
-  const locationTag = document.createElement('h3');
-  const locationTagString = negativeRegion ?
-                            `Negative Location ${locationCounter}` :
-                            `Location ${locationCounter}`;
-  locationTag.innerText = locationTagString;
-  locationDiv.appendChild(locationTag);
 
   const countryLabel = document.createElement('label');
   countryLabel.className = 'control-label';
@@ -603,6 +596,7 @@ function addRegion(negativeRegion, submission) {
   location_section = negativeRegion ? 'new_neg_locations' : 'new_locations';
   location_section = document.getElementById(location_section)
   location_section.appendChild(locationDiv);
+  regionSelection();
 }
 
 /**
@@ -656,14 +650,19 @@ function resetCampaignForm() {
 }
 
 function regionSelection() {
+    let usaRegion = false;
     for (let i = 1; i <= locationCount; i++) {
       // USA index = 1
-      if (document.getElementById(`gds-cr-${i}`).selectedIndex != 1) {
-        document.getElementById('negativeLocations').style.display = 'none'
-        document.getElementById('add_region').style.display = 'inline-block'
-      } else {
-        document.getElementById('negativeLocations').style.display = 'block'
-        document.getElementById('add_region').style.display = 'none'
+      if (document.getElementById(`gds-cr-${i}`).value == 'USA') {
+        usaRegion = true;
       }
+    }
+
+    if (!usaRegion) {
+      document.getElementById('negativeLocations').style.display = 'none'
+      document.getElementById('add_region').style.display = 'inline-block'
+    } else {
+      document.getElementById('negativeLocations').style.display = 'block'
+      document.getElementById('add_region').style.display = 'none'
     }
 }
