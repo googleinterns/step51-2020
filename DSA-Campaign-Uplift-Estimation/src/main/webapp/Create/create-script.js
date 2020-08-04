@@ -637,16 +637,19 @@ function determineValidity() {
 }
 
 function checkDateValidity() {
-  let startDate = document.getElementById('startDate').value.split('-');
-  let endDate = document.getElementById('endDate').value.split('-');
+  let startDateArray = document.getElementById('startDate').value.split('-');
+  let endDateArray = document.getElementById('endDate').value.split('-');
   const year = 0;
   const month = 1;
   const day = 2;
-  startDate[month] = startDate[month] < 10 ? '0' + startDate[month] : startDate[month];
-  startDate[day] = startDate[day] < 10 ? '0' + startDate[day] : startDate[day];
+  startDateArray[month] = startDateArray[month] < 10 ? '0' + startDateArray[month] : startDateArray[month];
+  startDateArray[day] = startDateArray[day] < 10 ? '0' + startDateArray[day] : startDateArray[day];
   
-  startDate = new Date(`${startDate[month]}/${startDate[day]}/${startDate[year]}`);
-  endDate = new Date(`${endDate[month]}/${endDate[day]}/${endDate[year]}`);
+  endDateArray[month] = endDateArray[month] < 10 ? '0' + endDateArray[month] : endDateArray[month];
+  endDateArray[day] = endDateArray[day] < 10 ? '0' + endDateArray[day] : endDateArray[day];
+
+  startDate = new Date(`${startDateArray[month]}/${startDateArray[day]}/${startDateArray[year]}`);
+  endDate = new Date(`${endDateArray[month]}/${endDateArray[day]}/${endDateArray[year]}`);
   
   if (endDate.getTime() <= startDate.getTime()) {
     alert('End date cannot be before or equal to the start date!');
