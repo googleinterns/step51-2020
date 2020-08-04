@@ -19,11 +19,18 @@ limitations under the License.
   box-sizing: border-box;
 }
 
-body {
-  font-family: Arial;
-  font-size: 17px;
+.button_override:focus {
+  color: #818181;
+  text-decoration: none;
+}
+
+.body_class {
   margin: 0;
   background-color: white;
+  font-family: "Helvetica Neue",
+      Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  line-height: normal;
 }
 
 .row {
@@ -112,8 +119,16 @@ label {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    margin: 10px 0;
-    width: fit-content;
+}
+
+h3.keyword_campaign {
+  display: block;
+  font-size: 1.17em;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
 }
 
 .button:hover {
@@ -140,37 +155,4 @@ hr.header_tag {
   .col-25 {
     margin-bottom: 20px;
   }
-}
-
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -60px;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-}
-
-.form-style {
-    background-color: white;
-    display: none;
-    margin-top: 20px;
 }

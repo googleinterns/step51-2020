@@ -21,8 +21,6 @@ runtime: python37
 # Use specific service account instead of default from environemnt.
 # TODO - Remove pending fix to python auth library to support scoping
 # credentials from the metadata API.
-env_variables:
-  GOOGLE_APPLICATION_CREDENTIALS: dsa-uplift-estimation-2020-34584f60c282.json
 
 handlers:
 - url: /bot

@@ -38,16 +38,16 @@
     <link rel="stylesheet" href="../Resources/Header/header.css"></link>
   </head>
   <!-- on page load, login status is verified, preset data is fetched, and date is set -->
-  <body onload="getLogsStatus(); verifyLoginStatus(); getKeywordCampaigns(); setDate();">
+  <body class="body_class" onload="getLogsStatus(); verifyLoginStatus(); getKeywordCampaigns(); setDate();">
     <!-- NavBar  - to add to page, copy mySidenav div and paste into body, and navbar_script.js and navbar_style.css to page-->
     <div id="mySidenav" class="sidenav">
-      <a class="navBar" href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a class="closebtn button_override" href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <img src="../Resources/images/DSA-campaign-white.png" style="max-width: 50%; max-height: 50%; margin-left: auto; margin-right: auto; display: block;"/>
-      <a class="navBar" href="/Home/home.html">Home</a>
-      <a class="navBar" href="/Create/create.html">Create</a>
-      <a class="navBar" href="/Compare/compare.html">Compare</a>
-      <a class="navBar" href="/About/about.html">About</a>
-      <a class="navBar" id="loginout-link" href="#">Logout</a>
+      <a class="navBar button_override" href="/Home/home.html">Home</a>
+      <a class="navBar button_override" href="/Create/create.html">Create</a>
+      <a class="navBar button_override" href="/Compare/compare.html">Compare</a>
+      <a class="navBar button_override" href="/About/about.html">About</a>
+      <a class="navBar button_override" id="loginout-link" href="#">Logout</a>
     </div>
 
     <header>
@@ -62,14 +62,14 @@
         <!-- drop down menus -->
         <div class="center">
           <div id="keyword-campaigns-container" class="select">
-            <h3>Select a keyword campaign</h3>
+            <h3 class="keyword_campaign">Select a keyword campaign</h3>
             <select id="keyword-campaigns" onchange="keywordSelection();">
               <option value=1>Select a keyword campaign</option>
             </select>
           </div>
 
           <!-- settings form -->
-          <form id="campaign-form" class="form-style" onsubmit="return false;">
+          <form id="campaign-form" class="form-style" style="display: none;" onsubmit="return false;">
             <div class="row">
               <!-- Main form -->
               <div class="col-50">
@@ -170,8 +170,11 @@
                     <div id='new_locations'>
                     </div>
                     <button id='add_region' class="button" onclick="addRegion(false, true);" style="float: right; display: none;" type="button">Add another location</button>
+                    <div id="location_breakpoints" style="display: none;">
+                      <br>
+                      <br>
+                    </div>
                   </div>
-                  <br>
                 </div>
 
                 <div id="negativeLocations" style="display: block;">
@@ -241,6 +244,17 @@
                   <br>
                   <br>
                 </div>
+                <label for="domain"><span style="color:red">&#42;</span> Domain:</label>
+                <input type="url" id="domain" name="domain" placeholder="http://google.com/" required>
+                <br>
+                <br>
+                <label for="targets"> Target Pages (Comma separated List):</label>
+                <input type="url" id="targets" name="targets" placeholder="http://google.com/page1/">
+                <br>
+                <br>
+                <label for="adText"> Ad Text:</label>
+                <input type="text" id="adInformationText" name="adText" placeholder="Some ad text." value=''>
+
               </div> 
 
               <!-- Preset Data -->

@@ -1,5 +1,5 @@
 from constant import *
-from datastore import *
+from clientserver import *
 from decimal import *
 import re
 
@@ -7,34 +7,36 @@ import re
 # used to generate phase specific messages
 
 PHASE_DICTIONARY = {
-  NAME: ['name',
+  PHASE_NUM.KEYWORD_CAMPAIGN: ['keyword campaign', 'Please select the number corresponding ' +
+  'to the desired keyword campaign being associated with your campaign.'],
+  PHASE_NUM.NAME: ['name',
       'Please input the name that will be associated with your dynamic ' +
       'search ad campaign estimate.'],
-  START_DATE: ['start date',
+  PHASE_NUM.START_DATE: ['start date',
       'Please input the date that your campaign estimate starts. <b>Must ' +
       'be in the form mm-dd-yyyy.</b>'],
-  END_DATE: ['end date',
+  PHASE_NUM.END_DATE: ['end date',
       'Please input the date that your campaign estimate will end. <b>Must ' +
       'be in the form mm-dd-yyyy.</b>'],
-  DAILY_BUDGET: ['daily budget', 'Please input the amount you are willing ' +
+  PHASE_NUM.DAILY_BUDGET: ['daily budget', 'Please input the amount you are willing ' +
       'to spend on the campaign each day.'],
-  LOCATIONS: ['locations', 'Please enter a comma separated list of state ' +
+  PHASE_NUM.LOCATIONS: ['locations', 'Please enter a comma separated list of state ' +
       'codes that your ad will target. Must be in the form of a valid US ' +
       'State abbreviation (Ex: \"CA, TX, MN\") (Must follow this form!). ' +
       'Enter \"USA\" if you would like to target the entire US.'],
-  NEG_LOCATIONS: ['negative locations', 'Are there any locations that your ' +
+  PHASE_NUM.NEG_LOCATIONS: ['negative locations', 'Are there any locations that your ' +
       'ad will not target? Ex: CA, USA (Must follow this format!' + 
       '). Input N/A if not applicable.'],
-  DOMAIN: ['domain', 'What is the domain of the webpage being advertised? ' +
+  PHASE_NUM.DOMAIN: ['domain', 'What is the domain of the webpage being advertised? ' +
       '(Ex: http://google.com)'],
-  TARGETS: ['targets', 'What are specific target pages of your domain ' +
+  PHASE_NUM.TARGETS: ['targets', 'What are specific target pages of your domain ' +
       'that you would like to specifically advertise? Multiple ' +
       'target pages can be input as a comma separated list. ' +
       '(Ex: http://google.com/page1, http://google.com/page2)'],
-  MANUAL_CPC: ['cost per click', 'What is the desired click per click? ' +
+  PHASE_NUM.MANUAL_CPC: ['cost per click', 'What is the desired click per click? ' +
       'The amount specified here will be how much you pay everytime an ' +
       'ad is clicked.'],
-  AD_TEXT: ['ad text', 'What text should appear on your ad.']
+  PHASE_NUM.AD_TEXT: ['ad text', 'What text should appear on your ad.']
 }
 
 
@@ -58,22 +60,40 @@ def error_handler(event, phase_num):
 
     # error map (PHASE_DICTIONARY key) : error handling reference
     ERROR_DICTIONARY = {
-      0: '',  # name cannot be an empty string or length 0
-      1: 'mm-dd-yyyy',   # start date must be in the form mm-dd-yyyy
-      2: 'mm-dd-yyyy',   # end date must be in the form mm-dd-yyyy
-      3: 0.01,   # daily budget must be at least 1 cent.
+      PHASE_NUM.NAME: '',  # name cannot be an empty string or length 0
+      PHASE_NUM.START_DATE: 'mm-dd-yyyy',   # start date must be in the form mm-dd-yyyy
+      PHASE_NUM.END_DATE: 'mm-dd-yyyy',   # end date must be in the form mm-dd-yyyy
+      PHASE_NUM.DAILY_BUDGET: 0.01,   # daily budget must be at least 1 cent.
       # 6/7 will be validated using python URL validator
-      8: 0.01,   # manual CPC must be at least 1 cent.
-      9: ''
+      PHASE_NUM.MANUAL_CPC: 0.01,   # manual CPC must be at least 1 cent.
+      PHASE_NUM.AD_TEXT: '',
+      PHASE_NUM.LOCATIONS: ''
     }
 
     # allows each success message to be changed at once, if necessary
     success = True
     message = event['message']['text']
 
+    if phase_num == VIEWING_KEYWORD_CAMPAIGNS:
+        campaigns = get_keyword_campaigns()
+        if (not message.isdigit()):
+            return error_message('Selection is not a valid number! Please input a number indicating what campaign you would like to view.', INVALID_INPUT)
+        elif (int(message) < 1 or int(message) > len(campaigns)):
+            return error_message('Selection is out of bounds!', INVALID_INPUT)
+        return success  
     # phase 0: name
-    if phase_num == NAME:
-        if (len(message) > 0 and message != ERROR_DICTIONARY[0]):
+    if phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
+        kc_campaigns = get_keyword_campaigns()
+        try:
+          selection = int(message)
+          if (selection < 1 or selection > len(kc_campaigns)): 
+              return 'Selection is out of bounds! Please enter a valid value.'
+          else:
+              return success
+        except ValueError:
+          return 'Selection is not a numeric value! Please enter a valid number corresponding to the keyword campaign of interest.'
+    elif phase_num == PHASE_NUM.NAME:
+        if (len(message) > 0 and message != ERROR_DICTIONARY[PHASE_NUM.NAME]):
             user_key = get_campaign_key(event['user']['email'], message)
             if (get_campaign_data(user_key) == None):
                 return success
@@ -83,7 +103,7 @@ def error_handler(event, phase_num):
           return 'Name is not valid!'
 
     # phase 1: start date, phase 2: end date
-    elif phase_num == START_DATE or phase_num == END_DATE:
+    elif phase_num == PHASE_NUM.START_DATE or phase_num == PHASE_NUM.END_DATE:
         date_parameters = message.split('-')
 
         # Expected date_parameters [mm, dd, yyyy]
@@ -102,12 +122,12 @@ def error_handler(event, phase_num):
         return 'Date is not in the right format! Must be in the form mm-dd-yyyy!'
 
     # phase 3: daily budget, phase 8: manual CPC
-    elif phase_num == DAILY_BUDGET or phase_num == MANUAL_CPC:
-        attribute_name = 'Daily budget' if phase_num == DAILY_BUDGET else 'Manual CPC (Cost Per Click)'
+    elif phase_num == PHASE_NUM.DAILY_BUDGET or phase_num == PHASE_NUM.MANUAL_CPC:
+        attribute_name = 'Daily budget' if phase_num == PHASE_NUM.DAILY_BUDGET else 'Manual CPC (Cost Per Click)'
         message = message[0:].strip()
         try:
           float(message)
-          if (Decimal(message) >= ERROR_DICTIONARY[3]): 
+          if (Decimal(message) >= ERROR_DICTIONARY[PHASE_NUM.DAILY_BUDGET]): 
             return success
           else:
             return '{} must be at least $0.01!'.format(attribute_name)
@@ -115,14 +135,14 @@ def error_handler(event, phase_num):
            return '{} must be a valid decimal value! Ex: 34.00'.format(attribute_name)
     
     # phase 4: locations, phase 5: negative locations
-    elif phase_num == LOCATIONS or phase_num == NEG_LOCATIONS:
-        if (phase_num == NEG_LOCATIONS and message.lower() == 'n/a'):
+    elif phase_num == PHASE_NUM.LOCATIONS or phase_num == PHASE_NUM.NEG_LOCATIONS:
+        if (phase_num == PHASE_NUM.NEG_LOCATIONS and message.lower() == 'n/a'):
             return success
         locations = message.split(',')
         for idx in range(len(locations)):
             # trim white space
             locations[idx] = locations[idx].strip()
-            if phase_num == NEG_LOCATIONS:
+            if phase_num == PHASE_NUM.NEG_LOCATIONS:
                 campaign_name = get_user_data(get_user_key(event['user']['email'])).campaign_name
                 campaign_key = get_campaign_key(event['user']['email'], campaign_name)
                 location_data = get_campaign_data(campaign_key).locations.split(',')
@@ -146,7 +166,7 @@ def error_handler(event, phase_num):
             return 'Locations must be a comma separated list of state codes. Ex: CA, TX, MN, PA'
         return success
     # phase 6: domain, phase 7: target page(s)
-    elif phase_num == DOMAIN or phase_num == TARGETS:
+    elif phase_num == PHASE_NUM.DOMAIN or phase_num == PHASE_NUM.TARGETS:
         # regex string being used to validate the URL
         url_regex = re.compile(
             r'^(?:http|ftp)s?://' # http:// or https://
@@ -160,7 +180,7 @@ def error_handler(event, phase_num):
         attribute_name = 'domain' if phase_num == 6 else 'target pages'
         failed = 'URL is not valid, please ensure that you specified the correct {}!'.format(attribute_name)
         # TARGETS can be a comma separated list
-        if (phase_num == TARGETS):
+        if (phase_num == PHASE_NUM.TARGETS):
             domains = message.split(',')
             for idx in range(len(domains)):
                 # trim white space
@@ -170,11 +190,114 @@ def error_handler(event, phase_num):
             return success
         
         return success if re.match(url_regex, message) else failed
-    elif phase_num == 9:
-        if (len(message) > 0 and message != ERROR_DICTIONARY[0]):
+    elif phase_num == PHASE_NUM.AD_TEXT:
+        if (len(message) > 0 and message != ERROR_DICTIONARY[PHASE_NUM.NAME]):
             return success
         else:
           return 'Ad text is not valid! Cannot be an empty value!'
+
+def create_keyword_campaign_list(editing):
+    keyword_campaign_list = ''
+    keyword_json = get_keyword_campaigns()
+    
+    for i in range(len(keyword_json)):
+        keyword_campaign_list = keyword_campaign_list + '<b>{}.</b> {}<br>'.format((i + 1), keyword_json[i]['name'])
+    message = "Please send a number corresponding to the desired keyword campaign.<br>{}".format(keyword_campaign_list)
+    if len(keyword_json) == 0:
+        message = "There are no active keyword campaigns, please create a campaign when a valid keyword campaign exists."
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE" if not editing else "NEW_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header('Editing'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": message
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "QUIT",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "quit_campaign",
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+
+def create_campaign_list(user_id, keyword_campaign_id):
+    """Shows list of campaigns belonging to current user
+    Args:
+      None
+    Returns:
+      dict
+        dictionary contains start campaign config message
+    """
+    campaigns = get_dsa_campaigns(user_id, keyword_campaign_id, editing)
+    campaign_list = ''
+    for i in range(len(campaigns)):
+        campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, campaigns[i].name)
+
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header('Editing'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": "Please send a number corresponding to the campaign " +
+                              "you would like to view.<br>" + campaign_list
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "BACK",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "back_submission" if editing else "quit_campaign",
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
 
 def create_setting_list():
     """Formats the introduction message response
@@ -186,7 +309,7 @@ def create_setting_list():
     """
 
     campaign_list = ''
-    for i in range(SUBMISSION):
+    for i in range(PHASE_NUM.SUBMISSION):
         campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, PHASE_DICTIONARY.get(i)[PHASE_NAME_INDEX])
 
     return {
@@ -255,7 +378,7 @@ def error_message(error_msg, phase_num):
         dictionary contains error response message
     """
 
-    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != INACTIVE else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
+    error = "<font color=\"#ff0000\">ERROR</font>: {}<br><b>Please send a valid value for your campaign {}!</b>".format(error_msg, PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX]) if phase_num != PHASE_NUM.INACTIVE else "<font color=\"#ff0000\">ERROR</font>: <b>{}</b>".format(error_msg)
     return {
               "cards": [
                 {
@@ -302,6 +425,13 @@ def create_campaign_overview(campaign_data, submission):
               "widgets": [
                 {
                   "keyValue": {
+                    "topLabel": "Keyword Campaign ID",
+                    "content": campaign_data.keyword_campaign_id if campaign_data.keyword_campaign_id != '' else not_set,
+                    "icon": "STAR"
+                  }
+                },
+                {
+                  "keyValue": {
                     "topLabel": "Campaign Name",
                     "content": campaign_data.name if campaign_data.name != '' else not_set,
                     "icon": "STAR"
@@ -324,14 +454,14 @@ def create_campaign_overview(campaign_data, submission):
                 {
                   "keyValue": {
                     "topLabel": "Daily Budget",
-                    "content": campaign_data.daily_budget if campaign_data.daily_budget != 0.0 else not_set,
+                    "content": '${}'.format(campaign_data.daily_budget) if campaign_data.daily_budget != 0.0 else not_set,
                     "icon": "DOLLAR"
                   }
                 },
                 {
                   "keyValue": {
                     "topLabel": "Cost Per Click",
-                    "content": campaign_data.manual_CPC if campaign_data.manual_CPC != 0.0 else not_set,
+                    "content": '${}'.format(campaign_data.manual_CPC) if campaign_data.manual_CPC != 0.0 else not_set,
                     "icon": "DOLLAR"
                   }
                 },
@@ -471,11 +601,11 @@ def add_overview_buttons(campaign_data, submission):
         )
     return button_list
 
-def create_confirmation_message(event, phase_num, editing):
+def create_confirmation_message(message, phase_num, editing):
     """Formats a confirmation message response for valid input
     Args:
-      event:
-        the specifc event that has passed error
+      message:
+        the specifc message that has passed error
         checking and is ready to be user confirmed
       phase_num:
         the phase number that will be used
@@ -484,6 +614,13 @@ def create_confirmation_message(event, phase_num, editing):
       dict
         dictionary contains confirmation prompt
     """
+
+    message_value = message
+    if (phase_num == PHASE_NUM.KEYWORD_CAMPAIGN):
+        message_value = get_keyword_campaigns()[int(message) - 1]['name']
+
+        # store the index of the keyword campaign being chosen
+        message = int(message) - 1
 
     return {
               "cards": [
@@ -494,7 +631,7 @@ def create_confirmation_message(event, phase_num, editing):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "You picked <b>\"{}\"</b> for your campaign {}, is this correct?".format(event['message']['text'], PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX])
+                            "text": "You picked <b>\"{}\"</b> for your campaign {}, is this correct?".format(message_value, PHASE_DICTIONARY.get(phase_num)[PHASE_NAME_INDEX])
                           }
                         }
                       ]
@@ -532,7 +669,7 @@ def create_confirmation_message(event, phase_num, editing):
                                     "parameters": [
                                       {
                                         "key": "input_data",
-                                        "value": event['message']['text']
+                                        "value": message
                                       },
                                       {
                                         "key": "editing",
@@ -608,7 +745,6 @@ def start_campaign_edit(event):
               ]
             }
 
-
 def start_user_campaign(event):
     """Formats the introduction message response
     Args:
@@ -642,8 +778,58 @@ def start_user_campaign(event):
                                 "will ask for your confirmation. " +
                                 "<br><b>3.</b> You will be able to review and edit your " +
                                 "settings before final submission. " +
-                                "<br>To begin, <b>please enter a valid name " +
-                                "for your campaign.</b>"
+                                "<br>To begin, please click <b>CONTINUE</b>."
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "CONTINUE",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "continue_campaign",
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+
+def create_submission_message(event):
+    """Formats the introduction message response
+    Args:
+      None
+    Returns:
+      dict
+        dictionary contains start campaign config message
+    """
+
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header('Editing'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": "Congratulations on submitting your campaign estimate, {}! ".format(event['user']['displayName']) +
+                            "Your Dynamic Search Ad Campaign " +
+                            "estimate will be available shortly!"
                           }
                         }
                       ]
@@ -661,6 +847,16 @@ def start_user_campaign(event):
                                   }
                                 }
                               }
+                            },
+                            {
+                              "textButton": {
+                                "text": "VISIT WEBSITE",
+                                "onClick": {
+                                  "openLink": {
+                                      "url": "https://dsa-uplift-estimation-2020.uc.r.appspot.com/"
+                                  }
+                                }
+                              }
                             }
                           ]
                         }
@@ -670,7 +866,6 @@ def start_user_campaign(event):
                 }
               ]
             }
-
 
 def create_configure_message(phase_num, editing):
     """Determine what setting message to provide based on
@@ -682,6 +877,10 @@ def create_configure_message(phase_num, editing):
       dictionary containing configuration prompt message for
       specified phase number
     """
+    
+    if phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
+        return create_keyword_campaign_list(editing)
+    configure_str = '{}'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
 
     return {
               "actionResponse": {
@@ -695,7 +894,7 @@ def create_configure_message(phase_num, editing):
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": '<b>{}</b>'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
+                            "text": configure_str
                           }
                         }
                       ]
@@ -865,7 +1064,236 @@ def add_edit_button(user_id):
         }
       )
     
+    if (len(get_dsa_campaigns(user_id)) != 0):
+        button_list.append(
+          {
+            "textButton": {
+              "text": "VIEW CAMPAIGNS",
+              "onClick": {
+                "action": {
+                  "actionMethodName": "view_campaigns",
+                }
+              }
+            }
+          }
+        )
+
     return button_list
+
+def get_campaign_overview(campaign_data, viewing):
+    """Returns a campaign overview for users to view,
+    Buttons on message vary based on submission boolean
+
+    Args:
+      campaign_data:
+        CampaignData used to populate campaign data
+      viewing:
+        bool representing if user is viewing a campaign from campaign list prompt, (determines if this updates previous message)
+    Returns:
+      dict
+        dictionary containing overview message
+    """    
+
+    print(campaign_data.campaign_id)
+    not_set = 'None'
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE" if not viewing else "NEW_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header(campaign_data.status),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "keyValue": {
+                            "topLabel": "Keyword Campaign ID",
+                            "content": campaign_data.keyword_campaign_id if campaign_data.keyword_campaign_id != '' else not_set,
+                            "icon": "STAR"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Campaign Name",
+                            "content": campaign_data.name if campaign_data.name != '' else not_set,
+                            "icon": "STAR"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Start Date",
+                            "content": campaign_data.start_date if campaign_data.start_date != '' else not_set,
+                            "icon": "INVITE"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "End Date",
+                            "content": campaign_data.end_date if campaign_data.end_date != '' else not_set,
+                            "icon": "INVITE"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Daily Budget",
+                            "content": '${}'.format(campaign_data.daily_budget) if campaign_data.daily_budget != 0.0 else not_set,
+                            "icon": "DOLLAR"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Cost Per Click",
+                            "content": '${}'.format(campaign_data.manual_CPC) if campaign_data.manual_CPC != 0.0 else not_set,
+                            "icon": "DOLLAR"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Domain",
+                            "content": campaign_data.domain if campaign_data.domain != '' else not_set,
+                            "icon": "BOOKMARK"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Target Pages",
+                            "content": campaign_data.targets if campaign_data.targets != '' else not_set,
+                            "icon": "BOOKMARK"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Locations",
+                            "content": campaign_data.locations if campaign_data.locations != '' else not_set,
+                            "icon": "MAP_PIN"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Negative Locations",
+                            "content": campaign_data.neg_locations if campaign_data.neg_locations != '' else not_set,
+                            "icon": "MAP_PIN"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Ad Text",
+                            "content": campaign_data.ad_text if campaign_data.ad_text != '' else not_set,
+                            "icon": "DESCRIPTION"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "keyValue": {
+                            "topLabel": "Impressions",
+                            "content": campaign_data.impressions if campaign_data.impressions != '' else not_set,
+                            "icon": "PERSON"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Clicks",
+                            "content": campaign_data.clicks if campaign_data.clicks != '' else not_set,
+                            "icon": "CONFIRMATION_NUMBER_ICON"
+                          }
+                        },
+                        {
+                          "keyValue": {
+                            "topLabel": "Cost",
+                            "content": '${}'.format(campaign_data.cost) if campaign_data.cost != '' else not_set,
+                            "icon": "DOLLAR"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "BACK",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "quit_campaign"
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "textButton": {
+                                "text": "DELETE CAMPAIGN",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "delete_campaign",
+                                    "parameters": [
+                                      {
+                                        "key": "campaign_id",
+                                        "value": campaign_data.campaign_id
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+
+def create_campaign_deletion_confirmation(error):
+    message = 'Campaign successfully deleted.'
+    if error:
+        message = 'Campaign cannot be deleted right now, please try again.'
+
+    return {
+              "actionResponse": {
+                "type": "UPDATE_MESSAGE"
+              },
+              "cards": [
+                {
+                  "header": build_header('Alert'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": message
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "QUIT",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "quit_campaign",
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+
 
 def build_header(subtitle):
     """Create a header dictionary to be used by every message
@@ -884,3 +1312,72 @@ def build_header(subtitle):
     }
 
     return header_dict
+
+def confirm_campaign_delete(user_id, campaign_id):
+
+    campaigns = get_dsa_campaigns(user_id)
+    campaign_to_delete = None
+    for campaign in campaigns:
+        if campaign.campaign_id == campaign_id:
+            campaign_to_delete = campaign
+            break
+
+    return {
+              "cards": [
+                {
+                  "header": build_header('WARNING'),
+                  "sections": [
+                    {
+                      "widgets": [
+                        {
+                          "textParagraph": {
+                            "text": "<font color=\"#ff0000\">ALERT:</font> Are you sure you would like to delete the campaign, <b>{}</b>?".format(campaign_to_delete.name)
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "NO",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "no_action",
+                                    "parameters": [
+                                      {
+                                        "key": "campaign_id",
+                                        "value": campaign_id
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "textButton": {
+                                "text": "YES",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "yes_action",
+                                    "parameters": [
+                                      {
+                                        "key": "campaign_id",
+                                        "value": campaign_id
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+

@@ -3,9 +3,13 @@ class ActiveUser:
         self.user_id = user_id
         self.phase_num = -1
         self.campaign_name = ''
+        self.keyword_campaign_id = ''
         self.accepting_text = False
         self.editing = False
     
+    def set_keyword_campaign_id(self, keyword_campaign_id):
+        self.keyword_campaign_id = keyword_campaign_id
+
     def set_accepting_text(self, accepting):
         self.accepting_text = accepting
     

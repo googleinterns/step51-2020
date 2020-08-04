@@ -56,8 +56,9 @@ function setDate() {
   let today = new Date();
   let startYear = today.getFullYear();
   let endYear = today.getFullYear() + 1;
-  let day = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
-  let dateString  = '-' + day + '-' + today.getDate();
+  let month = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
+  let day = (today.getDate() < 10) ? '0' + (today.getDate()) : (today.getDate());
+  let dateString  = '-' + month + '-' + day;
   document.getElementById('startDate').value = startYear + dateString
   document.getElementById('endDate').value = endYear + dateString
   console.log(startYear + dateString)
@@ -425,9 +426,8 @@ function addFormElements(keyvalPairs) {
                    encodeURIComponent(keywordCampaignId));
   // get the comment form  
   const form = document.getElementById('campaign-form');
-  let locationString = '';
-  let negLocationString = '';
-  let specific_region = true;
+  let locationArray = [];
+  let negLocationArray = [];
 
   for (let i = 0; i < form.elements.length; i++) {
     /*
@@ -466,19 +466,31 @@ function addFormElements(keyvalPairs) {
       keyvalPairs.push(encodeURIComponent(form.elements[i].name) + '=' +
                        encodeURIComponent(value));
     } else if (form.elements[i].name.includes('n' + formRegion)) {
-      console.log(negLocationString)
-      negLocationString = negLocationString == '' ? form.elements[i].value :
-                          negLocationString + ', ' + form.elements[i].value;
-    } else if (form.elements[i].name.includes(formRegion) && specific_region) {
-      if (form.elements[i].value == 'USA') {
-        specific_region = false;
-        locationString = 'USA'
-        continue;
-      }
-      locationString = locationString == '' ? form.elements[i].value :
-                       locationString + ', ' + form.elements[i].value;
+      negLocationArray.push(form.elements[i].value);
+    } else if (form.elements[i].name.includes(formRegion)) {
+      locationArray.push(form.elements[i].value);
     }
   }
+
+  filterDuplicates = function(locationArray) {
+    let unique = [];
+    for (let i = locationArray.length - 1; i >= 0; i--) {
+      if (locationArray[i] === 'USA') {
+        return [USA];
+      }
+      if (unique.indexOf(locationArray[i]) == -1) {
+        unique.push(locationArray[i]);
+      }
+    }
+    return unique;
+  }
+
+  let locationString = filterDuplicates(locationArray).join(',');
+  if (locationString === 'USA') {
+    negativeLocationArray = [];
+  }
+  let negLocationString = filterDuplicates(negativeLocationArray).join(',');
+
   console.log(negLocationString)
   keyvalPairs.push(encodeURIComponent(LOCATION_SECTION_ID) + '=' +
                    encodeURIComponent(locationString));
@@ -569,6 +581,8 @@ function addRegion(negativeRegion, submission) {
 
   regionSelect.setAttribute('onchange', 'regionSelection();');
 
+  regionSelect.value = '';
+
   const locations = document.getElementById(locationId);
 
   const locationDiv = document.createElement('div');
@@ -614,7 +628,32 @@ function determineValidity() {
       return false;
     }
   }
-  return true;
+
+  return checkDateValidity();
+}
+
+function checkDateValidity() {
+  startDate = document.getElementById('startDate').value.split('-');
+  endDate = document.getElementById('endDate').value.split('-');
+  const year = 0;
+  const month = 1;
+  const day = 2;
+  let startDate = new Date();
+  let endDate = new Date();
+
+  startDate.setFullYear(parseInt(startDate[year]));
+  startDate.setMonth(parseInt(startDate[month]));
+  startDate.setDate(parseInt(startDate[day]));
+
+  endDate.setFullYear(parseInt(endDate[year]));
+  endDate.setMonth(parseInt(endDate[month]));
+  endDate.setDate(parseInt(endDate[day]));
+
+  if (endDate <= startDate) {
+    alert('End date cannot be before or equal to the start date!');
+  }
+
+  return endDate > startDate;
 }
 
 /**
@@ -650,19 +689,28 @@ function resetCampaignForm() {
 }
 
 function regionSelection() {
-    let usaRegion = false;
+  let usaRegion = false
     for (let i = 1; i <= locationCount; i++) {
       // USA index = 1
       if (document.getElementById(`gds-cr-${i}`).value == 'USA') {
         usaRegion = true;
+        document.getElementById(`gds-cr-${i}`).value = '';
       }
     }
 
+    // USA index = 1
     if (!usaRegion) {
-      document.getElementById('negativeLocations').style.display = 'none'
-      document.getElementById('add_region').style.display = 'inline-block'
+      document.getElementById('negativeLocations').style.display = 'none';
+      document.getElementById('add_region').style.display = 'inline-block';
+      document.getElementById('new_locations').style.display = 'block';
+      document.getElementById('location_breakpoints').style.display = 'block';
     } else {
-      document.getElementById('negativeLocations').style.display = 'block'
-      document.getElementById('add_region').style.display = 'none'
+      document.getElementById('negativeLocations').style.display = 'block';
+      document.getElementById('add_region').style.display = 'none';
+      document.getElementById('location_breakpoints').style.display = 'none';
+      
+      // get rid of new locations and set the first location to USA
+      document.getElementById('new_locations').style.display = 'none';
+      document.getElementById('gds-cr-1').value = 'USA';
     }
 }
