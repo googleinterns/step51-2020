@@ -61,8 +61,6 @@ function setDate() {
   let dateString  = '-' + month + '-' + day;
   document.getElementById('startDate').value = startYear + dateString
   document.getElementById('endDate').value = endYear + dateString
-  console.log(startYear + dateString)
-  console.log(endYear + dateString)
 }
 
 /**
@@ -164,7 +162,6 @@ async function submitPresetData() {
   xmlhttp.open('POST', '/preset', true);
   xmlhttp.setRequestHeader('Content-type',
       'application/x-www-form-urlencoded');
-  console.log(queryString);
 
   if (determineValidity) {
     xmlhttp.send(queryString);
@@ -180,10 +177,8 @@ function updatePresetData() {
   if (userId != 0) {
     const presetURL = '/preset?userId=' + userId;
     fetch(presetURL).then(response => response.json()).then(presetData => {
-      console.log(presetData);
       document.getElementById('preset-container').innerHTML = '';
       for (let i = 0; i < presetData.length; i++) {
-        console.log('index: ' + i);
         const presetContainer = document.getElementById('preset-container');
         const liElement = document.createElement('li');
         const aTag = document.createElement('a');
@@ -223,7 +218,6 @@ function getPresetData(indexSelection) {
       .options;
   for (let i = 0; i < keywordCampaignElements.length; i++) {
     if (keywordCampaignElements[i].value === keywordSelection) {
-      console.log(keywordSelection);
       const selectedOption = keywordCampaignElements[i];
 
       // mark keyword campaign
@@ -248,7 +242,6 @@ function getPresetData(indexSelection) {
       fillOutLocations(locationsArray, false);
     } else if (key == NEG_LOCATION_SECTION_ID) {
       negLocationExists = true;
-      console.log(presetSelection[key].split(','));
       let locationsArray = presetSelection[key].split(',');
       locationsArray = locationsArray.filter(function(value) {
         if (value.trim() != 'USA' && value.trim() != '') {
@@ -305,7 +298,6 @@ function deleteCurrentAppliedPreset() {
     xmlhttp.open('POST', '/preset', true);
     xmlhttp.setRequestHeader('Content-type',
         'application/x-www-form-urlencoded');
-    console.log(queryString);
     xmlhttp.send(queryString);
   }
 }
@@ -410,7 +402,6 @@ function sendFormData() {
   xmlhttp.open('POST', '/DSA-campaigns', true);
   xmlhttp.setRequestHeader('Content-type',
       'application/x-www-form-urlencoded');
-  console.log(queryString);
   if (determineValidity()) {
     xmlhttp.send(queryString);
   }
@@ -439,7 +430,6 @@ function addFormElements(keyvalPairs) {
     if (form.elements[i].nodeName === 'BUTTON') {
       continue;
     }
-    console.log(form.elements[i].nodeName)
     // stop submission process if parameter is required and incorrect.
     if ((form.elements[i].required) && ((form.elements[i].value === null) ||
         (form.elements[i].value === ''))) {
@@ -493,7 +483,6 @@ function addFormElements(keyvalPairs) {
   }
   let negLocationString = filterDuplicates(negLocationArray).join(',');
 
-  console.log(negLocationString)
   keyvalPairs.push(encodeURIComponent(LOCATION_SECTION_ID) + '=' +
                    encodeURIComponent(locationString));
   keyvalPairs.push(encodeURIComponent(NEG_LOCATION_SECTION_ID) + '=' +
@@ -626,7 +615,6 @@ function determineValidity() {
   const elements = document.getElementsByTagName('input');
   for (let i = 0; i < elements.length; i++) {
     if (!elements[i].checkValidity()) {
-      console.log(elements[i].id);
       return false;
     }
   }
