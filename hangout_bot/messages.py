@@ -28,11 +28,11 @@ PHASE_DICTIONARY = {
       'ad will not target? Ex: CA, MN, PA (Must follow this format!' + 
       '). Input N/A if not applicable.'],
   PHASE_NUM.DOMAIN: ['domain', 'What is the domain of the webpage being advertised? ' +
-      '(Ex: http://www.google.com/)'],
+      '(Ex: https://www.google.com/)'],
   PHASE_NUM.TARGETS: ['targets', 'What are target pages of your domain ' +
       'that you would like to specifically advertise? Multiple ' +
       'target pages can be input as a comma separated list. ' +
-      '(Ex: http://www.google.com/page1/, http://www.google.com/page2/)'],
+      '(Ex: https://www.google.com/page1/, https://www.google.com/page2/)'],
   PHASE_NUM.MANUAL_CPC: ['cost per click', 'What is the desired cost per click? ' +
       'The amount specified here will be how much you pay everytime an ' +
       'ad is clicked.'],
