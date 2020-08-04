@@ -25,15 +25,15 @@ PHASE_DICTIONARY = {
       'State abbreviation (Ex: \"CA, TX, MN\") (Must follow this form!). ' +
       'Enter \"USA\" if you would like to target the entire US.'],
   PHASE_NUM.NEG_LOCATIONS: ['negative locations', 'Are there any locations that your ' +
-      'ad will not target? Ex: CA, USA (Must follow this format!' + 
+      'ad will not target? Ex: CA, MN, PA (Must follow this format!' + 
       '). Input N/A if not applicable.'],
   PHASE_NUM.DOMAIN: ['domain', 'What is the domain of the webpage being advertised? ' +
-      '(Ex: http://google.com)'],
-  PHASE_NUM.TARGETS: ['targets', 'What are specific target pages of your domain ' +
+      '(Ex: https://www.google.com/)'],
+  PHASE_NUM.TARGETS: ['targets', 'What are target pages of your domain ' +
       'that you would like to specifically advertise? Multiple ' +
       'target pages can be input as a comma separated list. ' +
-      '(Ex: http://google.com/page1, http://google.com/page2)'],
-  PHASE_NUM.MANUAL_CPC: ['cost per click', 'What is the desired click per click? ' +
+      '(Ex: https://www.google.com/page1/, https://www.google.com/page2/)'],
+  PHASE_NUM.MANUAL_CPC: ['cost per click', 'What is the desired cost per click? ' +
       'The amount specified here will be how much you pay everytime an ' +
       'ad is clicked.'],
   PHASE_NUM.AD_TEXT: ['ad text', 'What text should appear on your ad.']
@@ -319,7 +319,7 @@ def create_setting_list():
 
     campaign_list = ''
     for i in range(PHASE_NUM.SUBMISSION):
-        campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, PHASE_DICTIONARY.get(i)[PHASE_NAME_INDEX])
+        campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, PHASE_DICTIONARY.get(i)[PHASE_NAME_INDEX].capitalize())
 
     return {
               "actionResponse": {
@@ -1130,7 +1130,7 @@ def get_campaign_overview(campaign_data, viewing):
               },
               "cards": [
                 {
-                  "header": build_header(campaign_data.status),
+                  "header": build_header(campaign_data.status.capitalize()),
                   "sections": [
                     {
                       "widgets": [

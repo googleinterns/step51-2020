@@ -251,6 +251,8 @@ function getPresetData(indexSelection) {
       fillOutLocations(locationsArray, true);
     } else if (document.getElementById(key) != null) {
       document.getElementById(key).value = presetSelection[key];
+    } else if (key == 'adText') {
+      document.getElementById('adTextDescription').value = presetSelection[key];
     }
   }
 
@@ -477,9 +479,9 @@ function addFormElements(keyvalPairs) {
 
   let locationString = filterDuplicates(locationArray).join(',');
   if (locationString === 'USA') {
-    negativeLocationArray = [];
+    negLocationArray = [];
   }
-  let negLocationString = filterDuplicates(negativeLocationArray).join(',');
+  let negLocationString = filterDuplicates(negLocationArray).join(',');
 
   keyvalPairs.push(encodeURIComponent(LOCATION_SECTION_ID) + '=' +
                    encodeURIComponent(locationString));
@@ -616,32 +618,32 @@ function determineValidity() {
       return false;
     }
   }
-
+  if (!checkDateValidity()) {
+    alert('Start date cannot be after or the same day as end date!');
+  }
   return checkDateValidity();
 }
 
 function checkDateValidity() {
-  var startDate = document.getElementById('startDate').value.split('-');
-  var endDate = document.getElementById('endDate').value.split('-');
+  let startDateArray = document.getElementById('startDate').value.split('-');
+  let endDateArray = document.getElementById('endDate').value.split('-');
   const year = 0;
   const month = 1;
   const day = 2;
-  let startDateObject = new Date();
-  let endDateObject = new Date();
+  startDateArray[month] = startDateArray[month] < 10 ? '0' + startDateArray[month] : startDateArray[month];
+  startDateArray[day] = startDateArray[day] < 10 ? '0' + startDateArray[day] : startDateArray[day];
+  
+  endDateArray[month] = endDateArray[month] < 10 ? '0' + endDateArray[month] : endDateArray[month];
+  endDateArray[day] = endDateArray[day] < 10 ? '0' + endDateArray[day] : endDateArray[day];
 
-  startDateObject.setFullYear(parseInt(startDate[year]));
-  startDateObject.setMonth(parseInt(startDate[month]));
-  startDateObject.setDate(parseInt(startDate[day]));
-
-  endDateObject.setFullYear(parseInt(endDate[year]));
-  endDateObject.setMonth(parseInt(endDate[month]));
-  endDateObject.setDate(parseInt(endDate[day]));
-
-  if (endDateObject <= startDateObject) {
+  startDate = new Date(`${startDateArray[month]}/${startDateArray[day]}/${startDateArray[year]}`);
+  endDate = new Date(`${endDateArray[month]}/${endDateArray[day]}/${endDateArray[year]}`);
+  
+  if (endDate.getTime() <= startDate.getTime()) {
     alert('End date cannot be before or equal to the start date!');
   }
 
-  return endDateObject > startDateObject;
+  return endDate.getTime() > startDate.getTime();
 }
 
 /**
