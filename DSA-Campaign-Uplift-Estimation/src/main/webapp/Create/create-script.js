@@ -258,6 +258,8 @@ function getPresetData(indexSelection) {
       fillOutLocations(locationsArray, true);
     } else if (document.getElementById(key) != null) {
       document.getElementById(key).value = presetSelection[key];
+    } else if (key == 'adText') {
+      document.getElementById('adTextDescription').value = presetSelection[key];
     }
   }
 
@@ -476,7 +478,7 @@ function addFormElements(keyvalPairs) {
     let unique = [];
     for (let i = locationArray.length - 1; i >= 0; i--) {
       if (locationArray[i] === 'USA') {
-        return [USA];
+        return ['USA'];
       }
       if (unique.indexOf(locationArray[i]) == -1) {
         unique.push(locationArray[i]);
@@ -487,9 +489,9 @@ function addFormElements(keyvalPairs) {
 
   let locationString = filterDuplicates(locationArray).join(',');
   if (locationString === 'USA') {
-    negativeLocationArray = [];
+    negLocationArray = [];
   }
-  let negLocationString = filterDuplicates(negativeLocationArray).join(',');
+  let negLocationString = filterDuplicates(negLocationArray).join(',');
 
   console.log(negLocationString)
   keyvalPairs.push(encodeURIComponent(LOCATION_SECTION_ID) + '=' +
@@ -628,32 +630,26 @@ function determineValidity() {
       return false;
     }
   }
-
   return checkDateValidity();
 }
 
 function checkDateValidity() {
-  startDate = document.getElementById('startDate').value.split('-');
-  endDate = document.getElementById('endDate').value.split('-');
+  let startDate = document.getElementById('startDate').value.split('-');
+  let endDate = document.getElementById('endDate').value.split('-');
   const year = 0;
   const month = 1;
   const day = 2;
-  let startDate = new Date();
-  let endDate = new Date();
-
-  startDate.setFullYear(parseInt(startDate[year]));
-  startDate.setMonth(parseInt(startDate[month]));
-  startDate.setDate(parseInt(startDate[day]));
-
-  endDate.setFullYear(parseInt(endDate[year]));
-  endDate.setMonth(parseInt(endDate[month]));
-  endDate.setDate(parseInt(endDate[day]));
-
-  if (endDate <= startDate) {
+  startDate[month] = startDate[month] < 10 ? '0' + startDate[month] : startDate[month];
+  startDate[day] = startDate[day] < 10 ? '0' + startDate[day] : startDate[day];
+  
+  startDate = new Date(`${startDate[month]}/${startDate[day]}/${startDate[year]}`);
+  endDate = new Date(`${endDate[month]}/${endDate[day]}/${endDate[year]}`);
+  
+  if (endDate.getTime() <= startDate.getTime()) {
     alert('End date cannot be before or equal to the start date!');
   }
 
-  return endDate > startDate;
+  return endDate.getTime() > startDate.getTime();
 }
 
 /**
