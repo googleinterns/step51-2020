@@ -5,3 +5,11 @@ indexes:
     direction: asc
   - name: "timestamp"
     direction: asc
+- kind: "DSACampaign"
+  properties:
+  - name: "keywordCampaignId"
+    direction: asc
+  - name: "userId"
+    direction: asc
+  - name: "DSACampaignId"
+    direction: asc
