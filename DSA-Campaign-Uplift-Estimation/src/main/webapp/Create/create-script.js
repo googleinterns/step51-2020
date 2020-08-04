@@ -478,7 +478,7 @@ function addFormElements(keyvalPairs) {
   }
 
   let locationString = filterDuplicates(locationArray).join(',');
-  if (locationString === 'USA') {
+  if (locationString != 'USA') {
     negLocationArray = [];
   }
   let negLocationString = filterDuplicates(negLocationArray).join(',');
