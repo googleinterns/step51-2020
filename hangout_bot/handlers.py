@@ -39,15 +39,17 @@ def handle_message(event):
         return error_message('Unexpected input, please respond according to the prompts!', INVALID_INPUT)
 
     # start phase num specific handling for messages
-    if user_data.phase_num == VIEWING_KEYWORD_CAMPAIGNS:
-        campaigns = get_keyword_campaigns()
+    if user_data.phase_num == PHASE_NUM.VIEWING_KEYWORD_CAMPAIGNS:
+        campaigns = get_keyword_campaigns(user_data.user_id)
         message = event['message']['text']
         success = error_handler(event, user_data.phase_num)
+        print(success)
         if success == True:
             user_data.phase_num = PHASE_NUM.VIEWING_CAMPAIGNS
             user_data.keyword_campaign_id = campaigns[int(message) - 1]['keywordCampaignId']
             update_user(user_data)
-            return create_campaign_list(event['user']['email'], user_data.keyword_campaign_id, False)
+            print('some error with create campaign list')
+            return create_campaign_list(user_data.user_id, user_data.keyword_campaign_id, False)
         else:
             return error_message(success, INVALID_INPUT)
     elif user_data.phase_num == PHASE_NUM.VIEWING_CAMPAIGNS:
@@ -99,7 +101,7 @@ def handle_message(event):
             user_data.set_phase_num(int(message) - 1)
             update_user(user_data)
 
-            return create_configure_message(user_data.phase_num, user_data.editing)
+            return create_configure_message(user_data.user_id, user_data.phase_num, user_data.editing)
 
     # verify that message is valid
     error_msg = error_handler(event, user_data.phase_num)
@@ -141,7 +143,7 @@ def handle_button_click(event):
         user_data.increment_phase_num()
         user_data.set_accepting_text(True)
         update_user(user_data)
-        return create_configure_message(user_data.phase_num, user_data.editing)
+        return create_configure_message(user_data.user_id, user_data.phase_num, user_data.editing)
 
     elif event_action == 'edit_campaign':
         # user would like to edit an existing campaign
@@ -175,7 +177,7 @@ def handle_button_click(event):
 
         # user is on name phase, ActiveUser is changed and new campaign is added to datastore
         if user_data.phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
-            user_data.keyword_campaign_id = get_keyword_campaigns()[int(user_value)]['keywordCampaignId']
+            user_data.keyword_campaign_id = get_keyword_campaigns(None)[int(user_value)]['keywordCampaignId']
             user_data.increment_phase_num()
             user_data.accepting_text = True
             update_user(user_data)
@@ -186,9 +188,9 @@ def handle_button_click(event):
                 add_campaign_data(campaign)
                 user_data.accepting_text = False
                 update_user(user_data)
-                return create_campaign_overview(user_campaign_data, True)
+                return create_campaign_overview(campaign, True)
 
-            return create_configure_message(user_data.phase_num, user_data.editing)
+            return create_configure_message(user_data.user_id, user_data.phase_num, user_data.editing)
         elif user_data.phase_num == PHASE_NUM.NAME:
           # add new campaign with event id and name from confirmation event
           if not user_data.editing:
@@ -273,7 +275,7 @@ def handle_button_click(event):
         user_campaign_data = get_campaign_data(user_key)
 
         # send new configuration response 
-        return (create_configure_message(user_data.phase_num, user_data.editing) if user_data.phase_num < PHASE_NUM.SUBMISSION else create_campaign_overview(user_campaign_data, True))
+        return (create_configure_message(user_data.user_id, user_data.phase_num, user_data.editing) if user_data.phase_num < PHASE_NUM.SUBMISSION else create_campaign_overview(user_campaign_data, True))
     
     elif event_action == 'no_action':
         # user would like to re-enter setting value
@@ -293,7 +295,7 @@ def handle_button_click(event):
         update_user(user_data)
         
         # re-send current phase num configuration response
-        return create_configure_message(user_data.phase_num, user_data.editing)
+        return create_configure_message(user_data.user_id, user_data.phase_num, user_data.editing)
     
     elif event_action == 'submit':
         status = submit_user_campaign(user_data.user_id)
@@ -330,7 +332,7 @@ def handle_button_click(event):
         # user is prompted to input settings
         user_data.set_accepting_text(True)
         update_user(user_data)
-        return create_configure_message(user_data.phase_num, False)
+        return create_configure_message(user_data.user_id, user_data.phase_num, False)
     
     elif event_action == 'back_action':
         # if user is not happy with the campaign they have chosen, they can go back
@@ -357,10 +359,11 @@ def handle_button_click(event):
         user_data.phase_num = PHASE_NUM.VIEWING_KEYWORD_CAMPAIGNS
         user_data.set_accepting_text(True)
         update_user(user_data)
-        return create_keyword_campaign_list(False)
+        return create_keyword_campaign_list(user_data.user_id, False, True)
     
     elif event_action == 'delete_campaign':
         campaign_id = event['action']['parameters'][VALUE_INDEX]['value']
+        kc_campaign_id = event['action']['parameters'][VALUE_INDEX + 1]['value']
         user_data.phase_num = PHASE_NUM.DELETE_CAMPAIGN
         update_user(user_data)
-        return confirm_campaign_delete(user_data.user_id, campaign_id)
+        return confirm_campaign_delete(user_data.user_id, campaign_id, kc_campaign_id)

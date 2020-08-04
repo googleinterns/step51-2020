@@ -337,10 +337,12 @@ def convert_json_to_campaign(json_string):
     campaign_data.set_campaign_id(json_string['DSACampaignId'])
     return campaign_data
 
-def get_keyword_campaigns():
+def get_keyword_campaigns(user_id):
     """Returns all keyword campaigns in JSON format
     Args:
-      None
+      user_id:
+        None keyword campaign is used to get ALL keyword
+        campaigns
     Yields:
       json_data:
         JSON object containing keyword campaign data
@@ -351,6 +353,14 @@ def get_keyword_campaigns():
         # empty list of length 0, used to handle errors
         return []
     json_data = json_module.loads(response.text)
+    if user_id != None:
+        data_with_campaigns = []
+        for keyword_campaign in json_data:
+            # user is viewing keyword campaigns  specific to them.
+            if len(get_dsa_campaigns(user_id, keyword_campaign['keywordCampaignId'])) != 0:
+                data_with_campaigns.append(keyword_campaign)
+        return data_with_campaigns
+    
     return json_data
 
 def get_dsa_campaigns(user_id, keyword_campaign_id):
@@ -377,13 +387,9 @@ def get_dsa_campaigns(user_id, keyword_campaign_id):
     if response.status_code != 200:
         # list of length 0, used to handle errors
         return []
-    print(response.text)
-    print(response.status_code)
     campaign_data = response.json()
     for i in range(len(campaign_data)):
-        print(campaign_data[i])
         campaign_data[i] = convert_json_to_campaign(campaign_data[i])
-        print(campaign_data[i])
     return campaign_data
 
 
