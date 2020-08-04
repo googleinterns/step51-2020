@@ -74,8 +74,8 @@ def error_handler(event, phase_num):
     success = True
     message = event['message']['text']
 
-    if phase_num == VIEWING_KEYWORD_CAMPAIGNS:
-        campaigns = get_keyword_campaigns()
+    if phase_num == PHASE_NUM.VIEWING_KEYWORD_CAMPAIGNS:
+        campaigns = get_keyword_campaigns(event['user']['email'])
         if (not message.isdigit()):
             return error_message('Selection is not a valid number! Please input a number indicating what campaign you would like to view.', INVALID_INPUT)
         elif (int(message) < 1 or int(message) > len(campaigns)):
@@ -83,7 +83,7 @@ def error_handler(event, phase_num):
         return success  
     # phase 0: name
     if phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
-        kc_campaigns = get_keyword_campaigns()
+        kc_campaigns = get_keyword_campaigns(None)
         try:
           selection = int(message)
           if (selection < 1 or selection > len(kc_campaigns)): 
@@ -196,13 +196,15 @@ def error_handler(event, phase_num):
         else:
           return 'Ad text is not valid! Cannot be an empty value!'
 
-def create_keyword_campaign_list(editing):
+def create_keyword_campaign_list(user_id, editing, selecting_keyword_campaign):
     keyword_campaign_list = ''
-    keyword_json = get_keyword_campaigns()
-    
+    userid = user_id if selecting_keyword_campaign else None
+    keyword_json = get_keyword_campaigns(userid)
+
     for i in range(len(keyword_json)):
         keyword_campaign_list = keyword_campaign_list + '<b>{}.</b> {}<br>'.format((i + 1), keyword_json[i]['name'])
     message = "Please send a number corresponding to the desired keyword campaign.<br>{}".format(keyword_campaign_list)
+    
     if len(keyword_json) == 0:
         message = "There are no active keyword campaigns, please create a campaign when a valid keyword campaign exists."
     return {
@@ -245,33 +247,40 @@ def create_keyword_campaign_list(editing):
               ]
             }
 
-def create_campaign_list(user_id, keyword_campaign_id):
+def create_campaign_list(user_id, keyword_campaign_id, editing):
     """Shows list of campaigns belonging to current user
     Args:
-      None
+      user_id:
+        user id being used to get campaign list
+      keyword_campaign_id:
+        keyword campaign id used to get campaign list
+      editing:
+        determines if message is used for editing or for submitting
     Returns:
       dict
         dictionary contains start campaign config message
     """
-    campaigns = get_dsa_campaigns(user_id, keyword_campaign_id, editing)
+    campaigns = get_dsa_campaigns(user_id, keyword_campaign_id)
+    
+    if len(campaigns) == 0:
+        return error_message('There are no DSA Campaigns associated with this keyword campaign.', INVALID_INPUT)
     campaign_list = ''
     for i in range(len(campaigns)):
         campaign_list = campaign_list + '<b>{}.</b> {}<br>'.format(i + 1, campaigns[i].name)
 
     return {
               "actionResponse": {
-                "type": "UPDATE_MESSAGE"
+                "type": "NEW_MESSAGE" if not editing else "UPDATE_MESSAGE"
               },
               "cards": [
                 {
-                  "header": build_header('Editing'),
+                  "header": build_header('Viewing'),
                   "sections": [
                     {
                       "widgets": [
                         {
                           "textParagraph": {
-                            "text": "Please send a number corresponding to the campaign " +
-                              "you would like to view.<br>" + campaign_list
+                            "text": "Please send a number corresponding to the campaign you would like to view.<br>" + campaign_list
                           }
                         }
                       ]
@@ -285,7 +294,7 @@ def create_campaign_list(user_id, keyword_campaign_id):
                                 "text": "BACK",
                                 "onClick": {
                                   "action": {
-                                    "actionMethodName": "back_submission" if editing else "quit_campaign",
+                                    "actionMethodName": "back_submission" if editing else "quit_campaign"
                                   }
                                 }
                               }
@@ -390,6 +399,24 @@ def error_message(error_msg, phase_num):
                           "textParagraph": {
                             "text": error
                           }
+                        }
+                      ]
+                    },
+                    {
+                      "widgets": [
+                        {
+                          "buttons": [
+                            {
+                              "textButton": {
+                                "text": "QUIT",
+                                "onClick": {
+                                  "action": {
+                                    "actionMethodName": "quit_campaign"
+                                  }
+                                }
+                              }
+                            }
+                          ]
                         }
                       ]
                     }
@@ -617,7 +644,7 @@ def create_confirmation_message(message, phase_num, editing):
 
     message_value = message
     if (phase_num == PHASE_NUM.KEYWORD_CAMPAIGN):
-        message_value = get_keyword_campaigns()[int(message) - 1]['name']
+        message_value = get_keyword_campaigns(None)[int(message) - 1]['name']
 
         # store the index of the keyword campaign being chosen
         message = int(message) - 1
@@ -867,7 +894,7 @@ def create_submission_message(event):
               ]
             }
 
-def create_configure_message(phase_num, editing):
+def create_configure_message(user_id, phase_num, editing):
     """Determine what setting message to provide based on
       phase number.
     Args:
@@ -879,7 +906,7 @@ def create_configure_message(phase_num, editing):
     """
     
     if phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
-        return create_keyword_campaign_list(editing)
+        return create_keyword_campaign_list(user_id, editing, False)
     configure_str = '{}'.format(PHASE_DICTIONARY.get(phase_num)[PROMPT_MSG_INDEX])
 
     return {
@@ -1064,7 +1091,9 @@ def add_edit_button(user_id):
         }
       )
     
-    if (len(get_dsa_campaigns(user_id)) != 0):
+    keyword_json = get_keyword_campaigns(user_id)
+    
+    if (len(keyword_json) != 0):
         button_list.append(
           {
             "textButton": {
@@ -1094,7 +1123,6 @@ def get_campaign_overview(campaign_data, viewing):
         dictionary containing overview message
     """    
 
-    print(campaign_data.campaign_id)
     not_set = 'None'
     return {
               "actionResponse": {
@@ -1234,6 +1262,10 @@ def get_campaign_overview(campaign_data, viewing):
                                       {
                                         "key": "campaign_id",
                                         "value": campaign_data.campaign_id
+                                      },
+                                      {
+                                        "key": "keyword_campaign_id",
+                                        "value": campaign_data.keyword_campaign_id
                                       }
                                     ]
                                   }
@@ -1313,9 +1345,9 @@ def build_header(subtitle):
 
     return header_dict
 
-def confirm_campaign_delete(user_id, campaign_id):
+def confirm_campaign_delete(user_id, campaign_id, keyword_campaign_id):
 
-    campaigns = get_dsa_campaigns(user_id)
+    campaigns = get_dsa_campaigns(user_id, keyword_campaign_id)
     campaign_to_delete = None
     for campaign in campaigns:
         if campaign.campaign_id == campaign_id:
