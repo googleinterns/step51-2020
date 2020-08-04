@@ -630,6 +630,9 @@ function determineValidity() {
       return false;
     }
   }
+  if (!checkDateValidity()) {
+    alert('Start date cannot be after or the same day as end date!');
+  }
   return checkDateValidity();
 }
 
