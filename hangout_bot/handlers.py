@@ -174,7 +174,7 @@ def handle_button_click(event):
         # user input setting is correct
         # confirmation message has parameters containing the value being set
         user_value = event['action']['parameters'][VALUE_INDEX]['value']
-
+        print(user_data.phase_num)
         # user is on name phase, ActiveUser is changed and new campaign is added to datastore
         if user_data.phase_num == PHASE_NUM.KEYWORD_CAMPAIGN:
             user_data.keyword_campaign_id = get_keyword_campaigns(None)[int(user_value)]['keywordCampaignId']
@@ -189,8 +189,9 @@ def handle_button_click(event):
                 user_data.accepting_text = False
                 update_user(user_data)
                 return create_campaign_overview(campaign, True)
-
+            
             return create_configure_message(user_data.user_id, user_data.phase_num, user_data.editing)
+        
         elif user_data.phase_num == PHASE_NUM.NAME:
           # add new campaign with event id and name from confirmation event
           if not user_data.editing:
@@ -230,7 +231,8 @@ def handle_button_click(event):
           user_campaign_data = update_campaign_data(user_campaign_data,
                                                     user_data.phase_num,
                                                     user_value)
-          user_campaign_data.increment_phase_num()
+          if user_campaign_data.phase_num < PHASE_NUM.SUBMISSION:
+            user_campaign_data.increment_phase_num()
 
           add_campaign_data(user_campaign_data)
 
@@ -342,6 +344,7 @@ def handle_button_click(event):
         # user cancelled editing a submission
         campaign = get_campaign_data(get_campaign_key(user_data.user_id, user_data.campaign_name))
         user_data.set_accepting_text(False)
+        user_data.set_editing(False)
         update_user(user_data)
         return create_campaign_overview(campaign, True)
     
