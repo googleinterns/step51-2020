@@ -25,10 +25,10 @@ https://www.youtube.com/watch?time_continue=1&v=3CFrmuMjKig&feature=emb_logo
 ### Contact
 For any questions/feedback, please send an email to one of the following depending on the nature of your inquiry:
 
-Nevin George (nevingeorge2000@gmail.com) - created the compare page and developed the estimation algorithm.
-Neel Bagora (neelbagora@gmail.com) - created the create page and Hangouts Bot.
+Nevin George (nevingeorge2000@gmail.com) - created the compare page and developed the estimation algorithm.\
+Neel Bagora (neelbagora@gmail.com) - created the create page and Hangouts Bot.\
 Erik Garcia (erikgarciam246@gmail.com) - created the login and home pages.
 
 ### References
-We used 2019 US Census Population Estimates in our calculations.
+We used 2019 US Census Population Estimates in our calculations.\
 Link: https://www.census.gov/data/tables/time-series/demo/popest/2010s-state-total.html#par_textimage_1574439295
