@@ -27,7 +27,7 @@ let negLocationCount = 1;
 let selectedPreset = -1;
 
 // array to keep track of all preset names belonging to user
-const USER_PRESETS = [];
+let user_presets = [];
 
 // length of mm-dd-yyyy (error handling)
 const DATE_LENGTH = 10;
@@ -99,7 +99,7 @@ async function submitPresetData() {
   const xmlhttp= window.XMLHttpRequest ?
     new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
-  if (USER_PRESETS.length === MAX_PRESETS) {
+  if (user_presets.length === MAX_PRESETS) {
     alert('Preset limit reached, please delete presets.');
     return;
   }
@@ -130,8 +130,8 @@ async function submitPresetData() {
 
     // start error handling.
     if (presetName != '') {
-      for (let index = 0; index < USER_PRESETS.length; index++) {
-        if (USER_PRESETS[index].presetId
+      for (let index = 0; index < user_presets.length; index++) {
+        if (user_presets[index].presetId
             .toLowerCase() === presetName.toLowerCase()) {
           alert('Preset name already exists! Please pick a different name.');
           continue presetLoop;
@@ -178,6 +178,7 @@ function updatePresetData() {
     const presetURL = '/preset?userId=' + userId;
     fetch(presetURL).then(response => response.json()).then(presetData => {
       document.getElementById('preset-container').innerHTML = '';
+      user_presets = [];
       for (let i = 0; i < presetData.length; i++) {
         const presetContainer = document.getElementById('preset-container');
         const liElement = document.createElement('li');
@@ -188,7 +189,7 @@ function updatePresetData() {
         aTag.setAttribute('onclick', `getPresetData(${i});`);
 
         // for error handling (cannot create preset name if already exists)
-        USER_PRESETS.push(presetData[i]);
+        user_presets.push(presetData[i]);
 
         liElement.appendChild(aTag);
         presetContainer.appendChild(liElement);
@@ -199,9 +200,9 @@ function updatePresetData() {
 
 /**
  * getPresetData() updates the creation form with the specified
- * index. The index correlates to the object location in USER_PRESETS.
+ * index. The index correlates to the object location in user_presets.
  *
- * @param indexSelection index of USER_PRESETS that user selects.
+ * @param indexSelection index of user_presets that user selects.
  */
 function getPresetData(indexSelection) {
   if (!confirm('Are you sure you want to apply this preset?' +
@@ -209,7 +210,7 @@ function getPresetData(indexSelection) {
     return;
   }
 
-  const presetSelection = USER_PRESETS[indexSelection].campaignData;
+  const presetSelection = user_presets[indexSelection].campaignData;
   selectedPreset = indexSelection;
   document.getElementById('preset-delete-btn').style.display = 'inline-block';
   const keywordSelection = presetSelection.keywordCampaignId;
@@ -263,7 +264,7 @@ function getPresetData(indexSelection) {
 }
 
 function deleteCurrentAppliedPreset() {
-  const presetId = USER_PRESETS[selectedPreset].presetId;
+  const presetId = user_presets[selectedPreset].presetId;
   if (confirm(`Are you sure you would like to delete ${presetId}?` +
               ` Existing data in the form will not be deleted.`)) {
     const xmlhttp= window.XMLHttpRequest ?
@@ -272,7 +273,7 @@ function deleteCurrentAppliedPreset() {
     xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
         alert('Preset deleted.');
-        USER_PRESETS.splice(selectedPreset, 1);
+        user_presets.splice(selectedPreset, 1);
         selectedPreset = -1;
         document.getElementById('preset-delete-btn').style.display = 'none';
         updatePresetData();
